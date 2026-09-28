@@ -7,7 +7,9 @@ export function useRelogio() {
     const t = setInterval(() => setAgora(new Date()), 15000);
     return () => clearInterval(t);
   }, []);
-  const forcada = Number(new URLSearchParams(window.location.search).get('hora'));
+  // Sem ?hora= no endereço, vale a hora do PC (Number(null) daria 0 e prenderia o relógio na meia-noite).
+  const parametro = new URLSearchParams(window.location.search).get('hora');
+  const forcada = parametro === null || parametro.trim() === '' ? NaN : Number(parametro);
   if (Number.isInteger(forcada) && forcada >= 0 && forcada < 24) {
     const d = new Date(agora);
     d.setHours(forcada);
