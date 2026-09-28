@@ -124,14 +124,25 @@ export default function App() {
     aplicar(await api.rodada());
   }
 
-  async function novoPedido(projeto, texto, chamarAgora) {
-    aplicar(await api.pedido(projeto, texto));
+  async function novoPedido(projeto, texto, anexos, chamarAgora) {
+    aplicar(await api.pedido(projeto, texto, anexos));
     if (!chamarAgora) return;
     try {
       await chamarEquipe();
     } catch (e) {
       mostrarAviso(`O pedido foi salvo, mas não consegui chamar a equipe: ${e.message}`);
     }
+  }
+
+  async function ligarGit(ligado) {
+    aplicar(await api.ligarGit(ligado));
+    mostrarAviso(ligado
+      ? 'Envio automático ligado: o que mudar nesta pasta vai para o GitHub depois de cada rodada e decisão.'
+      : 'Envio automático desligado: nada sai do PC até você clicar em "Enviar agora".');
+  }
+
+  async function enviarGit() {
+    aplicar(await api.enviarGit());
   }
 
   async function sair() {
@@ -182,6 +193,7 @@ export default function App() {
               onMemoria={() => setFicha({ tipo: 'memoria' })}
               onPedidos={() => setFicha({ tipo: 'pedidos' })}
               onVoce={irParaSuaMesa}
+              onGit={() => setFicha({ tipo: 'git' })}
             />
           ) : (
             <Missoes estado={estado} onArquivo={abrirArquivo} />
@@ -190,7 +202,14 @@ export default function App() {
         <Lado estado={estado} onDecidir={decidir} onChamar={chamarEquipe} onArquivo={abrirArquivo} />
       </div>
       <Letreiro estado={estado} />
-      <Ficha ficha={ficha} estado={estado} onFechar={() => setFicha(null)} onArquivo={abrirArquivo} />
+      <Ficha
+        ficha={ficha}
+        estado={estado}
+        onFechar={() => setFicha(null)}
+        onArquivo={abrirArquivo}
+        onLigarGit={ligarGit}
+        onEnviarGit={enviarGit}
+      />
       <NovaMissao aberto={novaAberta} estado={estado} nuvem={nuvem} onFechar={() => setNovaAberta(false)} onEnviar={novoPedido} />
       {nivelNovo && <div className="nivel-novo" key={nivelNovo.chave} role="status">Nível {nivelNovo.nivel}!</div>}
       <div className={`aviso-flutuante${aviso ? ' visivel' : ''}`} role="status" aria-live="polite">{textoAviso.current}</div>

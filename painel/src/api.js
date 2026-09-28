@@ -18,13 +18,18 @@ const enviar = (url, corpo) => pedir(url, {
   body: JSON.stringify(corpo || {}),
 });
 
+// Endereço de um anexo (imagem, PDF ou texto) para miniaturas e links.
+export const urlAnexo = (caminho) => `/api/anexo?caminho=${encodeURIComponent(caminho)}`;
+
 export const api = {
   sessao: () => pedir('/api/sessao'),
   estado: () => pedir('/api/estado'),
   arquivo: (id) => pedir(`/api/arquivo?id=${encodeURIComponent(id)}`),
-  pedido: (projeto, texto) => enviar('/api/pedido', { projeto, texto }),
+  pedido: (projeto, texto, anexos) => enviar('/api/pedido', { projeto, texto, anexos }),
   decisao: (id, acao, comentario) => enviar('/api/decisao', { id, acao, comentario }),
   rodada: () => enviar('/api/rodada'),
+  ligarGit: (ligado) => enviar('/api/git', { ligado }),
+  enviarGit: () => enviar('/api/git/enviar'),
   login: (senha) => enviar('/api/login', { senha }),
   logout: () => enviar('/api/logout'),
 };

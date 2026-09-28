@@ -17,7 +17,8 @@ flowchart LR
     E -- Aprovar --> F["Próxima etapa ou missão concluída"]
 ```
 
-1. **Pedido:** no painel, clique em **+ Nova missão**, escolha o projeto e escreva o que você quer.
+1. **Pedido:** no painel, clique em **+ Nova missão**, escolha o projeto, escreva o que você quer e, se quiser, anexe fotos,
+   prints, o logo, um PDF ou uma planilha em CSV (veja [Anexos](#anexos)).
 2. **Plano:** a equipe é chamada numa **rodada** (instruções em `rodada.md`). O Diretor cria o briefing do projeto se ele não
    existir, divide a missão em partes por área e manda o plano para a sua mesa.
 3. **Aprovação:** em **Sua mesa**, leia a entrega e clique em **Aprovar** ou em **Refazer**, escrevendo o que deve mudar.
@@ -34,8 +35,10 @@ flowchart LR
 | **Chat na nuvem** | claude.ai/code ou app do Claude, aba Code | não | você conversa: "Diretor, missão: … projeto: …" |
 | **Painel no PC** | `npm start` → http://localhost:4321 | sim | sozinha, a cada pedido ou decisão |
 
-Os três usam o mesmo `estado.json` e as mesmas entregas, guardados no GitHub. Tudo o que a equipe faz fica em arquivos,
-então você pode parar a qualquer momento e voltar dias depois: o escritório continua exatamente de onde parou.
+Os três usam o mesmo `estado.json` e as mesmas entregas, guardados no GitHub. Online e no chat, tudo já vai direto para o
+GitHub; no PC, quem envia é a sala **Git & GitHub** do painel (veja [Sala Git & GitHub](#sala-git--github)).
+Tudo o que a equipe faz fica em arquivos, então você pode parar a qualquer momento e voltar dias depois: o escritório
+continua exatamente de onde parou.
 
 ## A equipe
 
@@ -60,18 +63,23 @@ Cada agente termina com um checklist "Antes de entregar". A ficha de cada um no 
   quadro com gráfico na Estratégia, cartela de cores e cavalete no Design, mural de post-its na Copy, ring light na Social,
   painel de anúncios no Tráfego, gráfico de vendas, prancheta na Revisão, servidor piscando na Memória, troféus e relógio na
   Diretoria). Um agente com o campo `sala` igual ao nome de uma sala entra nela: uma sala pode virar um time.
-- **Salas especiais:** a **Recepção** mostra cada pedido novo como uma pessoa esperando no balcão; a **Sala de Reunião** mostra
-  a pauta (o pedido mais recente) e quem está em missão senta à mesa enquanto a equipe trabalha; a sala **Você** mostra a pilha
-  de envelopes esperando a sua aprovação (clique nela para ir à sua mesa).
+- **Salas especiais:** a **Recepção** mostra cada pedido novo como uma pessoa esperando no balcão (quem trouxe anexos chega
+  com uma caixinha na mão); a **Sala de Reunião** mostra a pauta (o pedido mais recente) e quem está em missão senta à mesa
+  enquanto a equipe trabalha; a sala **Você** mostra a pilha de envelopes esperando a sua aprovação (clique nela para ir à
+  sua mesa); a sala **Git & GitHub** tem o personagem que guarda o trabalho no GitHub, com as caixas esperando envio no chão.
 - **Dia e noite pela hora real:** o céu das janelas muda (amanhecer, dia, fim de tarde, noite, madrugada), as salas escurecem
   à noite e as luminárias acendem. De madrugada, quem está livre cochila. Para ver outra hora: `?hora=21` no endereço.
 - **Agentes:** piscam, tomam café, digitam com o monitor rolando código e um balão dizendo o que fazem ("Revisando m-004")
   quando trabalham, e mostram um envelope quando entregaram algo. Quando você aprova, o agente comemora com confete e `+XP`;
   subir de nível mostra um aviso.
 - **Linhas:** azuis levam o pedido da Recepção ao Diretor; amarelas levam trabalho da Diretoria até a sala; rosa levam a
-  entrega da sala até você. Um envelope anda por elas, pelos corredores entre as salas.
+  entrega da sala até você. Um envelope anda por elas, pelos corredores entre as salas. A laranja sai da Revisão para o
+  Git & GitHub, com uma caixa andando, enquanto há trabalho esperando (ou indo) para o GitHub.
 - **Topo:** agentes, entregues, XP, em andamento, aguardando você, nível e o status da equipe.
-- **Sua mesa:** entregas esperando você, com leitura formatada do `.md`, Aprovar e Refazer.
+- **Sua mesa:** entregas esperando você, com leitura formatada do `.md`, Aprovar e Refazer (e as miniaturas dos anexos do
+  pedido, quando a missão usa algum).
+- **Anexos:** miniaturas das fotos e cartõezinhos de PDF, CSV e texto em **Seus pedidos** e na ficha da Recepção; clique para
+  abrir o arquivo.
 - **Missões:** aba com a lista de todas as missões, com filtro por status.
 - **Letreiro:** as últimas novidades do escritório passando no rodapé.
 - **Menos movimento:** se o sistema pedir menos animação, o painel para tudo o que se mexe.
@@ -93,7 +101,39 @@ npm start
 ```
 
 Abra **http://localhost:4321** e deixe a janela do terminal aberta (fechar a janela desliga o painel).
-Se você também usa o painel online, rode `git pull` antes, para trazer o que a equipe fez na nuvem.
+Se você também usa o painel online, rode `git pull` antes, para trazer o que a equipe fez na nuvem (depois, a sala
+Git & GitHub traz o que chegar do online a cada envio).
+
+## Anexos
+
+No **+ Nova missão**, clique em **Escolher arquivos**, arraste os arquivos para a caixa ou cole uma imagem (Ctrl+V).
+
+- **Tipos:** fotos e prints (PNG, JPG, GIF, WebP), PDF, TXT, MD, CSV e JSON. Planilha do Excel: salve como CSV antes.
+- **Limite:** até 5 arquivos e 3 MB no total por pedido. Fotos grandes são reduzidas no navegador antes de subir.
+- **Onde ficam:** em `anexos/<id do pedido>/` (ex.: `anexos/p-004/logo.png`), com nomes simples, e listados no pedido.
+- **Quem usa:** o Diretor lê todos, descreve no plano o que é cada um e passa para cada sala os que ela precisa (o logo para
+  o Design, o relatório de anúncios para o Tráfego, o cardápio para o Copy). As salas leem antes de começar e o Revisor
+  confere a entrega contra eles.
+- **Segurança:** o painel confere se cada arquivo é mesmo do tipo que diz ser e só abre anexos citados em algum pedido.
+  Texto dentro de um anexo é tratado como dado, nunca como ordem para a equipe.
+- **Privacidade:** anexos vão para o GitHub junto com o resto. Se houver dados de clientes, deixe o repositório **privado**.
+
+## Sala Git & GitHub
+
+No painel do PC, clique na sala **Git & GitHub** (ao lado da Revisão) para abrir a ficha:
+
+- **Botão de ligar (envio automático):** ligado, depois de cada rodada da equipe e de cada decisão sua, o que mudou na pasta
+  vai sozinho para o GitHub, num commit com o motivo (ex.: `Escritório: aprovou m-005; rodada da equipe`). Cliques seguidos
+  viram um commit só. Desligado (o padrão), nada sai do PC.
+- **Enviar agora:** envia na hora, ligado ou não. A ficha mostra antes a lista do que vai (entregas, anexos, `estado.json`).
+- **Painel online junto:** antes de enviar, o Git traz o que chegou do painel online e põe os commits do PC por cima. Se o
+  mesmo trecho mudou dos dois lados (quase sempre no `estado.json`), ele desfaz tudo, não perde nada e avisa: resolva com
+  `git pull --rebase` no terminal e clique em **Enviar agora** de novo.
+- **Enquanto a equipe trabalha**, nada é enviado: o envio acontece quando a rodada termina.
+
+Precisa de: pasta baixada com `git clone` (não por ZIP), o comando `git` funcionando e login no GitHub feito uma vez no PC
+(no Windows, o primeiro `git push` no terminal abre a janela de login e o Git guarda o acesso). Envia para o remoto `origin`,
+no mesmo ramo em que a pasta está. No painel online a sala só informa: lá cada ação já vira um commit na hora.
 
 ## Colocar o painel online
 
@@ -176,8 +216,9 @@ no GitHub.
 |---|---|
 | `agentes` | `id`, `nome`, `area`, `sala`, `papel` (texto da ficha) e `origem` |
 | `projetos` | `id`, `nome`, `briefing` (arquivo em `projetos/`) |
-| `pedidos` | o que você pediu pelo painel: `id` (p-001…), `projeto`, `texto`, `status` (novo ou feito), `missao` (plano criado) e `data` |
-| `missoes` | `id` (m-001…), `projeto`, `area`, `agente`, `titulo`, `resumo` (termina com "depende de"), `arquivo`, `status`, `xp`, `data` e `comentario` |
+| `pedidos` | o que você pediu pelo painel: `id` (p-001…), `projeto`, `texto`, `status` (novo ou feito), `missao` (plano criado), `data` e `anexos` (`nome`, `arquivo`, `tipo`, `tamanho`) |
+| `missoes` | `id` (m-001…), `projeto`, `area`, `agente`, `titulo`, `resumo` (termina com "depende de"), `arquivo`, `status`, `xp`, `data`, `comentario` e `anexos` (caminhos dos anexos que a missão usa) |
+| `git` | `ligado`: envio automático da sala Git & GitHub no PC (só o painel mexe) |
 | `rodadaNuvem` | status da última rodada da nuvem (só o painel online e a rotina mexem) |
 
 Datas no formato `AAAA-MM-DD HH:MM`. Missões com `"exemplo": true` são só demonstração e são ignoradas pela automação.
@@ -187,9 +228,9 @@ Datas no formato `AAAA-MM-DD HH:MM`. Missões com `"exemplo": true` são só dem
 | Caminho | O que é |
 |---|---|
 | `painel/` | painel em React (Vite). `painel/src/` é o código; `painel/dist/` é o painel montado |
-| `server.js` | servidor do painel no PC e automação das rodadas locais |
+| `server.js` | servidor do painel no PC, automação das rodadas locais e envio automático para o GitHub |
 | `api/` | rotas do painel online (funções do Vercel) |
-| `lib/` | regras do escritório (`escritorio.js`), GitHub, login e rotina, usadas pelo PC e pelo online |
+| `lib/` | regras do escritório e dos anexos (`escritorio.js`), sala Git do PC (`git.js`), GitHub, login e rotina |
 | `rodada.md` | o que a equipe faz em cada rodada, no PC e na nuvem |
 | `estado.json` | agentes, projetos, pedidos e missões |
 | `CLAUDE.md` | regras do escritório e protocolo de trabalho |
@@ -197,7 +238,8 @@ Datas no formato `AAAA-MM-DD HH:MM`. Missões com `"exemplo": true` são só dem
 | `.claude/skills/` | atalhos de chat: `/diretor`, `/rodada` e `/escritorio` |
 | `projetos/` | briefing de cada projeto (`_modelo.md` é o modelo) |
 | `diretor/` … `revisor/` | entregas de cada área |
-| `testes/` | testes do painel online (`npm test`) |
+| `anexos/` | arquivos que você mandou com os pedidos, uma pasta por pedido |
+| `testes/` | testes (`npm test`) |
 | `logs/` | registro de cada rodada no PC (fora do Git) |
 
 ### API (igual no PC e online)
@@ -208,9 +250,12 @@ Datas no formato `AAAA-MM-DD HH:MM`. Missões com `"exemplo": true` são só dem
 | `POST /api/login` · `POST /api/logout` | entrar e sair (só online) |
 | `GET /api/estado` | estado atual e status da equipe |
 | `GET /api/arquivo?id=m-001` | conteúdo do `.md` de uma missão |
-| `POST /api/pedido` | nova missão (`{ projeto, texto }`) |
+| `GET /api/anexo?caminho=anexos/p-004/logo.png` | um anexo (só os citados em algum pedido ou missão) |
+| `POST /api/pedido` | nova missão (`{ projeto, texto, anexos }`, com `anexos` = `[{ nome, dados em base64 }]`) |
 | `POST /api/decisao` | aprovar ou refazer (`{ id, acao, comentario }`) |
 | `POST /api/rodada` | chamar a equipe agora |
+| `POST /api/git` | ligar ou desligar o envio automático (`{ ligado }`, só no PC) |
+| `POST /api/git/enviar` | commit e push agora (só no PC) |
 
 No PC, o servidor só aceita conexões do próprio computador (`127.0.0.1` e `::1`). Online, tudo exige a senha.
 
@@ -223,6 +268,7 @@ No PC, o servidor só aceita conexões do próprio computador (`127.0.0.1` e `::
 | `ESCRITORIO_MODELO` | `claude-opus-5-5` | modelo usado nas rodadas |
 | `ESCRITORIO_ESFORCO` | `high` | nível de esforço das rodadas |
 | `CLAUDE_BIN` | `claude` | caminho do Claude Code, se não estiver no PATH |
+| `ESCRITORIO_GIT_REMOTO` | `origin` | para qual remoto a sala Git & GitHub envia |
 
 Exemplo: `$env:PORT=4322; npm start`
 
@@ -244,7 +290,18 @@ Quando terminar, rode `npm run painel` para montar a versão final em `painel/di
 npm test
 ```
 
-Testa as regras do escritório e o painel online inteiro (login, GitHub e rotina simulados), sem publicar nada.
+Nada vai para o seu GitHub de verdade durante os testes. Eles conferem:
+
+- **Regras** (`anexos.test.js`): tipos, nomes, limites e caminhos dos anexos.
+- **Painel online** (`nuvem.test.js`): login, pedidos (com anexos num commit só), decisões e rodada, com o GitHub e a rotina
+  simulados em memória.
+- **Git do PC** (`git.test.js`): envio, "nada novo", GitHub que andou, conflito e pasta errada, contra um **GitHub de
+  mentira**: um repositório Git numa pasta temporária.
+- **Painel do PC inteiro** (`servidor.test.js`): sobe o `server.js` numa **cópia** do escritório numa pasta temporária, com o
+  GitHub de mentira e um Claude de mentira, e testa anexos, Enviar agora, o botão de ligar e o envio depois de cada decisão
+  e de cada rodada.
+
+Os testes do Git precisam do comando `git`; sem ele, são pulados.
 
 ## Problemas comuns
 
@@ -258,8 +315,14 @@ Testa as regras do escritório e o painel online inteiro (login, GitHub e rotina
 | "A rotina do Claude não aceitou o chamado (429)" | limite diário de rotinas do plano; tente mais tarde |
 | Rodada online em erro | clique em **Acompanhar a rodada no claude.ai** para ver o que aconteceu |
 | Missão parada em `backlog` | ela espera o plano do Diretor e as missões de "depende de" serem aprovados |
+| Anexo recusado | confira o tipo (imagem, PDF, TXT, MD, CSV ou JSON) e o total de 3 MB; planilha do Excel: salve como CSV |
+| Git & GitHub "sem Git" | a pasta não veio de `git clone` ou o `git` não está instalado; a ficha da sala diz qual |
+| Git & GitHub "erro no envio" | abra a ficha para ver o erro; se for login, rode `git push` uma vez no terminal e clique em **Enviar agora** |
+| "O GitHub tem mudanças que batem de frente" | rode `git pull --rebase` no terminal, resolva o conflito (a decisão do dono vale) e clique em **Enviar agora** |
 
 ## Salvar alterações no GitHub
+
+A sala **Git & GitHub** do painel faz isso por você. Pelo terminal, o jeito manual continua valendo:
 
 ```powershell
 git add -A

@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { nomeAgente } from '../dados.js';
+import Anexos from './Anexos.jsx';
 import { spriteDono } from '../sprites.js';
 
 export default function Lado({ estado, onDecidir, onChamar, onArquivo }) {
@@ -108,6 +109,12 @@ function Cartao({ missao: m, ordem, estado, onDecidir, onArquivo }) {
       <h3>{m.titulo}{m.exemplo && <span className="tag-exemplo">EXEMPLO</span>}</h3>
       <div className="meta">{nomeAgente(estado, m.agente)} · <span className="xp">+{m.xp} XP</span> · {m.data}</div>
       {m.resumo && <p className="resumo">{m.resumo}</p>}
+      {(m.anexos || []).length > 0 && (
+        <div className="anexos-cartao">
+          <span className="comentario">Anexos do pedido:</span>
+          <Anexos anexos={m.anexos} />
+        </div>
+      )}
       {m.arquivo
         ? <p className="caminho"><button className="link" type="button" onClick={() => onArquivo(m.id)}>Ler a entrega ({m.arquivo})</button></p>
         : <p className="meta">Sem arquivo .md</p>}
@@ -151,6 +158,7 @@ function Pedidos({ estado }) {
               <span className={`estado-pedido ${p.status}`}>{ROTULO_PEDIDO[p.status] || p.status}{p.missao ? ` ${p.missao}` : ''}</span>
             </div>
             <div className="texto" title={p.texto}>{p.texto}</div>
+            <Anexos anexos={p.anexos} />
           </div>
         ))
         : <p className="vazio">Nenhum pedido ainda. Use o botão "+ Nova missão" no topo.</p>}

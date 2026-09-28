@@ -13,6 +13,7 @@
   --verde: #5ad17a;
   --vermelho: #ef5a5a;
   --azul: #7cc4ff;
+  --laranja: #ff9f43;
   --pixel: "Press Start 2P", ui-monospace, "Courier New", monospace;
   --vt: "VT323", ui-monospace, "Courier New", monospace;
   --rodape: 34px;
@@ -90,6 +91,7 @@ button, input, textarea { font: inherit; color: inherit; }
 .traco.rodando { color: var(--amarelo); }
 .traco.aguardando { color: var(--rosa); }
 .traco.chegada { color: var(--azul); }
+.traco.git { color: var(--laranja); }
 
 /* Céu das janelas em cada fase do dia */
 .escritorio { --ceu: #7cc4ff; }
@@ -107,17 +109,19 @@ button, input, textarea { font: inherit; color: inherit; }
     "reu dir dir voc"
     "rec pes est des"
     "cop soc tra ven"
-    "rev mem mem mem";
+    "rev git mem mem";
 }
 .linhas { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; pointer-events: none; z-index: 6; }
 .linha { fill: none; stroke-width: 4; stroke-dasharray: 10 8; shape-rendering: crispEdges; animation: marcha .9s linear infinite; }
 .linha.rodando { stroke: var(--amarelo); }
 .linha.aguardando { stroke: var(--rosa); }
 .linha.chegada { stroke: var(--azul); }
+.linha.git { stroke: var(--laranja); }
 .ponta { shape-rendering: crispEdges; stroke: var(--contorno); stroke-width: 2; }
 .ponta.rodando { fill: var(--amarelo); }
 .ponta.aguardando { fill: var(--rosa); }
 .ponta.chegada { fill: var(--azul); }
+.ponta.git { fill: var(--laranja); }
 .envelope { image-rendering: pixelated; }
 @keyframes marcha { to { stroke-dashoffset: -18; } }
 
@@ -268,11 +272,16 @@ button, input, textarea { font: inherit; color: inherit; }
 .sino.no-balcao { position: absolute; top: -10px; right: 10px; width: 10px; height: 10px; }
 .fila-visitantes { display: flex; gap: 4px; align-items: flex-end; min-height: 32px; }
 .visitante {
-  width: 24px; height: 32px; background-size: 144px 32px; background-repeat: no-repeat; image-rendering: pixelated;
+  position: relative; width: 24px; height: 32px; background-size: 144px 32px; background-repeat: no-repeat; image-rendering: pixelated;
   animation: ocioso-mini 12s step-end infinite, respira 2.4s steps(1) infinite;
 }
 .visitante:nth-child(2) { animation-delay: -4s, -.8s; }
 .visitante:nth-child(3) { animation-delay: -8s, -1.6s; }
+/* Caixinha na mão de quem trouxe anexos (segura na frente da barriga) */
+.visitante .caixinha {
+  position: absolute; left: 5px; top: 19px; width: 14px; height: 10px;
+  background-size: 100% 100%; image-rendering: pixelated;
+}
 @keyframes ocioso-mini {
   0% { background-position: 0 0; }
   30% { background-position: -72px 0; }
@@ -284,6 +293,24 @@ button, input, textarea { font: inherit; color: inherit; }
 .pilha { position: absolute; top: -18px; right: 2px; z-index: 4; width: 16px; height: 32px; }
 .pilha i { position: absolute; left: 0; width: 16px; height: 12px; background-size: 100% 100%; image-rendering: pixelated; }
 .tarefa.livre { background: var(--verde); color: #0b2412; }
+
+/* Sala Git & GitHub: nuvem de envio e interruptor na parede, caixas esperando no chão */
+.nuvem-envio { width: 36px; height: 20px; top: 12px; }
+.interruptor-parede {
+  position: absolute; top: 54px; left: 14px; z-index: 2; width: 14px; height: 20px;
+  background: #d8dde6; border: 2px solid var(--contorno); box-shadow: inset -2px -2px 0 #9aa3b3;
+}
+.interruptor-parede i {
+  position: absolute; left: 3px; bottom: 2px; width: 4px; height: 7px; background: #5b6272;
+  box-shadow: 0 -9px 0 -1px var(--vermelho);
+}
+.interruptor-parede.ligado i { top: 2px; bottom: auto; box-shadow: 0 9px 0 -1px var(--verde); }
+.sala-git .postos { align-items: flex-end; }
+.caixas-saida { position: relative; z-index: 1; display: flex; flex-direction: column-reverse; align-items: center; margin-bottom: 30px; }
+.caixas-saida i { display: block; width: 24px; height: 21px; margin-top: -6px; background-size: 100% 100%; image-rendering: pixelated; }
+.caixas-saida i:nth-child(2) { transform: translateX(3px); }
+.caixas-saida i:nth-child(3) { transform: translateX(-2px); }
+.posto-git .mesa.ligada .tela { background-color: rgba(240, 80, 51, .35); }
 
 /* ---------- Agentes ---------- */
 .agente {
@@ -360,6 +387,8 @@ button, input, textarea { font: inherit; color: inherit; }
 .tarefa { margin-top: 3px; padding: 3px 4px 2px; white-space: nowrap; font: 6px/1.2 var(--pixel); border: 2px solid var(--contorno); }
 .tarefa.rodando { background: var(--amarelo); color: #1b1606; }
 .tarefa.aguardando { background: var(--rosa); color: #2a0a1b; }
+.tarefa.fila { background: var(--laranja); color: #2a1604; }
+.tarefa.erro { background: var(--vermelho); color: #2a0707; }
 /* Balão de quem está trabalhando: o que está fazendo e em qual missão */
 .balao {
   position: absolute; top: -30px; left: 50%; z-index: 4; transform: translateX(-50%);
@@ -470,6 +499,8 @@ td.mono { white-space: nowrap; }
 .btn.refazer { background: var(--vermelho); color: #2a0707; }
 .btn.neutro { background: var(--fundo-2); color: var(--texto); }
 .btn.chamar { background: var(--amarelo); color: #1b1606; }
+.btn.enviar-git { background: var(--laranja); color: #2a1604; }
+.btn.neutro:disabled { cursor: not-allowed; }
 .caixa-refazer { margin-top: 10px; }
 .caixa-refazer label { display: block; margin-bottom: 4px; font-size: 18px; color: var(--apagado); }
 textarea {
@@ -487,6 +518,40 @@ textarea {
 .estado-pedido.novo { background: var(--amarelo); color: #1b1606; }
 .estado-pedido.feito { background: var(--verde); color: #0b2412; }
 
+/* ---------- Anexos: miniaturas nos pedidos e nos cartões ---------- */
+.anexos-lista { display: flex; flex-wrap: wrap; gap: 6px; margin: 6px 0 0; padding: 0; list-style: none; }
+.anexo { display: block; color: var(--texto); text-decoration: none; }
+.anexo:focus-visible { outline: 3px solid var(--amarelo); outline-offset: 2px; }
+.miniatura {
+  display: block; width: 40px; height: 40px; object-fit: cover; background: var(--fundo-2);
+  border: 3px solid var(--contorno); box-shadow: inset 0 0 0 2px rgba(255, 255, 255, .06);
+}
+@media (hover: hover) and (pointer: fine) {
+  .anexo:hover .miniatura { border-color: var(--laranja); }
+}
+.miniatura.arquivo {
+  display: grid; place-items: center; overflow: hidden;
+  font: 7px/1 var(--pixel); text-transform: uppercase; color: #fff; background: #4a4560;
+}
+.miniatura.ext-pdf { background: #b3323f; }
+.miniatura.ext-csv { background: #2f8f55; }
+.miniatura.ext-json { background: #3a64b0; }
+.miniatura.ext-md, .miniatura.ext-txt { background: #5b5f6e; }
+/* Nas listas pequenas o nome fica só para leitores de tela (e no "title" ao passar o mouse). */
+.anexos-lista:not(.grande) .anexo-nome {
+  position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap;
+}
+.anexos-lista.grande { gap: 10px; margin: 4px 0 6px; }
+.anexos-lista.grande .anexo { width: 84px; }
+.anexos-lista.grande .miniatura { width: 84px; height: 84px; }
+.anexos-lista.grande .miniatura.arquivo { font-size: 10px; }
+.anexos-lista.grande .anexo-nome {
+  display: block; margin-top: 3px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;
+  font-size: 16px; color: var(--apagado);
+}
+.anexos-cartao { margin: 6px 0; }
+.pedido .anexos-lista { margin-top: 6px; }
+
 /* Formulário de nova missão */
 .form-missao label { display: block; margin: 12px 0 4px; font: 8px/1 var(--pixel); color: var(--amarelo); }
 .form-missao input:not([type="checkbox"]), .login input {
@@ -497,6 +562,29 @@ textarea {
 .form-missao .marcar { display: flex; align-items: center; gap: 8px; margin-top: 14px; font: 20px/1 var(--vt); color: var(--texto); cursor: pointer; }
 .form-missao .marcar input { width: 18px; height: 18px; accent-color: var(--amarelo); }
 .botoes-fim { gap: 8px; }
+.area-anexos {
+  display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; padding: 10px;
+  background: var(--fundo); border: 3px dashed #4a4560;
+  transition: border-color 150ms ease, background-color 150ms ease;
+}
+.area-anexos.arrastando { border-color: var(--laranja); background: #2a2016; }
+.entrada-anexos { position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
+.anexos-escolhidos { display: grid; gap: 6px; margin: 8px 0 0; padding: 0; list-style: none; }
+.anexos-escolhidos li {
+  display: grid; grid-template-columns: 40px minmax(0, 1fr) auto; align-items: center; gap: 10px;
+  padding: 5px 6px; background: var(--fundo-2); border: 3px solid var(--contorno);
+  animation: entrar 180ms var(--ease-out) both;
+}
+.anexo-info { display: grid; min-width: 0; }
+.anexo-info b { overflow: hidden; white-space: nowrap; text-overflow: ellipsis; font-weight: normal; }
+.anexo-info .comentario { font-size: 16px; }
+.tirar {
+  width: 30px; height: 30px; padding: 0; cursor: pointer; font: 18px/1 var(--vt);
+  color: var(--texto); background: var(--painel-2); border: 3px solid var(--contorno);
+}
+@media (hover: hover) and (pointer: fine) {
+  .tirar:hover { background: var(--vermelho); color: #2a0707; }
+}
 
 /* ---------- Janelas de ficha ---------- */
 dialog {
@@ -514,6 +602,8 @@ dialog[open]::backdrop { animation: escurecer 200ms var(--ease-out); }
 .ficha-topo h2 { margin: 0 0 6px; font: 12px/1.5 var(--pixel); }
 .ficha-topo .sub { color: var(--apagado); font-size: 19px; }
 .ficha-topo .nivel-barra { width: 160px; }
+.ficha-topo .boneco { flex: none; }
+.ficha-topo .sub { overflow-wrap: anywhere; }
 .ficha-corpo { max-height: calc(100vh - 240px); overflow: auto; padding: 8px 18px 14px; }
 .ficha-corpo h3 { margin: 14px 0 6px; font: 8px/1 var(--pixel); color: var(--amarelo); }
 .ficha-corpo p { margin: 0 0 6px; }
@@ -524,9 +614,37 @@ dialog[open]::backdrop { animation: escurecer 200ms var(--ease-out); }
 .entregas li { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 8px; padding: 6px 0; border-top: 2px solid #2f2945; }
 .entregas .data { color: var(--apagado); font-size: 17px; }
 .pedido-item p { flex-basis: 100%; margin: 2px 0 4px; }
+.pedido-item .anexos-lista { flex-basis: 100%; }
+.entregas .anexos-lista li { display: block; padding: 0; border: 0; }
 .fila-titulo:focus-visible { outline-offset: 4px; }
 #sua-mesa { scroll-margin-top: 200px; }
 .ficha-rodape { display: flex; justify-content: flex-end; padding: 10px 18px 14px; border-top: 4px solid var(--contorno); }
+
+/* Ficha do Git: o botão de ligar e a lista do que vai subir */
+.interruptor {
+  display: inline-flex; align-items: center; gap: 10px; margin: 2px 0 6px; padding: 4px 0; cursor: pointer;
+  font: 9px/1 var(--pixel); color: var(--texto); background: none; border: 0;
+}
+.interruptor:disabled { cursor: not-allowed; opacity: .5; }
+.interruptor .trilho {
+  position: relative; width: 52px; height: 26px; background: #3a3452;
+  border: 3px solid var(--contorno); box-shadow: inset 0 3px 0 rgba(0, 0, 0, .35);
+  transition: background-color 180ms var(--ease-out);
+}
+.interruptor .pino {
+  position: absolute; top: 2px; left: 2px; width: 16px; height: 16px;
+  background: #d8dde6; border: 2px solid var(--contorno); box-shadow: inset -2px -2px 0 #9aa3b3;
+  transition: transform 180ms var(--ease-out);
+}
+.interruptor.ligado .trilho { background: var(--verde); }
+.interruptor.ligado .pino { transform: translateX(26px); }
+.arquivos-git {
+  max-height: 150px; overflow: auto; margin: 0 0 6px; padding: 6px 10px; list-style: none;
+  font-size: 18px; background: var(--fundo); border: 3px solid var(--contorno);
+}
+.arquivos-git li { overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+.arquivos-git li::before { content: "+ "; color: var(--laranja); }
+.arquivos-git li.comentario::before { content: ""; }
 
 /* Entregas em Markdown */
 .markdown { font-size: 20px; line-height: 1.25; }
@@ -594,7 +712,7 @@ dialog[open]::backdrop { animation: escurecer 200ms var(--ease-out); }
 
 /* ---------- Salas estreitas: menos enfeite, mais espaço para o nome ---------- */
 @container (max-width: 190px) {
-  .janela.e, .deco.parede { display: none; }
+  .janela.e, .deco.parede, .interruptor-parede { display: none; }
 }
 @container (max-width: 420px) {
   .trofeus { display: none; }
@@ -611,14 +729,14 @@ dialog[open]::backdrop { animation: escurecer 200ms var(--ease-out); }
 @media (max-width: 760px) {
   .planta {
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    grid-template-areas: "dir dir" "reu voc" "rec pes" "est des" "cop soc" "tra ven" "rev mem";
+    grid-template-areas: "dir dir" "reu voc" "rec pes" "est des" "cop soc" "tra ven" "rev git" "mem mem";
   }
   .trofeus, .relogio { display: none; }
 }
 @media (max-width: 440px) {
   .planta {
     grid-template-columns: minmax(0, 1fr);
-    grid-template-areas: "dir" "voc" "reu" "rec" "pes" "est" "des" "cop" "soc" "tra" "ven" "rev" "mem";
+    grid-template-areas: "dir" "voc" "reu" "rec" "pes" "est" "des" "cop" "soc" "tra" "ven" "rev" "git" "mem";
   }
   .corpo { padding: 12px 16px; }
   .topo { gap: 10px; padding: 10px 16px; }

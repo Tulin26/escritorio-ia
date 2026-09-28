@@ -18,11 +18,13 @@ export const PISOS = {
   bege: ['#8a7456', '#977f60', '#3f3222', '#5c4b35'],
   rosa: ['#8c3f6e', '#9a4a7b', '#3f1a31', '#5e2a4a'],
   laranja: ['#8a5a2a', '#976433', '#40290f', '#5c3d1c'],
+  grafite: ['#2d3340', '#353c4b', '#12151c', '#1f2430'],
 };
 
 // Salas do escritório. As de agentes listam quem senta nelas; um agente do estado.json cujo campo "sala" tenha o
 // nome de uma sala também entra nela (assim uma sala pode virar um time com vários agentes).
-// Salas especiais: reunião (pauta do último pedido), você (sua mesa), recepção (pedidos na fila) e memória.
+// Salas especiais: reunião (pauta do último pedido), você (sua mesa), recepção (pedidos na fila), memória e Git & GitHub
+// (guarda o trabalho no GitHub; quem faz é o servidor do painel, não um agente do Claude).
 export const SALAS = [
   { id: 'reu', nome: 'Sala de Reunião', piso: 'bege', tipo: 'reuniao' },
   { id: 'dir', agentes: ['diretor'], nome: 'Diretoria', piso: 'marrom', deco: 'diretoria' },
@@ -36,6 +38,7 @@ export const SALAS = [
   { id: 'tra', agentes: ['trafego'], nome: 'Tráfego & Mídia', piso: 'laranja', deco: 'trafego' },
   { id: 'ven', agentes: ['vendas'], nome: 'Vendas', piso: 'vinho', deco: 'vendas' },
   { id: 'rev', agentes: ['revisor'], nome: 'Revisão', piso: 'roxo', deco: 'revisao' },
+  { id: 'git', nome: 'Git & GitHub', piso: 'grafite', tipo: 'git', deco: 'git' },
   { id: 'mem', nome: 'Memória', piso: 'azul', tipo: 'memoria' },
 ];
 
@@ -49,6 +52,7 @@ export const VISUAL = {
   trafego: { cabelo: '#1c1410', pele: '#8d5a32', roupa: '#e07a2f' },
   vendas: { cabelo: '#3a2616', pele: '#a8703f', roupa: '#2f9c8a' },
   revisor: { cabelo: '#9a9aa8', pele: '#f0c8a0', roupa: '#5b5f6e' },
+  git: { cabelo: '#24292f', pele: '#c68642', roupa: '#f05033' },
 };
 export const VISUAL_PADRAO = { cabelo: '#333', pele: '#e0b090', roupa: '#777' };
 
@@ -105,7 +109,26 @@ export const COMO_TRABALHA = {
     'Dá nota de 1 a 5 em precisão, completude, clareza, ação e concisão, refazendo contas e checando fontes.',
     'Aponta erros e riscos com a correção sugerida. Quem decide é você.',
   ],
+  git: [
+    'Junta tudo o que mudou na pasta do escritório: entregas, anexos e o estado.json.',
+    'Faz um commit com o motivo (ex.: "rodada da equipe", "aprovou m-004") e traz antes o que chegou do painel online.',
+    'Envia para o GitHub. Ligado, faz isso sozinho depois de cada rodada e decisão; desligado, só quando você clicar em Enviar agora.',
+  ],
 };
+
+// Anexos: o que o painel aceita (o servidor confere de novo) e como mostrar o tamanho.
+export const EXTENSOES_ANEXO = ['png', 'jpg', 'jpeg', 'gif', 'webp', 'pdf', 'txt', 'md', 'csv', 'json'];
+export const LIMITE_ANEXOS = { quantidade: 5, bytes: 3 * 1024 * 1024 };
+export const extensaoDe = (nome) => {
+  const i = String(nome || '').lastIndexOf('.');
+  return i > 0 ? nome.slice(i + 1).toLowerCase() : '';
+};
+export const ehImagem = (nome) => ['png', 'jpg', 'jpeg', 'gif', 'webp'].includes(extensaoDe(nome));
+export function tamanhoLegivel(bytes) {
+  if (bytes < 1024) return `${bytes} B`;
+  if (bytes < 1024 * 1024) return `${Math.round(bytes / 1024)} KB`;
+  return `${(bytes / 1024 / 1024).toFixed(1).replace('.', ',')} MB`;
+}
 
 export const missoesDe = (estado, agenteId) => (estado.missoes || []).filter((m) => m.agente === agenteId);
 export const xpDe = (lista) => lista.filter((m) => m.status === 'aprovado').reduce((t, m) => t + (Number(m.xp) || 0), 0);

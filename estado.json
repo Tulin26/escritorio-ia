@@ -1,5 +1,8 @@
 {
   "escritorio": "Escritório de IA",
+  "git": {
+    "ligado": false
+  },
   "agentes": [
     {
       "id": "diretor",

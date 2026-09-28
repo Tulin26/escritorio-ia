@@ -381,3 +381,44 @@ const COR_ENVELOPE = { aguardando: '#ffc6e3', rodando: '#fff1b0', chegada: '#c6e
 export const spriteEnvelope = (tipo) => sprite(`env:${tipo}`, () => folhaSprites([ENVELOPE], {
   k: '#2a1830', W: COR_ENVELOPE[tipo] || COR_ENVELOPE.rodando,
 }, 2));
+
+// ---------- Sala Git & GitHub ----------
+// Nuvem com a seta subindo (o trabalho indo para o GitHub), na parede
+const NUVEM_ENVIO = [
+  '.......WWWW.......',
+  '.....WWWWWWWW.....',
+  '....WWWWooWWWW....',
+  '..WWWWWooooWWWWW..',
+  '.WWWWWooooooWWWWW.',
+  'WWWWWooooooooWWWWW',
+  'WWWWWWWWooWWWWWWWW',
+  'WWWWWWWWooWWWWWWWW',
+  'wWWWWWWWooWWWWWWWw',
+  '.wwwwwwwwwwwwwwww.',
+];
+export const spriteNuvemEnvio = () => sprite('nuvem-envio', () => folhaSprites([NUVEM_ENVIO], {
+  W: '#eef2f7', w: '#b9c6d8', o: '#f05033',
+}, 3));
+
+// Caixa de papelão: anda pela linha Revisão → Git e empilha na sala enquanto espera o envio
+const CAIXA = [
+  '.kkkkkk.',
+  'kTTttTTk',
+  'kkkkkkkk',
+  'kCCttCCk',
+  'kCCttCCk',
+  'kCCCCCCk',
+  'kkkkkkkk',
+];
+const PALETA_CAIXA = { k: '#3a2412', T: '#e0a868', t: '#f2e2b8', C: '#c98b4a' };
+export const spriteCaixa = () => sprite('caixa', () => folhaSprites([CAIXA], PALETA_CAIXA, 2));
+
+// Caixinha na mão do visitante da Recepção: o pedido dele veio com anexos
+const CAIXINHA = [
+  'kkkkkkk',
+  'kTTtTTk',
+  'kCCtCCk',
+  'kCCtCCk',
+  'kkkkkkk',
+];
+export const spriteCaixinha = () => sprite('caixinha', () => folhaSprites([CAIXINHA], PALETA_CAIXA, 2));

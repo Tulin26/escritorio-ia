@@ -1,2 +1,4 @@
 # Mesma quebra de linha (LF) em qualquer PC, sem avisos de LF/CRLF
 * text=auto eol=lf
+# Anexos dos pedidos ficam byte a byte como o dono mandou (sem conversão de quebra de linha)
+anexos/** -text

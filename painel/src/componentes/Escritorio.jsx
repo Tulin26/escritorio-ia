@@ -6,6 +6,7 @@ import {
   spriteAgente, spriteMesa, spritePlanta, spriteEstante, spriteGlobo, spriteQuadro, spriteMural,
   spriteRingLight, spriteGrafico, spritePrancheta, spriteRack, spriteTrofeu, spriteEnvelope, spriteDono,
   spriteMesaReuniao, spriteCadeira, spriteBalcao, spriteCavalete, spriteCartela, spritePainelAds, spriteVisitante,
+  spriteNuvemEnvio, spriteCaixa, spriteCaixinha,
 } from '../sprites.js';
 
 const fundo = (url) => ({ backgroundImage: `url(${url})` });
@@ -38,7 +39,7 @@ function montarSalas(estado) {
   return [...salas, ...extras];
 }
 
-export default function Escritorio({ estado, fase, agora, festas, reduzido, onAgente, onMemoria, onPedidos, onVoce }) {
+export default function Escritorio({ estado, fase, agora, festas, reduzido, onAgente, onMemoria, onPedidos, onVoce, onGit }) {
   const wrapRef = useRef(null);
   const salas = montarSalas(estado);
   const madrugada = agora.getHours() < 6;
@@ -50,6 +51,7 @@ export default function Escritorio({ estado, fase, agora, festas, reduzido, onAg
         <span><i className="traco chegada" />Pedido chegando</span>
         <span><i className="traco rodando" />Trabalho indo para a sala</span>
         <span><i className="traco aguardando" />Entrega indo para você</span>
+        <span><i className="traco git" />Trabalho indo para o GitHub</span>
       </div>
       <div className="planta-wrap" ref={wrapRef}>
         <div className="planta">
@@ -70,6 +72,7 @@ export default function Escritorio({ estado, fase, agora, festas, reduzido, onAg
                 onMemoria={onMemoria}
                 onPedidos={onPedidos}
                 onVoce={onVoce}
+                onGit={onGit}
               />
             );
           })}
@@ -80,13 +83,14 @@ export default function Escritorio({ estado, fase, agora, festas, reduzido, onAg
   );
 }
 
-function Sala({ sala, primeiroIndice, estado, fase, agora, festas, madrugada, onAgente, onMemoria, onPedidos, onVoce }) {
+function Sala({ sala, primeiroIndice, estado, fase, agora, festas, madrugada, onAgente, onMemoria, onPedidos, onVoce, onGit }) {
   const [c1, c2, borda, parede] = PISOS[sala.piso] || PISOS.turquesa;
   const agentes = (sala.agentes || []).map((id) => (estado.agentes || []).find((a) => a.id === id)).filter(Boolean);
   const abrir = () => {
     if (sala.tipo === 'memoria') return onMemoria();
     if (sala.tipo === 'recepcao' || sala.tipo === 'reuniao') return onPedidos();
     if (sala.tipo === 'voce') return onVoce();
+    if (sala.tipo === 'git') return onGit();
     if (agentes[0]) return onAgente(agentes[0].id);
     return undefined;
   };
@@ -109,6 +113,7 @@ function Sala({ sala, primeiroIndice, estado, fase, agora, festas, madrugada, on
       {sala.tipo === 'reuniao' && <Reuniao estado={estado} onAbrir={onPedidos} />}
       {sala.tipo === 'recepcao' && <Recepcao estado={estado} onAbrir={onPedidos} />}
       {sala.tipo === 'voce' && <Voce estado={estado} onAbrir={onVoce} />}
+      {sala.tipo === 'git' && <SalaGit estado={estado} madrugada={madrugada} onAbrir={onGit} />}
       {!sala.tipo && agentes.length > 0 && (
         <div className="postos">
           {agentes.map((ag, i) => (
@@ -182,6 +187,15 @@ function Decoracao({ tipo, estado, agora }) {
       );
     case 'revisao':
       return <span className="deco parede prancheta" aria-hidden="true" style={fundo(spritePrancheta())} />;
+    case 'git': {
+      const ligado = Boolean((estado._git || {}).ligado);
+      return (
+        <>
+          <span className="deco parede nuvem-envio" aria-hidden="true" style={fundo(spriteNuvemEnvio())} />
+          <span className={`interruptor-parede${ligado ? ' ligado' : ''}`} aria-hidden="true"><i /></span>
+        </>
+      );
+    }
     default:
       return null;
   }
@@ -227,28 +241,83 @@ function Reuniao({ estado, onAbrir }) {
       </div>
       <button type="button" className="mem-info pauta" onClick={(e) => { e.stopPropagation(); onAbrir(); }}>
         {emReuniao && <b className="ao-vivo">em reunião</b>}
-        {pauta ? `Pauta: ${pauta.projetoNome || pauta.projeto}: ${pauta.texto}` : 'Sem reunião agora'}
+        {pauta
+          ? `Pauta${(pauta.anexos || []).length ? ` (${pauta.anexos.length} anexo(s))` : ''}: ${pauta.projetoNome || pauta.projeto}: ${pauta.texto}`
+          : 'Sem reunião agora'}
       </button>
     </>
   );
 }
 
 // Recepção: cada pedido novo é uma pessoa esperando no balcão até o Diretor atender.
+// Quem trouxe anexos chega com uma caixinha na mão.
 function Recepcao({ estado, onAbrir }) {
   const fila = (estado.pedidos || []).filter((p) => p.status === 'novo');
+  const comAnexos = fila.filter((p) => (p.anexos || []).length > 0).length;
   return (
     <>
       <div className="recepcao-area" aria-hidden="true">
         <div className="fila-visitantes">
-          {fila.slice(0, 3).map((p, i) => <span key={p.id} className="visitante" style={fundo(spriteVisitante(i))} />)}
+          {fila.slice(0, 3).map((p, i) => (
+            <span key={p.id} className="visitante" style={fundo(spriteVisitante(i))}>
+              {(p.anexos || []).length > 0 && <i className="caixinha" style={fundo(spriteCaixinha())} />}
+            </span>
+          ))}
         </div>
         <span className="balcao" style={fundo(spriteBalcao())}><span className="sino no-balcao" /></span>
       </div>
       <button type="button" className="mem-info" onClick={(e) => { e.stopPropagation(); onAbrir(); }}>
         {fila.length ? `${fila.length} pedido(s) na fila` : 'Ninguém na fila'}
+        {comAnexos > 0 && <><br />{comAnexos} com anexos</>}
         {fila.length > 3 && <><br />+{fila.length - 3} esperando lá fora</>}
       </button>
     </>
+  );
+}
+
+// O que a etiqueta embaixo do Git diz, e com qual cor.
+function situacaoGit(g, nuvem) {
+  if (nuvem) return ['livre', 'salva sozinho'];
+  if (!g.disponivel) return ['erro', 'sem Git'];
+  if (g.enviando) return ['rodando', 'enviando…'];
+  if (g.ultimo && !g.ultimo.ok) return ['erro', 'erro no envio'];
+  const falta = g.pendentes || g.adiante;
+  if (falta) return ['fila', g.pendentes ? `${g.pendentes} para enviar` : `${g.adiante} commit(s) para enviar`];
+  return ['livre', g.ligado ? 'tudo no GitHub' : 'em dia'];
+}
+
+// Sala Git & GitHub: o personagem na mesa guarda o trabalho no GitHub. As caixas no chão são os arquivos esperando envio.
+function SalaGit({ estado, madrugada, onAbrir }) {
+  const g = estado._git || {};
+  const nuvem = g.modo === 'nuvem';
+  const [classe, texto] = situacaoGit(g, nuvem);
+  let modo = g.enviando ? 'digitando' : 'ocioso';
+  if (madrugada && !g.enviando && !g.pendentes) modo = 'dormindo';
+  const caixas = Math.min(3, g.pendentes || 0);
+  return (
+    <div className="postos">
+      {caixas > 0 && (
+        <span className="caixas-saida" aria-hidden="true">
+          {Array.from({ length: caixas }, (_, i) => <i key={i} style={fundo(spriteCaixa())} />)}
+        </span>
+      )}
+      <button
+        type="button"
+        className={`agente ${modo} posto-git`}
+        aria-label={`Git & GitHub: ${nuvem ? 'no painel online tudo já é salvo no GitHub' : `${g.ligado ? 'envio automático ligado' : 'envio automático desligado'}, ${texto}`}. Abrir ficha`}
+        onClick={(e) => { e.stopPropagation(); onAbrir(); }}
+      >
+        {g.enviando && <span className="balao" aria-hidden="true">Enviando<i /><i /><i /></span>}
+        {modo === 'dormindo' && <span className="zzz" aria-hidden="true">z<b>z</b></span>}
+        <span className="luz" aria-hidden="true" />
+        <span className="boneco" style={fundo(spriteAgente('git'))} />
+        <span className={`mesa${g.enviando ? ' ligada' : ''}`} style={fundo(spriteMesa())}>
+          {g.enviando && <span className="tela" />}
+        </span>
+        <span className="etiqueta">Git <b>{nuvem ? 'online' : g.ligado ? 'ligado' : 'desligado'}</b></span>
+        <span className={`tarefa ${classe}`}>{texto}</span>
+      </button>
+    </div>
   );
 }
 
@@ -336,12 +405,17 @@ function rota(a, b, gap, desvio) {
     const meio = Math.abs(y2 - y1) < 4 ? [[bx, y1]] : colunaDoAlvo(y1, y2);
     return [[ax, a.y], [ax, y1], ...meio, [bx, b.y + b.h]];
   }
+  // Mesma fileira: pelo corredor de cima (na primeira fileira, pelo de baixo).
+  if (a.y > gap && b.y > gap) {
+    const y0 = Math.round(Math.min(a.y, b.y) - gap / 2 + dy);
+    return [[ax, a.y], [ax, y0], [bx, y0], [bx, b.y]];
+  }
   const y1 = Math.round(Math.max(a.y + a.h, b.y + b.h) + gap / 2 + dy);
   return [[ax, a.y + a.h], [ax, y1], [bx, y1], [bx, b.y + b.h]];
 }
 
-// Linhas tracejadas com um envelope andando: pedido da Recepção para a Diretoria, trabalho da Diretoria para a sala
-// e entrega da sala para você.
+// Linhas tracejadas com um envelope andando: pedido da Recepção para a Diretoria, trabalho da Diretoria para a sala,
+// entrega da sala para você e, com uma caixa no lugar do envelope, o trabalho saindo da Revisão para o Git & GitHub.
 function Linhas({ wrapRef, estado, salas, reduzido }) {
   const [desenho, setDesenho] = useState({ largura: 0, altura: 0, itens: [] });
   const estadoRef = useRef(estado);
@@ -354,6 +428,7 @@ function Linhas({ wrapRef, estado, salas, reduzido }) {
     ...(estado.missoes || []).map((m) => `${m.agente}:${m.status}`),
     ...(estado.pedidos || []).map((p) => p.status),
     Object.entries(salaDe).join(','),
+    `git:${Boolean(estado._git && estado._git.fila)}`,
   ].join('|');
 
   // useEffect (e não useLayoutEffect): só aqui o ref da planta, que é do componente pai, já está preenchido.
@@ -383,6 +458,7 @@ function Linhas({ wrapRef, estado, salas, reduzido }) {
           pares.push(par);
         }
       });
+      if (atual._git && atual._git.fila) pares.push({ de: 'rev', para: 'git', tipo: 'git' });
       const gap = parseFloat(getComputedStyle(wrap.querySelector('.planta')).rowGap) || 18;
       const itens = pares.map((p, i) => {
         const a = caixa(p.de);
@@ -413,11 +489,15 @@ function Linhas({ wrapRef, estado, salas, reduzido }) {
         <g key={`${it.chave}-${it.d}`}>
           <path className={`linha ${it.tipo}`} d={it.d} />
           <rect className={`ponta ${it.tipo}`} x={it.tx - 5} y={it.ty - 5} width={10} height={10} />
-          {!reduzido && (
+          {!reduzido && (it.tipo === 'git' ? (
+            <image className="envelope" href={spriteCaixa()} width={16} height={14} x={-8} y={-7}>
+              <animateMotion dur={`${it.dur}s`} repeatCount="indefinite" path={it.d} />
+            </image>
+          ) : (
             <image className="envelope" href={spriteEnvelope(it.tipo)} width={16} height={12} x={-8} y={-6}>
               <animateMotion dur={`${it.dur}s`} repeatCount="indefinite" path={it.d} />
             </image>
-          )}
+          ))}
         </g>
       ))}
     </svg>
