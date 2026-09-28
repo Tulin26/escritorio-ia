@@ -1,0 +1,13 @@
+# Registros das rodadas automáticas (gerados a cada uso)
+logs/
+
+# Arquivos temporários do servidor
+*.tmp
+
+# Configurações locais de cada máquina
+.claude/settings.local.json
+
+# Sistema
+Thumbs.db
+desktop.ini
+node_modules/
