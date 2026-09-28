@@ -6,6 +6,9 @@ logs/
 
 # Configurações locais de cada máquina
 .claude/settings.local.json
+.claude/launch.json
+.vercel/
+.env*
 
 # Sistema
 Thumbs.db

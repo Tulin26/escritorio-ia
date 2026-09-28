@@ -19,7 +19,8 @@ O estado de todas as missões fica em `estado.json`. O painel (`node server.js`)
 ## Regra de ouro
 
 **Nada externo acontece sem status `aprovado`.** Externo = publicar, postar, enviar mensagem/e-mail, agendar, gastar dinheiro,
-contratar, fazer cadastro, fazer deploy, ou **alterar arquivos de qualquer projeto fora desta pasta** (ex.: `C:\xampp\htdocs\...`).
+contratar, fazer cadastro, fazer deploy, ou **alterar arquivos de qualquer projeto fora desta pasta** (a raiz deste repositório;
+ex.: `C:\xampp\htdocs\...` é fora).
 Mesmo com `aprovado`, a ação externa só é executada quando o dono pedir explicitamente ("execute a m-012"),
 e somente exatamente o que foi aprovado. Se o conteúdo mudou depois da aprovação, volta para `aguardando`.
 
@@ -50,11 +51,25 @@ Subagentes não chamam outros subagentes. Quem coordena é a sessão principal d
 
 ## Pedidos pelo painel (automação)
 
-O dono cria missões pelo botão "+ Nova missão" do painel. O servidor grava em `estado.json > pedidos`
-(`{ id: "p-001", projeto, projetoNome, texto, status: "novo" | "feito", missao, data }`) e chama o Claude sozinho
-(`claude -p`, Opus 5.5, esforço alto, sem terminal, gravando só nesta pasta). A cada aprovação ou pedido de refazer no painel,
-o servidor chama o Claude de novo para tocar a próxima etapa. Logs de cada rodada ficam em `logs/`.
-Ao processar um pedido: crie o briefing do projeto se faltar, chame o diretor, marque o pedido como "feito" e grave em `missao` o id do plano.
+O dono cria missões pelo botão "+ Nova missão" do painel. O pedido é gravado em `estado.json > pedidos`
+(`{ id: "p-001", projeto, projetoNome, texto, status: "novo" | "feito", missao, data }`) e a equipe é chamada para uma
+**rodada**, que segue o `rodada.md`. Ao processar um pedido: crie o briefing do projeto se faltar, chame o diretor, marque o
+pedido como "feito" e grave em `missao` o id do plano.
+
+- **Painel no PC** (`npm start`): o servidor chama o Claude sozinho (`claude -p`, Opus 5.5, esforço alto, sem terminal, gravando
+  só nesta pasta) a cada pedido, aprovação ou pedido de refazer. Logs de cada rodada ficam em `logs/`.
+- **Painel online** (Vercel): o painel grava cada pedido e decisão como um commit no GitHub. Quando o dono clica em
+  "Chamar a equipe", o painel dispara uma **rotina** do Claude Code na nuvem, que segue o `rodada.md` (inclusive a seção
+  "Na nuvem") e salva tudo de volta no GitHub. O campo `estado.json > rodadaNuvem` guarda o status dessa rodada
+  (`rodando`, `inicio`, `iniciadaEm`, `motivo`, `sessao`, `fim`, `ok`, `erro`, `resumo`): só a rodada e o painel mexem nele.
+
+## Usando pelo claude.ai/code (chat na nuvem)
+
+O dono também pode abrir este repositório em claude.ai/code (ou no app do Claude, aba Code) e conversar como no PC
+("Diretor, missão: … projeto: …", "rode as missões", "aprovo a m-012"). Siga o mesmo protocolo acima e, **ao final de cada
+rodada**, salve no GitHub para o painel e as próximas conversas enxergarem: `git add -A`, commit com mensagem curta em
+português, `git pull --rebase origin main` e `git push origin HEAD:main` (conflito no `estado.json`: junte as duas versões;
+a decisão do dono sempre vale). Quando o dono aprovar pelo chat, grave `aprovado` só na missão que ele citou.
 
 ## Convenções
 

@@ -1,0 +1,10 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "framework": null,
+  "installCommand": "npm --prefix painel install",
+  "buildCommand": "npm --prefix painel run build",
+  "outputDirectory": "painel/dist",
+  "functions": {
+    "api/*.js": { "maxDuration": 30 }
+  }
+}

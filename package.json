@@ -1,11 +1,14 @@
 {
   "name": "escritorio-ia",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "private": true,
   "description": "Painel pixel art para organizar missões de vários projetos com uma equipe de agentes por área, com aprovação do dono em cada passo.",
   "main": "server.js",
   "scripts": {
-    "start": "node server.js"
+    "start": "node server.js",
+    "painel": "npm --prefix painel install && npm --prefix painel run build",
+    "painel:dev": "npm --prefix painel run dev",
+    "test": "node --test testes/*.test.js"
   },
   "engines": {
     "node": ">=18"

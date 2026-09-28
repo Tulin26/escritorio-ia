@@ -54,7 +54,7 @@
       "nome": "Revisor",
       "area": "revisor",
       "sala": "Revisão",
-      "papel": "Revisa as entregas das outras salas com nota por critério e aponta erros, riscos e o que falta antes de chegar até você.",
+      "papel": "Revisa as entregas das outras salas: refaz as contas, confere as fontes, dá nota por critério e aponta erros, riscos e o que falta antes de chegar até você.",
       "origem": "ECC agents/agent-evaluator + agents/marketing-agent + skills/operator-approval-loop"
     }
   ],
@@ -111,9 +111,9 @@
       "titulo": "Escrever o resumo sobre matrizes",
       "resumo": "Resumo em Markdown (matrizes, ensino médio/vestibular): definição e notação, tipos, operações (igualdade, adição/subtração, escalar, multiplicação), determinante (2x2 e Sarrus 3x3), inversa 2x2, aplicações (sistemas lineares, computação gráfica), erros comuns, 5 exercícios inéditos com gabarito. Todas as contas refeitas e conferidas. Pendências registradas na entrega (sentido de 'matriz', nível e uso ainda dependem de resposta do dono). Entrega: copy/m-003-matriz-resumo.md | depende de: m-002",
       "arquivo": "copy/m-003-matriz-resumo.md",
-      "status": "aguardando",
+      "status": "aprovado",
       "xp": 30,
-      "data": "2026-09-25 15:45",
+      "data": "2026-09-28 12:02",
       "comentario": ""
     },
     {

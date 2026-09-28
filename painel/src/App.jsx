@@ -1,0 +1,190 @@
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { api } from './api.js';
+import { faseDoDia, nivelDe, xpDe } from './dados.js';
+import { useMovimentoReduzido, useRelogio } from './ganchos.js';
+import Topo from './componentes/Topo.jsx';
+import Escritorio from './componentes/Escritorio.jsx';
+import Lado from './componentes/Lado.jsx';
+import Missoes from './componentes/Missoes.jsx';
+import Letreiro from './componentes/Letreiro.jsx';
+import Ficha from './componentes/Ficha.jsx';
+import NovaMissao from './componentes/NovaMissao.jsx';
+import Login from './componentes/Login.jsx';
+
+// Quanto esperar entre uma leitura do estado e outra (a aba escondida lê bem menos).
+const INTERVALO = { local: 3000, nuvem: 5000, escondida: 30000 };
+const DURACAO_FESTA_MS = 2400;
+
+export default function App() {
+  const [sessao, setSessao] = useState(null);
+  const [estado, setEstado] = useState(null);
+  const [erro, setErro] = useState('');
+  const [aba, setAba] = useState('escritorio');
+  const [ficha, setFicha] = useState(null);
+  const [novaAberta, setNovaAberta] = useState(false);
+  const [festas, setFestas] = useState({});
+  const [nivelNovo, setNivelNovo] = useState(null);
+  const [aviso, setAviso] = useState(null);
+  const ultimoJson = useRef('');
+  const anterior = useRef(null);
+  // O aviso some com fade: o texto fica até o fim da transição.
+  const textoAviso = useRef('');
+  if (aviso) textoAviso.current = aviso.texto;
+  const agora = useRelogio();
+  const reduzido = useMovimentoReduzido();
+  const fase = faseDoDia(agora.getHours());
+
+  useEffect(() => {
+    api.sessao().then(setSessao).catch(() => setSessao({ modo: 'local', logado: true }));
+  }, []);
+
+  const mostrarAviso = useCallback((texto) => {
+    const chave = Date.now();
+    setAviso({ texto, chave });
+    setTimeout(() => setAviso((a) => (a && a.chave === chave ? null : a)), 6000);
+  }, []);
+
+  // Compara o estado novo com o anterior: missão que virou "aprovado" faz o agente comemorar.
+  const comemorar = useCallback((antes, depois) => {
+    if (!antes) return;
+    const statusAntes = new Map((antes.missoes || []).map((m) => [m.id, m.status]));
+    const aprovadas = (depois.missoes || []).filter((m) => m.status === 'aprovado' && statusAntes.has(m.id) && statusAntes.get(m.id) !== 'aprovado');
+    if (aprovadas.length) {
+      const chave = Date.now();
+      const porAgente = {};
+      aprovadas.forEach((m) => { porAgente[m.agente] = { xp: ((porAgente[m.agente] || {}).xp || 0) + (Number(m.xp) || 0), chave }; });
+      setFestas((f) => ({ ...f, ...porAgente }));
+      setTimeout(() => setFestas((f) => Object.fromEntries(Object.entries(f).filter(([, v]) => v.chave !== chave))), DURACAO_FESTA_MS);
+    }
+    const nivel = nivelDe(xpDe(depois.missoes || []));
+    if (nivel > nivelDe(xpDe(antes.missoes || []))) {
+      const chave = Date.now();
+      setNivelNovo({ nivel, chave });
+      setTimeout(() => setNivelNovo((n) => (n && n.chave === chave ? null : n)), 3600);
+    }
+  }, []);
+
+  const aplicar = useCallback((dados) => {
+    const { aviso: avisoServidor, pedido, ...novo } = dados;
+    if (avisoServidor) mostrarAviso(avisoServidor);
+    const json = JSON.stringify(novo);
+    if (json === ultimoJson.current) return;
+    ultimoJson.current = json;
+    comemorar(anterior.current, novo);
+    anterior.current = novo;
+    setEstado(novo);
+  }, [comemorar, mostrarAviso]);
+
+  const carregar = useCallback(async () => {
+    try {
+      aplicar(await api.estado());
+      setErro('');
+    } catch (e) {
+      if (e.status === 401) setSessao({ modo: 'nuvem', logado: false });
+      else setErro(`Não consegui ler o estado do escritório (${e.message}).`);
+    }
+  }, [aplicar]);
+
+  useEffect(() => {
+    if (!sessao || !sessao.logado) return undefined;
+    let vivo = true;
+    let espera;
+    const ciclo = async () => {
+      await carregar();
+      if (!vivo) return;
+      const intervalo = document.hidden ? INTERVALO.escondida : INTERVALO[sessao.modo] || INTERVALO.local;
+      espera = setTimeout(ciclo, intervalo);
+    };
+    const voltou = () => {
+      if (document.hidden) return;
+      clearTimeout(espera);
+      ciclo();
+    };
+    ciclo();
+    document.addEventListener('visibilitychange', voltou);
+    return () => {
+      vivo = false;
+      clearTimeout(espera);
+      document.removeEventListener('visibilitychange', voltou);
+    };
+  }, [sessao, carregar]);
+
+  const nuvem = sessao && sessao.modo === 'nuvem';
+
+  async function decidir(id, acao, comentario) {
+    aplicar(await api.decisao(id, acao, comentario));
+    if (nuvem) {
+      mostrarAviso(acao === 'aprovar'
+        ? `Você aprovou ${id}. Quando terminar de revisar, clique em "Chamar a equipe".`
+        : `Ajuste pedido em ${id}. Clique em "Chamar a equipe" para refazerem.`);
+    }
+  }
+
+  async function chamarEquipe() {
+    aplicar(await api.rodada());
+  }
+
+  async function novoPedido(projeto, texto, chamarAgora) {
+    aplicar(await api.pedido(projeto, texto));
+    if (!chamarAgora) return;
+    try {
+      await chamarEquipe();
+    } catch (e) {
+      mostrarAviso(`O pedido foi salvo, mas não consegui chamar a equipe: ${e.message}`);
+    }
+  }
+
+  async function sair() {
+    await api.logout().catch(() => {});
+    ultimoJson.current = '';
+    anterior.current = null;
+    setEstado(null);
+    setSessao({ modo: 'nuvem', logado: false });
+  }
+
+  if (!sessao) return <div className="carregando">Abrindo o escritório…</div>;
+  if (!sessao.logado) {
+    return <Login onEntrar={async (senha) => { await api.login(senha); setSessao({ modo: 'nuvem', logado: true }); }} />;
+  }
+  if (!estado) return <div className="carregando">{erro || 'Abrindo o escritório…'}</div>;
+
+  const abrirArquivo = (id) => setFicha({ tipo: 'arquivo', id });
+  return (
+    <>
+      <Topo
+        estado={estado}
+        agora={agora}
+        fase={fase}
+        aba={aba}
+        onAba={setAba}
+        onNovaMissao={() => setNovaAberta(true)}
+        modo={sessao.modo}
+        onSair={sair}
+      />
+      {erro && <div className="erro" role="alert">{erro}</div>}
+      <div className="corpo">
+        <main>
+          {aba === 'escritorio' ? (
+            <Escritorio
+              estado={estado}
+              fase={fase}
+              agora={agora}
+              festas={festas}
+              reduzido={reduzido}
+              onAgente={(id) => setFicha({ tipo: 'agente', id })}
+              onMemoria={() => setFicha({ tipo: 'memoria' })}
+            />
+          ) : (
+            <Missoes estado={estado} onArquivo={abrirArquivo} />
+          )}
+        </main>
+        <Lado estado={estado} onDecidir={decidir} onChamar={chamarEquipe} onArquivo={abrirArquivo} />
+      </div>
+      <Letreiro estado={estado} />
+      <Ficha ficha={ficha} estado={estado} onFechar={() => setFicha(null)} onArquivo={abrirArquivo} />
+      <NovaMissao aberto={novaAberta} estado={estado} nuvem={nuvem} onFechar={() => setNovaAberta(false)} onEnviar={novoPedido} />
+      {nivelNovo && <div className="nivel-novo" key={nivelNovo.chave} role="status">Nível {nivelNovo.nivel}!</div>}
+      <div className={`aviso-flutuante${aviso ? ' visivel' : ''}`} role="status" aria-live="polite">{textoAviso.current}</div>
+    </>
+  );
+}
