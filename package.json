@@ -1,0 +1,13 @@
+{
+  "name": "escritorio-ia",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Painel pixel art para organizar missões de vários projetos com uma equipe de agentes por área, com aprovação do dono em cada passo.",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

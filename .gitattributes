@@ -1,0 +1,2 @@
+# Mesma quebra de linha (LF) em qualquer PC, sem avisos de LF/CRLF
+* text=auto eol=lf
