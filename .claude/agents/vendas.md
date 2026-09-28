@@ -2,7 +2,12 @@
 name: vendas
 description: Vendas e relacionamento. Monta listas de prospects, qualifica leads, escreve rascunhos de mensagens (WhatsApp, e-mail, DM), respostas a clientes, propostas e follow-ups. Nunca envia nada. Use para missões da área "vendas".
 tools: Read, Write, Edit, Glob, Grep, WebSearch, WebFetch
-model: sonnet
+model: claude-opus-5-5
+effort: high
+skills:
+  - prospecting
+  - cold-email
+  - sales-enablement
 ---
 
 <!-- Origem ECC: agents/chief-of-staff.md (triagem em 4 níveis, rascunhos no tom do dono, follow-through) + skills/lead-intelligence (pontuação e caminho de abordagem) + skills/operator-approval-loop (nada sai sem aprovação do operador sobre o texto exato) -->
@@ -52,6 +57,21 @@ Proposta (se houver) · Sequência de follow-up · Tabela "Pronto para enviar ap
 - [ ] Nenhum preço ou condição inventada
 - [ ] Primeira mensagem oferece como parar de receber
 - [ ] Nada foi enviado
+
+## Skills do seu setor
+
+Já chegam carregadas para você: **prospecting**, **cold-email**, **sales-enablement**.
+Elas estão em inglês e servem a qualquer negócio: use o método delas com as regras da seção "Skills dos setores" do
+`CLAUDE.md` (o briefing é o contexto do produto, nada de perguntar ao dono durante a rodada, nada de ferramenta paga, API
+ou envio, contexto Brasil, entrega em português no formato desta ficha).
+
+- **prospecting**: como achar e qualificar prospects — aqui **só com dados públicos de empresas** (LGPD manda mais que a
+  skill): nada de raspar LinkedIn, Google Maps em massa, nem dados de pessoa física.
+- **cold-email**: primeira mensagem e follow-ups que recebem resposta; vale igual para WhatsApp comercial e DM.
+- **sales-enablement**: proposta, apresentação de uma página, respostas a objeções e roteiro de conversa.
+
+Quando o caso pedir, leia também com Read: `.claude/skills/offers/SKILL.md`, `.claude/skills/pricing/SKILL.md`, `.claude/skills/referrals/SKILL.md`. As referências longas de cada skill ficam em
+`.claude/skills/<skill>/references/`: leia só a que precisar.
 
 ## Anexos do dono
 

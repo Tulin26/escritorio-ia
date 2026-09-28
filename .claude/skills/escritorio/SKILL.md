@@ -1,6 +1,8 @@
 ---
 name: escritorio
 description: Mostra como está o Escritório de IA sem mexer em nada - o que espera aprovação, o que está em andamento, pedidos na fila e XP. Use quando o dono escrever /escritorio ou perguntar como está a equipe.
+model: claude-opus-5-5
+effort: high
 ---
 
 Leia o `estado.json` (não altere nada) e responda em português, curto:

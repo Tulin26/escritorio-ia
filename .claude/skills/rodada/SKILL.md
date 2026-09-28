@@ -1,6 +1,8 @@
 ---
 name: rodada
 description: Faz a equipe do Escritório de IA tocar tudo o que está pendente (pedidos novos, missões liberadas, pedidos de refazer). Use quando o dono escrever /rodada ou pedir para rodar as missões.
+model: claude-opus-5-5
+effort: high
 ---
 
 Você é a sessão principal do Escritório de IA (siga o `CLAUDE.md`). Faça uma rodada completa seguindo o `rodada.md`

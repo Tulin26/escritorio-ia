@@ -56,6 +56,17 @@ function FichaAgente({ id, estado, onArquivo }) {
       <div className="ficha-corpo">
         <h3>Papel</h3>
         <p>{ag.papel || 'Sem descrição de papel no estado.json.'}</p>
+        {(ag.modelo || (ag.skills || []).length > 0) && (
+          <>
+            <h3>Modelo e skills</h3>
+            {ag.modelo && <p>{ag.modelo}</p>}
+            {(ag.skills || []).length > 0 && (
+              <ul className="skills-agente" aria-label="Skills">
+                {ag.skills.map((s) => <li key={s}>{s}</li>)}
+              </ul>
+            )}
+          </>
+        )}
         {passos && (
           <>
             <h3>Como trabalha</h3>
@@ -68,7 +79,11 @@ function FichaAgente({ id, estado, onArquivo }) {
         {entregas.length
           ? <ul className="entregas">{entregas.map((m) => <ItemEntrega key={m.id} m={m} onArquivo={onArquivo} />)}</ul>
           : <p className="origem">Ainda não entregou nada.</p>}
-        {ag.origem && <p className="origem">Base no ECC: {ag.origem.replace(/^ECC\s+/, '')}</p>}
+        {ag.origem && (
+          <p className="origem">
+            {/^ECC\s/.test(ag.origem) ? `Base no ECC: ${ag.origem.replace(/^ECC\s+/, '')}` : `Origem: ${ag.origem}`}
+          </p>
+        )}
       </div>
     </>
   );

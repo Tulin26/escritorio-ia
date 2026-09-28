@@ -8,15 +8,51 @@ O estado de todas as missões fica em `estado.json`. O painel (`node server.js`)
 
 | Agente | Área / pasta | Faz |
 |---|---|---|
-| diretor | `diretor/` | divide a missão, cria sub-missões no estado.json |
+| diretor | `diretor/` | manda cada pedido direto para a sala certa, cria as sub-missões no estado.json |
 | pesquisador | `pesquisa/` | mercado, concorrentes, público, palavras-chave (com fontes) |
 | estrategista | `estrategia/` | posicionamento, ângulo, funil, SEO |
-| designer | `design/` | identidade visual, briefs de peças com medidas e prompts de imagem (nunca publica) |
+| designer | `design/` | identidade visual, telas de site/app/landing page (UI/UX), briefs de peças e prompts de imagem (nunca publica) |
 | copywriter | `copy/` | textos na voz da marca |
 | social | `social/` | posts, roteiros, calendário |
 | trafego | `trafego/` | planos de campanha paga e análise de contas de anúncio (nunca mexe na conta nem gasta) |
 | vendas | `vendas/` | prospects, rascunhos de mensagens e propostas (nunca envia) |
 | revisor | `revisor/` | revisão de qualidade e risco antes da aprovação |
+
+## Modelo, esforço e skills
+
+- **Todas as sessões e todos os agentes usam o Opus 5.5 (`claude-opus-5-5`) com esforço `high`.** Os agentes já dizem isso
+  no próprio arquivo (`model` e `effort`); o `.claude/settings.json` deixa o mesmo padrão para as sessões abertas nesta pasta.
+  Ao chamar um agente, não passe outro modelo.
+- Cada setor tem **skills** (em `.claude/skills/`) que já chegam carregadas no agente (campo `skills` do arquivo dele):
+
+| Setor | Skills carregadas |
+|---|---|
+| Pesquisa | customer-research, competitor-profiling, competitors |
+| Estratégia | product-marketing, content-strategy, seo-audit, offers |
+| Marca & Design | ui-ux-pro-max (front-end / UI-UX), image |
+| Copy | copywriting, copy-editing, emails |
+| Social | social, video |
+| Tráfego & Mídia | ads, ad-creative, analytics |
+| Vendas | prospecting, cold-email, sales-enablement |
+| Revisão | copy-editing, cro |
+
+- **As skills dos setores são dos agentes.** A sessão principal não as usa para fazer o trabalho de uma sala: chama o agente.
+- Os `.claude/skills/diretor`, `rodada` e `escritorio` são os atalhos do dono (`/diretor`, `/rodada`, `/escritorio`).
+
+## Skills dos setores
+
+As skills de marketing (pacote marketingskills) e a ui-ux-pro-max vêm de projetos abertos, em inglês, feitos para qualquer
+negócio. Os agentes usam o método delas com estas regras, que valem mais que o texto da skill:
+
+- **Contexto do produto** (`.agents/product-marketing.md` nas skills) = o briefing `projetos/<projeto>.md` + as entregas
+  aprovadas do projeto + os anexos da missão. Não crie `.agents/` nem `.claude/product-marketing.md`.
+- **Perguntas**: nas rodadas ninguém responde. Quando a skill mandar perguntar, escreva as perguntas na entrega e siga com
+  uma hipótese dita.
+- **Ferramentas**: ignore integrações, MCPs, APIs, chaves e ferramentas pagas citadas nas skills. Nenhum agente conecta,
+  cadastra, gasta, gera imagem ou vídeo em serviço pago, agenda nem envia nada.
+- **Brasil**: WhatsApp, Instagram e Google Meu Negócio costumam pesar mais que LinkedIn e X para negócio local. Siga a LGPD,
+  o Código de Defesa do Consumidor e o código do Conar (nada de promessa enganosa, depoimento inventado ou urgência falsa).
+- **Entrega** em português, no formato da ficha do agente (ele vale mais que o formato da skill).
 
 ## Regra de ouro
 
@@ -46,7 +82,9 @@ Subagentes não chamam outros subagentes. Quem coordena é a sessão principal d
 
 1. **Missão nova** ("Diretor, missão: … projeto: …"):
    - Se `projetos/<id>.md` não existir, crie a partir do modelo com o que o dono disser, pergunte o que faltar e registre o projeto em `estado.json > projetos`.
-   - Chame o agente **diretor**. Ele salva o plano em `diretor/`, cria a missão do plano em `aguardando` e as sub-missões em `backlog`.
+   - Chame o agente **diretor**. Ele manda o pedido direto para a sala que entrega o que foi pedido (a Pesquisa só entra
+     quando o dono pede ou quando falta dado de fora), salva o plano em `diretor/`, cria a missão do plano em `aguardando` e
+     as sub-missões em `backlog`.
 2. **Plano aprovado** ("rode as missões" / "pode tocar"): para cada sub-missão em `backlog` cujas dependências estejam `aprovado`,
    chame o agente da área passando o **id da missão**. Missões independentes podem rodar em paralelo.
 3. **Refazer** ("processe as missões em refazer"): para cada missão em `refazer`, chame o agente dono passando o id; ele lê o `comentario`.

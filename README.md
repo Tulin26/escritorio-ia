@@ -42,20 +42,46 @@ continua exatamente de onde parou.
 
 ## A equipe
 
-| Agente | Sala | Faz | Pasta das entregas |
-|---|---|---|---|
-| Diretor | Diretoria | divide a missão, define ordem, dependências e XP | `diretor/` |
-| Pesquisador | Pesquisa | mercado, concorrentes, público, palavras-chave, sempre com 3+ fontes | `pesquisa/` |
-| Estrategista | Estratégia | posicionamento, ângulo da campanha, funil, metas com número e prazo, SEO | `estrategia/` |
-| Designer | Marca & Design | identidade visual, briefs de peças com medidas certas e prompts prontos para gerar imagens (não publica) | `design/` |
-| Copywriter | Copy | textos de site, anúncios, e-mails, roteiros e materiais de estudo, com variações | `copy/` |
-| Social | Social | posts, legendas, roteiros de vídeo e calendário, com texto alternativo (não publica) | `social/` |
-| Gestor de Tráfego | Tráfego & Mídia | plano de campanha paga e análise completa da conta: 7 e 30 dias, melhores e piores anúncios, criativos cansados (nunca mexe na conta nem gasta) | `trafego/` |
-| Vendas | Vendas | prospects só com dados públicos de empresas (LGPD), rascunhos, propostas e follow-ups (não envia) | `vendas/` |
-| Revisor | Revisão | refaz as contas, confere as fontes, dá nota por critério e aponta riscos | `revisor/` |
+Todos os agentes (e a sessão que coordena as rodadas) usam o **Opus 5.5 com esforço alto**.
+
+| Agente | Sala | Faz | Skills | Pasta das entregas |
+|---|---|---|---|---|
+| Diretor | Diretoria | manda cada pedido direto para a sala certa, define ordem, dependências e XP | — | `diretor/` |
+| Pesquisador | Pesquisa | mercado, concorrentes, público, palavras-chave, sempre com 3+ fontes | customer-research, competitor-profiling, competitors | `pesquisa/` |
+| Estrategista | Estratégia | posicionamento, oferta, funil, metas com número e prazo, conteúdo, SEO | product-marketing, content-strategy, seo-audit, offers | `estrategia/` |
+| Designer | Marca & Design | identidade visual, **telas de site, app e landing page (UI/UX)**, briefs de peças e prompts de imagem (não publica) | **ui-ux-pro-max**, image | `design/` |
+| Copywriter | Copy | textos de site, anúncios, e-mails, roteiros e materiais de estudo, com variações | copywriting, copy-editing, emails | `copy/` |
+| Social | Social | posts, legendas, roteiros de vídeo e calendário, com texto alternativo (não publica) | social, video | `social/` |
+| Gestor de Tráfego | Tráfego & Mídia | plano de campanha paga e análise completa da conta: 7 e 30 dias, melhores e piores anúncios, criativos cansados (nunca mexe na conta nem gasta) | ads, ad-creative, analytics | `trafego/` |
+| Vendas | Vendas | prospects só com dados públicos de empresas (LGPD), rascunhos, propostas e follow-ups (não envia) | prospecting, cold-email, sales-enablement | `vendas/` |
+| Revisor | Revisão | refaz as contas, confere as fontes, dá nota por critério e aponta riscos | copy-editing, cro | `revisor/` |
 
 As instruções completas de cada agente ficam em `.claude/agents/`, e as regras gerais em `CLAUDE.md`.
-Cada agente termina com um checklist "Antes de entregar". A ficha de cada um no painel mostra como ele trabalha.
+Cada agente termina com um checklist "Antes de entregar". A ficha de cada um no painel mostra como ele trabalha, o modelo e
+as skills dele.
+
+### O Diretor manda para a sala certa
+
+O pedido não começa mais sempre pela Pesquisa. O Diretor vê o que você pediu e manda direto para quem entrega: post vai para
+Social, texto de site para Copy, tela ou arte para Design, análise de anúncio para Tráfego, proposta para Vendas, estratégia
+para Estratégia. A Pesquisa só entra quando você pede ou quando falta um dado de fora (preço de concorrente, dado de
+mercado). A tabela completa está em `.claude/agents/diretor.md`.
+
+### Skills
+
+As skills ficam em `.claude/skills/` e já chegam carregadas no agente do setor (campo `skills` do arquivo dele):
+
+- **UI UX Pro Max** ([nextlevelbuilder/ui-ux-pro-max-skill](https://github.com/nextlevelbuilder/ui-ux-pro-max-skill)): banco de
+  estilos, paletas, fontes e regras de UX para telas de site, app e landing page. Está com o Designer. Nas rodadas ele consulta
+  os dados direto (sem terminal); no chat você também pode chamar `/ui-ux-pro-max`.
+- **Marketing** ([coreyhaines31/marketingskills](https://github.com/coreyhaines31/marketingskills)): 27 skills escolhidas por
+  setor (pesquisa de público, concorrentes, posicionamento, oferta, SEO, copy, e-mail, social, vídeo, anúncios, métricas,
+  prospecção, vendas, conversão). Não aparecem no menu `/`: são dos agentes.
+
+Elas vêm em inglês e servem a qualquer negócio; as regras de uso no escritório (briefing como contexto, nada de ferramenta
+paga, API ou envio, LGPD, CDC e Conar, entrega em português) estão no `CLAUDE.md`, seção "Skills dos setores".
+Para trocar as skills de um setor, edite a lista `skills:` no arquivo do agente e a mesma lista em `estado.json > agentes`
+(o `npm test` avisa se ficarem diferentes).
 
 ## O painel
 
@@ -236,8 +262,9 @@ Datas no formato `AAAA-MM-DD HH:MM`. Missões com `"exemplo": true` são só dem
 | `rodada.md` | o que a equipe faz em cada rodada, no PC e na nuvem |
 | `estado.json` | agentes, projetos, pedidos e missões |
 | `CLAUDE.md` | regras do escritório e protocolo de trabalho |
-| `.claude/agents/` | instruções de cada agente |
-| `.claude/skills/` | atalhos de chat: `/diretor`, `/rodada` e `/escritorio` |
+| `.claude/agents/` | instruções de cada agente (modelo, esforço e skills no topo de cada arquivo) |
+| `.claude/skills/` | atalhos de chat (`/diretor`, `/rodada`, `/escritorio`) e as skills dos setores |
+| `.claude/settings.json` | Opus 5.5 com esforço alto como padrão para as sessões abertas nesta pasta |
 | `projetos/` | briefing de cada projeto (`_modelo.md` é o modelo) |
 | `diretor/` … `revisor/` | entregas de cada área |
 | `anexos/` | arquivos que você mandou com os pedidos, uma pasta por pedido |
@@ -295,6 +322,8 @@ npm test
 Nada vai para o seu GitHub de verdade durante os testes. Eles conferem:
 
 - **Regras** (`anexos.test.js`): tipos, nomes, limites e caminhos dos anexos.
+- **Equipe** (`equipe.test.js`): todos no Opus 5.5 com esforço alto, cada skill citada existe e tem licença, a ficha do painel
+  mostra as mesmas skills do arquivo do agente e o Diretor não começa sempre pela Pesquisa.
 - **Painel online** (`nuvem.test.js`): login, pedidos (com anexos num commit só), decisões e rodada, com o GitHub e a rotina
   simulados em memória.
 - **Git do PC** (`git.test.js`): envio, "nada novo", GitHub que andou, conflito e pasta errada, contra um **GitHub de
@@ -335,3 +364,6 @@ git push
 ## Créditos
 
 Os agentes foram adaptados do projeto open source [ECC](https://github.com/affaan-m/ECC).
+As skills dos setores vêm de [marketingskills](https://github.com/coreyhaines31/marketingskills) (Corey Haines) e de
+[UI UX Pro Max](https://github.com/nextlevelbuilder/ui-ux-pro-max-skill) (Next Level Builder), ambas com licença MIT
+(uma cópia da licença fica na pasta de cada skill).

@@ -65,8 +65,8 @@ export const VERBO = {
 // Como cada agente trabalha, em 3 passos (aparece na ficha de cada um).
 export const COMO_TRABALHA = {
   diretor: [
-    'Recebe o seu pedido e lê o briefing do projeto (cria o briefing se ainda não existir).',
-    'Divide o trabalho em 3 a 7 missões, uma por sala, com ordem, dependências e critério de aceite.',
+    'Recebe o seu pedido, lê o briefing do projeto e os anexos (cria o briefing se ainda não existir).',
+    'Manda direto para a sala que entrega o que você pediu: post vai para Social, texto para Copy, tela para Design. A Pesquisa só entra se faltar dado de fora.',
     'Manda o plano para a sua mesa. Nenhuma sala começa antes de você aprovar.',
   ],
   pesquisador: [
@@ -80,7 +80,7 @@ export const COMO_TRABALHA = {
     'Lista as peças que Copy, Social e Vendas vão produzir, em ordem de prioridade.',
   ],
   designer: [
-    'Define a identidade visual: paleta, fontes, estilo de foto e grade de posts.',
+    'Define a identidade visual e desenha telas de site, app e landing page com a skill UI UX Pro Max.',
     'Entrega briefs de criação com medidas certas para cada rede e prompts prontos para gerar imagens.',
     'Não usa imagem de terceiros sem licença e confere se o texto sobre a imagem dá para ler.',
   ],

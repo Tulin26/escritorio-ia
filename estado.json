@@ -9,7 +9,9 @@
       "nome": "Diretor",
       "area": "diretor",
       "sala": "Diretoria",
-      "papel": "Recebe sua missão, divide em partes por área, define a ordem e o XP de cada uma e acompanha tudo até a sua aprovação.",
+      "papel": "Recebe sua missão e manda direto para a sala que entrega o que você pediu (a Pesquisa só entra quando precisa de dados de fora), define a ordem e o XP e acompanha tudo até a sua aprovação.",
+      "modelo": "Opus 5.5 · esforço alto",
+      "skills": [],
       "origem": "ECC agents/planner + skills/team-agent-orchestration"
     },
     {
@@ -18,6 +20,12 @@
       "area": "pesquisa",
       "sala": "Pesquisa",
       "papel": "Pesquisa mercado, concorrentes, público, preços e palavras-chave, sempre com fontes e uma recomendação no final.",
+      "modelo": "Opus 5.5 · esforço alto",
+      "skills": [
+        "customer-research",
+        "competitor-profiling",
+        "competitors"
+      ],
       "origem": "ECC skills/market-research + skills/deep-research + agents/seo-specialist"
     },
     {
@@ -26,6 +34,13 @@
       "area": "estrategia",
       "sala": "Estratégia",
       "papel": "Define posicionamento, ângulo da campanha, funil, metas e plano de SEO a partir da pesquisa aprovada.",
+      "modelo": "Opus 5.5 · esforço alto",
+      "skills": [
+        "product-marketing",
+        "content-strategy",
+        "seo-audit",
+        "offers"
+      ],
       "origem": "ECC agents/marketing-agent + agents/seo-specialist + skills/seo"
     },
     {
@@ -34,6 +49,12 @@
       "area": "copy",
       "sala": "Copy",
       "papel": "Escreve textos de site, anúncios, e-mails e roteiros na voz da marca, com 2 ou 3 variações por peça.",
+      "modelo": "Opus 5.5 · esforço alto",
+      "skills": [
+        "copywriting",
+        "copy-editing",
+        "emails"
+      ],
       "origem": "ECC agents/marketing-agent + skills/brand-voice"
     },
     {
@@ -42,6 +63,11 @@
       "area": "social",
       "sala": "Social",
       "papel": "Cria posts, legendas, roteiros de Reels e calendário de conteúdo adaptados a cada rede. Não publica nada.",
+      "modelo": "Opus 5.5 · esforço alto",
+      "skills": [
+        "social",
+        "video"
+      ],
       "origem": "ECC skills/content-engine + skills/brand-voice"
     },
     {
@@ -50,6 +76,12 @@
       "area": "vendas",
       "sala": "Vendas",
       "papel": "Monta listas de prospects, rascunhos de mensagens, propostas e follow-ups. Nunca envia nada sem o seu ok.",
+      "modelo": "Opus 5.5 · esforço alto",
+      "skills": [
+        "prospecting",
+        "cold-email",
+        "sales-enablement"
+      ],
       "origem": "ECC agents/chief-of-staff + skills/lead-intelligence + skills/operator-approval-loop"
     },
     {
@@ -58,6 +90,11 @@
       "area": "revisor",
       "sala": "Revisão",
       "papel": "Revisa as entregas das outras salas: refaz as contas, confere as fontes, dá nota por critério e aponta erros, riscos e o que falta antes de chegar até você.",
+      "modelo": "Opus 5.5 · esforço alto",
+      "skills": [
+        "copy-editing",
+        "cro"
+      ],
       "origem": "ECC agents/agent-evaluator + agents/marketing-agent + skills/operator-approval-loop"
     },
     {
@@ -65,7 +102,12 @@
       "nome": "Designer",
       "area": "design",
       "sala": "Marca & Design",
-      "papel": "Cuida da identidade visual e entrega briefs de posts, carrosséis, capas e banners com medidas certas e prompts prontos para gerar imagens. Não publica.",
+      "papel": "Cuida da identidade visual e das telas de site, app e landing page (UI/UX), e entrega briefs de posts, carrosséis, capas e banners com medidas certas e prompts prontos para gerar imagens. Não publica.",
+      "modelo": "Opus 5.5 · esforço alto",
+      "skills": [
+        "ui-ux-pro-max",
+        "image"
+      ],
       "origem": "Escritório de IA (inspirado no Escritório Start Digital)"
     },
     {
@@ -74,6 +116,12 @@
       "area": "trafego",
       "sala": "Tráfego & Mídia",
       "papel": "Planeja campanhas pagas e faz a análise completa das contas de anúncio: números de 7 e 30 dias, melhores e piores anúncios, criativos cansados e recomendações. Nunca mexe na conta nem gasta.",
+      "modelo": "Opus 5.5 · esforço alto",
+      "skills": [
+        "ads",
+        "ad-creative",
+        "analytics"
+      ],
       "origem": "Escritório de IA (inspirado no Escritório Start Digital)"
     }
   ],

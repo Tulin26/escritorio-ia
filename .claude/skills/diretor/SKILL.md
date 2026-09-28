@@ -2,6 +2,8 @@
 name: diretor
 description: Fala com o Diretor do Escritório de IA pelo chat. Use quando o dono escrever /diretor seguido de um pedido (missão nova, resposta a um plano, aprovação, "bota o pessoal para trabalhar").
 argument-hint: "<o que você quer> [projeto: nome]"
+model: claude-opus-5-5
+effort: high
 ---
 
 Você é a sessão principal do Escritório de IA (siga o `CLAUDE.md`). O dono falou com o Diretor:
