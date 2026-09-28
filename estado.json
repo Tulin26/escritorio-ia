@@ -3,6 +3,10 @@
   "git": {
     "ligado": false
   },
+  "numeracao": {
+    "missao": 4,
+    "pedido": 1
+  },
   "agentes": [
     {
       "id": "diretor",
@@ -132,69 +136,6 @@
       "briefing": "projetos/matriz.md"
     }
   ],
-  "pedidos": [
-    {
-      "id": "p-001",
-      "projeto": "matriz",
-      "projetoNome": "Matriz",
-      "texto": "eu quero um resumo sobre matrizes",
-      "status": "feito",
-      "missao": "m-001",
-      "data": "2026-09-25 15:25"
-    }
-  ],
-  "missoes": [
-    {
-      "id": "m-001",
-      "projeto": "matriz",
-      "area": "diretor",
-      "agente": "diretor",
-      "titulo": "Plano: resumo sobre matrizes",
-      "resumo": "Plano de 3 sub-missões (pesquisa, copy, revisão). Pedido ambíguo: responda pelo Refazer qual 'matriz', nível/público, tamanho/formato e uso. Hipótese se aprovar sem responder: matrizes em matemática, ensino médio/vestibular, 3 a 5 páginas com exemplos e exercícios. | depende de: -",
-      "arquivo": "diretor/m-001-matriz-plano.md",
-      "status": "aprovado",
-      "xp": 10,
-      "data": "2026-09-25 15:27",
-      "comentario": ""
-    },
-    {
-      "id": "m-002",
-      "projeto": "matriz",
-      "area": "pesquisa",
-      "agente": "pesquisador",
-      "titulo": "Levantar conteúdo e fontes confiáveis sobre matrizes",
-      "resumo": "Levantamento cobrindo definição, tipos, operações, determinante, inversa e aplicações (nível ensino médio/vestibular), com fórmulas, 1 exemplo conferido por tópico e 6 fontes (Khan Academy, Toda Matéria, UFS, UNICAMP/IME e 1 fonte de apoio). Entrega: pesquisa/m-002-matriz-conteudo.md | depende de: m-001",
-      "arquivo": "pesquisa/m-002-matriz-conteudo.md",
-      "status": "aprovado",
-      "xp": 20,
-      "data": "2026-09-25 15:30",
-      "comentario": ""
-    },
-    {
-      "id": "m-003",
-      "projeto": "matriz",
-      "area": "copy",
-      "agente": "copywriter",
-      "titulo": "Escrever o resumo sobre matrizes",
-      "resumo": "Resumo em Markdown (matrizes, ensino médio/vestibular): definição e notação, tipos, operações (igualdade, adição/subtração, escalar, multiplicação), determinante (2x2 e Sarrus 3x3), inversa 2x2, aplicações (sistemas lineares, computação gráfica), erros comuns, 5 exercícios inéditos com gabarito. Todas as contas refeitas e conferidas. Pendências registradas na entrega (sentido de 'matriz', nível e uso ainda dependem de resposta do dono). Entrega: copy/m-003-matriz-resumo.md | depende de: m-002",
-      "arquivo": "copy/m-003-matriz-resumo.md",
-      "status": "aprovado",
-      "xp": 30,
-      "data": "2026-09-28 12:02",
-      "comentario": ""
-    },
-    {
-      "id": "m-004",
-      "projeto": "matriz",
-      "area": "revisor",
-      "agente": "revisor",
-      "titulo": "Revisar exatidão e clareza do resumo",
-      "resumo": "Veredito: pode ir para aprovação — as 16 contas/fórmulas/gabaritos refeitas de forma independente conferem, cobertura e nível (ensino médio/vestibular) corretos, notas 5/5 em todos os eixos, só 4 observações LEVES (sem GRAVE nem MÉDIO). | depende de: m-003",
-      "arquivo": "revisor/m-004-matriz-revisao.md",
-      "status": "aguardando",
-      "xp": 10,
-      "data": "2026-09-28 14:46",
-      "comentario": ""
-    }
-  ]
+  "pedidos": [],
+  "missoes": []
 }

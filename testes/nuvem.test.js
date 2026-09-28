@@ -3,8 +3,6 @@
 // Rodar: npm test
 const test = require('node:test');
 const assert = require('node:assert/strict');
-const fs = require('fs');
-const path = require('path');
 
 process.env.GITHUB_TOKEN = 'token-de-teste';
 process.env.GITHUB_REPO = 'dono/escritorio-ia';
@@ -14,9 +12,9 @@ process.env.ROTINA_TOKEN = 'token-da-rotina';
 
 const escritorio = require('../lib/escritorio');
 const auth = require('../lib/auth');
-const { PNG, CSV, anexo } = require('./apoio');
+const { PNG, CSV, anexo, estadoDeExemplo } = require('./apoio');
 
-const ESTADO_INICIAL = fs.readFileSync(path.join(__dirname, '..', 'estado.json'), 'utf8');
+const ESTADO_INICIAL = estadoDeExemplo();
 
 // GitHub e rotina de mentira. O "GitHub" é um Git pequeno em memória (arquivos, árvores, commits e o ramo main) que
 // responde às duas APIs usadas pelo painel: a de arquivos (contents) e a de dados do Git (commit com vários arquivos).

@@ -141,7 +141,9 @@ a decisão do dono sempre vale). Quando o dono aprovar pelo chat, grave `aprovad
 
 - Entregas: `<pasta-da-area>/<id>-<projeto>-<assunto>.md`, em português.
 - `data`: `AAAA-MM-DD HH:MM` (horário local).
-- IDs: `m-001`, `m-002`… sequenciais, nunca reutilizados.
+- IDs: `m-001`, `m-002`… sequenciais, nunca reutilizados. Quando o dono zera o placar, as missões e pedidos antigos vão
+  para `historico/` e `estado.json > numeracao` (`{ "missao": N, "pedido": N }`) guarda o último número usado: os próximos
+  ids continuam a partir dele. As entregas antigas continuam nas pastas das áreas.
 - Missões com `"exemplo": true` (ids `ex-01`, `ex-02`…) são só demonstração do painel: não conte na numeração, não execute nada delas e apague-as quando o dono pedir.
 - Cada agente em `estado.json > agentes` tem um campo `papel` (texto curto mostrado na ficha do painel). Ao criar um agente novo, preencha também `papel`.
 - Edite `estado.json` preservando JSON válido e sem apagar missões. Se o painel estiver aberto, ele relê o arquivo a cada poucos segundos.

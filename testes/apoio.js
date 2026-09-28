@@ -12,6 +12,28 @@ const PNG = Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR
 const CSV = Buffer.from('produto,preço,vendas\r\npão francês,0.90,420\r\n', 'utf8');
 const anexo = (nome, conteudo) => ({ nome, dados: conteudo.toString('base64') });
 
+// estado.json de exemplo: os agentes vêm do estado.json de verdade e as missões do projeto Matriz são fixas,
+// porque o placar de verdade pode ser zerado a qualquer momento (e aí não haveria m-004 para testar).
+const missaoDeExemplo = (id, area, agente, arquivo, xp, dep) => ({
+  id, projeto: 'matriz', area, agente, titulo: `Missão ${id}`, resumo: `Exemplo | depende de: ${dep}`,
+  arquivo, status: 'aprovado', xp, data: '2026-09-28 12:00', comentario: '',
+});
+function estadoDeExemplo() {
+  const real = JSON.parse(fs.readFileSync(path.join(RAIZ, 'estado.json'), 'utf8').replace(/^﻿/, ''));
+  return `${JSON.stringify({
+    ...real,
+    numeracao: { missao: 4, pedido: 1 },
+    projetos: [{ id: 'matriz', nome: 'Matriz', briefing: 'projetos/matriz.md' }],
+    pedidos: [{ id: 'p-001', projeto: 'matriz', projetoNome: 'Matriz', texto: 'eu quero um resumo sobre matrizes', status: 'feito', missao: 'm-001', data: '2026-09-25 15:25' }],
+    missoes: [
+      missaoDeExemplo('m-001', 'diretor', 'diretor', 'diretor/m-001-matriz-plano.md', 10, '-'),
+      missaoDeExemplo('m-002', 'pesquisa', 'pesquisador', 'pesquisa/m-002-matriz-conteudo.md', 20, 'm-001'),
+      missaoDeExemplo('m-003', 'copy', 'copywriter', 'copy/m-003-matriz-resumo.md', 30, 'm-002'),
+      missaoDeExemplo('m-004', 'revisor', 'revisor', 'revisor/m-004-matriz-revisao.md', 10, 'm-003'),
+    ],
+  }, null, 2)}\n`;
+}
+
 function pastaTemporaria(prefixo) {
   return fs.mkdtempSync(path.join(os.tmpdir(), `escritorio-${prefixo}-`));
 }
@@ -60,4 +82,4 @@ function criarGithubDeMentira(pasta, arquivos = { 'estado.json': '{}\n' }) {
   return { env, git, remoto, escritorio };
 }
 
-module.exports = { RAIZ, PNG, CSV, anexo, pastaTemporaria, apagar, ambienteGit, temGit, criarGithubDeMentira };
+module.exports = { RAIZ, PNG, CSV, anexo, estadoDeExemplo, pastaTemporaria, apagar, ambienteGit, temGit, criarGithubDeMentira };

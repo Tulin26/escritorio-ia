@@ -68,6 +68,8 @@ O pedido pode vir com arquivos do dono em `pedidos[].anexos` (cada um com `nome`
 ## Cartão de sub-missão
 
 Leia o `estado.json`, descubra o maior `m-NNN` já usado (ignore os `ex-NN` de exemplo) e continue a partir dele.
+Se existir `numeracao.missao` (o placar foi zerado e as missões antigas foram para `historico/`), o próximo id é maior que
+ele também: com `"numeracao": { "missao": 4 }` e nenhuma missão no array, comece em `m-005`.
 Para cada sub-missão, acrescente ao array `missoes`:
 
 ```json

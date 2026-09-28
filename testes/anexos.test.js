@@ -67,6 +67,12 @@ test('pedido guarda os anexos em anexos/<id do pedido>/', () => {
   assert.deepEqual(semAnexo.anexos, []);
 });
 
+test('placar zerado: o próximo pedido continua a numeração guardada, sem repetir id', () => {
+  const estado = { numeracao: { missao: 4, pedido: 1 }, pedidos: [], missoes: [] };
+  assert.equal(escritorio.novoPedido(estado, { projeto: 'Padaria', texto: 'posts do dia do pão' }).id, 'p-002');
+  assert.equal(escritorio.novoPedido(estado, { projeto: 'Padaria', texto: 'mais um pedido' }).id, 'p-003');
+});
+
 test('o painel só abre anexos citados por um pedido ou missão, dentro de anexos/', () => {
   const estado = {
     pedidos: [{ id: 'p-001', anexos: [{ nome: 'logo.png', arquivo: 'anexos/p-001/logo.png' }] }],

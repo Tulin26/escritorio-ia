@@ -7,16 +7,18 @@ const fs = require('fs');
 const net = require('net');
 const path = require('path');
 const { spawn } = require('child_process');
-const { RAIZ, PNG, CSV, anexo, pastaTemporaria, apagar, temGit, criarGithubDeMentira } = require('./apoio');
+const {
+  RAIZ, PNG, CSV, anexo, estadoDeExemplo, pastaTemporaria, apagar, temGit, criarGithubDeMentira,
+} = require('./apoio');
 
 const espera = (ms) => new Promise((r) => setTimeout(r, ms));
 
-// A cópia leva só o que o servidor usa; o estado.json é o do escritório de verdade.
+// A cópia leva só o que o servidor usa; o estado.json é o de exemplo (agentes de verdade, missões do projeto Matriz).
 function copiaDoEscritorio() {
   return {
     'server.js': fs.readFileSync(path.join(RAIZ, 'server.js')),
     'rodada.md': fs.readFileSync(path.join(RAIZ, 'rodada.md')),
-    'estado.json': fs.readFileSync(path.join(RAIZ, 'estado.json')),
+    'estado.json': estadoDeExemplo(),
     '.gitignore': fs.readFileSync(path.join(RAIZ, '.gitignore')),
     '.gitattributes': fs.readFileSync(path.join(RAIZ, '.gitattributes')),
     ...Object.fromEntries(fs.readdirSync(path.join(RAIZ, 'lib')).map((f) => [`lib/${f}`, fs.readFileSync(path.join(RAIZ, 'lib', f))])),
