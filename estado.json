@@ -141,11 +141,11 @@
       "area": "revisor",
       "agente": "revisor",
       "titulo": "Revisar exatidão e clareza do resumo",
-      "resumo": "Critério de aceite: refazer todas as contas, fórmulas e gabaritos; checar cobertura e nível; nota por critério e lista de correções. Entrega: revisor/m-004-matriz-revisao.md | depende de: m-003",
-      "arquivo": "",
-      "status": "backlog",
+      "resumo": "Veredito: pode ir para aprovação — as 16 contas/fórmulas/gabaritos refeitas de forma independente conferem, cobertura e nível (ensino médio/vestibular) corretos, notas 5/5 em todos os eixos, só 4 observações LEVES (sem GRAVE nem MÉDIO). | depende de: m-003",
+      "arquivo": "revisor/m-004-matriz-revisao.md",
+      "status": "aguardando",
       "xp": 10,
-      "data": "2026-09-25 15:30",
+      "data": "2026-09-28 14:46",
       "comentario": ""
     }
   ]
