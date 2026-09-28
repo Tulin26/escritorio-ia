@@ -118,7 +118,11 @@ export const COMO_TRABALHA = {
 
 // Anexos: o que o painel aceita (o servidor confere de novo) e como mostrar o tamanho.
 export const EXTENSOES_ANEXO = ['png', 'jpg', 'jpeg', 'gif', 'webp', 'pdf', 'txt', 'md', 'csv', 'json'];
-export const LIMITE_ANEXOS = { quantidade: 5, bytes: 3 * 1024 * 1024 };
+// No PC cabe bem mais; online o Vercel aceita no máximo uns 4 MB por envio (mesmos números de lib/escritorio.js).
+export const LIMITES_ANEXOS = {
+  pc: { quantidade: 10, porArquivo: 25 * 1024 * 1024, bytes: 50 * 1024 * 1024 },
+  nuvem: { quantidade: 5, porArquivo: 3 * 1024 * 1024, bytes: 3 * 1024 * 1024 },
+};
 export const extensaoDe = (nome) => {
   const i = String(nome || '').lastIndexOf('.');
   return i > 0 ? nome.slice(i + 1).toLowerCase() : '';
@@ -127,7 +131,8 @@ export const ehImagem = (nome) => ['png', 'jpg', 'jpeg', 'gif', 'webp'].includes
 export function tamanhoLegivel(bytes) {
   if (bytes < 1024) return `${bytes} B`;
   if (bytes < 1024 * 1024) return `${Math.round(bytes / 1024)} KB`;
-  return `${(bytes / 1024 / 1024).toFixed(1).replace('.', ',')} MB`;
+  const mb = bytes / 1024 / 1024;
+  return Number.isInteger(mb) ? `${mb} MB` : `${mb.toFixed(1).replace('.', ',')} MB`;
 }
 
 export const missoesDe = (estado, agenteId) => (estado.missoes || []).filter((m) => m.agente === agenteId);

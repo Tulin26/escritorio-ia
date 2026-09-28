@@ -78,8 +78,8 @@ Cada agente termina com um checklist "Antes de entregar". A ficha de cada um no 
 - **Topo:** agentes, entregues, XP, em andamento, aguardando você, nível e o status da equipe.
 - **Sua mesa:** entregas esperando você, com leitura formatada do `.md`, Aprovar e Refazer (e as miniaturas dos anexos do
   pedido, quando a missão usa algum).
-- **Anexos:** miniaturas das fotos e cartõezinhos de PDF, CSV e texto em **Seus pedidos** e na ficha da Recepção; clique para
-  abrir o arquivo.
+- **Anexos:** solte arquivos em qualquer lugar do painel para abrir uma nova missão com eles. Miniaturas das fotos e
+  cartõezinhos de PDF, CSV e texto aparecem em **Seus pedidos** e na ficha da Recepção; clique para abrir o arquivo.
 - **Missões:** aba com a lista de todas as missões, com filtro por status.
 - **Letreiro:** as últimas novidades do escritório passando no rodapé.
 - **Menos movimento:** se o sistema pedir menos animação, o painel para tudo o que se mexe.
@@ -106,10 +106,12 @@ Git & GitHub traz o que chegar do online a cada envio).
 
 ## Anexos
 
-No **+ Nova missão**, clique em **Escolher arquivos**, arraste os arquivos para a caixa ou cole uma imagem (Ctrl+V).
+Arraste os arquivos do Explorer e solte **em qualquer lugar do painel**: abre uma nova missão com eles anexados. Dentro do
+**+ Nova missão** também dá para clicar em **Escolher arquivos**, soltar no formulário ou colar uma imagem (Ctrl+V).
 
 - **Tipos:** fotos e prints (PNG, JPG, GIF, WebP), PDF, TXT, MD, CSV e JSON. Planilha do Excel: salve como CSV antes.
-- **Limite:** até 5 arquivos e 3 MB no total por pedido. Fotos grandes são reduzidas no navegador antes de subir.
+- **Limite no PC:** até 10 arquivos por pedido, 25 MB cada e 50 MB no total. As fotos vão do jeito que estão.
+- **Limite no painel online:** até 5 arquivos e 3 MB no total (limite do Vercel); lá as fotos grandes são reduzidas antes de subir.
 - **Onde ficam:** em `anexos/<id do pedido>/` (ex.: `anexos/p-004/logo.png`), com nomes simples, e listados no pedido.
 - **Quem usa:** o Diretor lê todos, descreve no plano o que é cada um e passa para cada sala os que ela precisa (o logo para
   o Design, o relatório de anúncios para o Tráfego, o cardápio para o Copy). As salas leem antes de começar e o Revisor
@@ -315,7 +317,7 @@ Os testes do Git precisam do comando `git`; sem ele, são pulados.
 | "A rotina do Claude não aceitou o chamado (429)" | limite diário de rotinas do plano; tente mais tarde |
 | Rodada online em erro | clique em **Acompanhar a rodada no claude.ai** para ver o que aconteceu |
 | Missão parada em `backlog` | ela espera o plano do Diretor e as missões de "depende de" serem aprovados |
-| Anexo recusado | confira o tipo (imagem, PDF, TXT, MD, CSV ou JSON) e o total de 3 MB; planilha do Excel: salve como CSV |
+| Anexo recusado | confira o tipo (imagem, PDF, TXT, MD, CSV ou JSON) e o tamanho (no PC: 25 MB cada, 50 MB no total; online: 3 MB); planilha do Excel: salve como CSV |
 | Git & GitHub "sem Git" | a pasta não veio de `git clone` ou o `git` não está instalado; a ficha da sala diz qual |
 | Git & GitHub "erro no envio" | abra a ficha para ver o erro; se for login, rode `git push` uma vez no terminal e clique em **Enviar agora** |
 | "O GitHub tem mudanças que batem de frente" | rode `git pull --rebase` no terminal, resolva o conflito (a decisão do dono vale) e clique em **Enviar agora** |

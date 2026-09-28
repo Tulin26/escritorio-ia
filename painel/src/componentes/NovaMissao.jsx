@@ -1,16 +1,18 @@
 import { useEffect, useRef, useState } from 'react';
 import Dialogo from './Dialogo.jsx';
 import { Miniatura } from './Anexos.jsx';
-import { EXTENSOES_ANEXO, LIMITE_ANEXOS, ehImagem, extensaoDe, tamanhoLegivel } from '../dados.js';
+import { EXTENSOES_ANEXO, LIMITES_ANEXOS, ehImagem, extensaoDe, tamanhoLegivel } from '../dados.js';
 
-// Foto acima disso é reduzida no navegador antes de subir (lado maior com até LADO_MAXIMO px, em JPEG).
+// Online, foto acima disso é reduzida no navegador antes de subir (lado maior com até LADO_MAXIMO px, em JPEG).
+// No PC a foto vai como está; só é reduzida se passar do limite por arquivo.
 const REDUZIR_ACIMA = 900 * 1024;
 const LADO_MAXIMO = 1920;
 
-export default function NovaMissao({ aberto, estado, nuvem, onFechar, onEnviar }) {
+// "soltos" são arquivos que você soltou em qualquer lugar do painel ({ chave, arquivos }): entram como anexos.
+export default function NovaMissao({ aberto, estado, nuvem, soltos, onUsarSoltos, onFechar, onEnviar }) {
   return (
     <Dialogo aberto={aberto} onFechar={onFechar} rotulo="dlgMissaoTitulo">
-      <Formulario estado={estado} nuvem={nuvem} onFechar={onFechar} onEnviar={onEnviar} />
+      <Formulario estado={estado} nuvem={nuvem} soltos={soltos} onUsarSoltos={onUsarSoltos} onFechar={onFechar} onEnviar={onEnviar} />
     </Dialogo>
   );
 }
@@ -42,7 +44,8 @@ const paraBase64 = (blob) => new Promise((ok, erro) => {
   leitor.readAsDataURL(blob);
 });
 
-function Formulario({ estado, nuvem, onFechar, onEnviar }) {
+function Formulario({ estado, nuvem, soltos, onUsarSoltos, onFechar, onEnviar }) {
+  const limites = nuvem ? LIMITES_ANEXOS.nuvem : LIMITES_ANEXOS.pc;
   const [projeto, setProjeto] = useState('');
   const [texto, setTexto] = useState('');
   const [anexos, setAnexos] = useState([]);
@@ -58,6 +61,15 @@ function Formulario({ estado, nuvem, onFechar, onEnviar }) {
   // As prévias das imagens são endereços temporários do navegador: libera tudo ao fechar.
   useEffect(() => () => lista.current.forEach((a) => a.previa && URL.revokeObjectURL(a.previa)), []);
 
+  // Arquivos soltos no painel (fora deste formulário) viram anexos; a chave evita usar a mesma leva duas vezes.
+  const levasUsadas = useRef(new Set());
+  useEffect(() => {
+    if (!soltos || levasUsadas.current.has(soltos.chave)) return;
+    levasUsadas.current.add(soltos.chave);
+    onUsarSoltos();
+    adicionar(soltos.arquivos);
+  }, [soltos]); // eslint-disable-line react-hooks/exhaustive-deps
+
   const nomes = new Set();
   (estado.projetos || []).forEach((p) => nomes.add(p.nome || p.id));
   (estado.pedidos || []).forEach((p) => nomes.add(p.projetoNome || p.projeto));
@@ -70,10 +82,10 @@ function Formulario({ estado, nuvem, onFechar, onEnviar }) {
     setPreparando(true);
     const problemas = [];
     const novos = [];
-    let soma = total;
+    let soma = lista.current.reduce((t, a) => t + a.blob.size, 0);
     for (const arquivo of escolhidos) {
-      if (lista.current.length + novos.length >= LIMITE_ANEXOS.quantidade) {
-        problemas.push(`no máximo ${LIMITE_ANEXOS.quantidade} anexos por pedido`);
+      if (lista.current.length + novos.length >= limites.quantidade) {
+        problemas.push(`no máximo ${limites.quantidade} anexos por pedido`);
         break;
       }
       const ext = extensaoDe(arquivo.name);
@@ -85,11 +97,14 @@ function Formulario({ estado, nuvem, onFechar, onEnviar }) {
         problemas.push(`"${arquivo.name}" está vazio`);
         continue;
       }
-      const pronto = ['jpg', 'jpeg', 'png', 'webp'].includes(ext) && arquivo.size > REDUZIR_ACIMA
-        ? await reduzirImagem(arquivo)
-        : { blob: arquivo, nome: arquivo.name };
-      if (soma + pronto.blob.size > LIMITE_ANEXOS.bytes) {
-        problemas.push(`"${arquivo.name}" passaria do limite de ${tamanhoLegivel(LIMITE_ANEXOS.bytes)} no total`);
+      const reduzir = ['jpg', 'jpeg', 'png', 'webp'].includes(ext) && arquivo.size > (nuvem ? REDUZIR_ACIMA : limites.porArquivo);
+      const pronto = reduzir ? await reduzirImagem(arquivo) : { blob: arquivo, nome: arquivo.name };
+      if (pronto.blob.size > limites.porArquivo) {
+        problemas.push(`"${arquivo.name}" passa de ${tamanhoLegivel(limites.porArquivo)}`);
+        continue;
+      }
+      if (soma + pronto.blob.size > limites.bytes) {
+        problemas.push(`"${arquivo.name}" passaria do limite de ${tamanhoLegivel(limites.bytes)} no total`);
         continue;
       }
       soma += pronto.blob.size;
@@ -135,8 +150,26 @@ function Formulario({ estado, nuvem, onFechar, onEnviar }) {
     }
   }
 
+  // O formulário inteiro aceita arquivos arrastados (e segura o evento, para o painel não abrir outra missão).
+  const arrastar = (e) => {
+    if (!e.dataTransfer || ![...e.dataTransfer.types].includes('Files')) return;
+    e.preventDefault();
+    e.stopPropagation();
+    setArrastando(true);
+  };
+  const sair = (e) => {
+    if (!e.currentTarget.contains(e.relatedTarget)) setArrastando(false);
+  };
+  const soltar = (e) => {
+    if (!e.dataTransfer || !e.dataTransfer.files.length) return;
+    e.preventDefault();
+    e.stopPropagation();
+    setArrastando(false);
+    adicionar(e.dataTransfer.files);
+  };
+
   return (
-    <form onSubmit={enviar} onPaste={colar} noValidate>
+    <form onSubmit={enviar} onPaste={colar} onDragEnter={arrastar} onDragOver={arrastar} onDragLeave={sair} onDrop={soltar} noValidate>
       <div className="ficha-topo">
         <div>
           <h2 id="dlgMissaoTitulo">Nova missão</h2>
@@ -158,12 +191,7 @@ function Formulario({ estado, nuvem, onFechar, onEnviar }) {
         <p className="dica">Quanto mais detalhe (cidade, público, prazo, verba), melhor o plano. Se faltar algo, o Diretor pergunta no próprio plano.</p>
 
         <label htmlFor="mAnexos">Anexos (opcional)</label>
-        <div
-          className={`area-anexos${arrastando ? ' arrastando' : ''}`}
-          onDragOver={(e) => { e.preventDefault(); setArrastando(true); }}
-          onDragLeave={() => setArrastando(false)}
-          onDrop={(e) => { e.preventDefault(); setArrastando(false); adicionar(e.dataTransfer.files); }}
-        >
+        <div className={`area-anexos${arrastando ? ' arrastando' : ''}`}>
           <input
             ref={entrada}
             id="mAnexos"
@@ -174,10 +202,10 @@ function Formulario({ estado, nuvem, onFechar, onEnviar }) {
             accept={EXTENSOES_ANEXO.map((x) => `.${x}`).join(',')}
             onChange={(e) => { adicionar(e.target.files); e.target.value = ''; }}
           />
-          <button type="button" className="btn neutro" disabled={preparando || anexos.length >= LIMITE_ANEXOS.quantidade} onClick={() => entrada.current && entrada.current.click()}>
+          <button type="button" className="btn neutro" disabled={preparando || anexos.length >= limites.quantidade} onClick={() => entrada.current && entrada.current.click()}>
             {preparando ? 'Preparando…' : 'Escolher arquivos'}
           </button>
-          <span className="comentario">ou arraste para cá (ou cole uma imagem)</span>
+          <span className="comentario">{arrastando ? 'Pode soltar!' : 'ou arraste e solte aqui (ou cole uma imagem)'}</span>
         </div>
         {anexos.length > 0 && (
           <ul className="anexos-escolhidos">
@@ -194,8 +222,9 @@ function Formulario({ estado, nuvem, onFechar, onEnviar }) {
           </ul>
         )}
         <p className="dica">
-          Fotos, prints, logo, PDF, TXT, MD, CSV ou JSON (planilha: salve como CSV). Até {LIMITE_ANEXOS.quantidade} arquivos e{' '}
-          {tamanhoLegivel(LIMITE_ANEXOS.bytes)} no total{anexos.length ? ` (usando ${tamanhoLegivel(total)})` : ''}; fotos grandes são reduzidas.
+          Fotos, prints, logo, PDF, TXT, MD, CSV ou JSON (planilha: salve como CSV). Até {limites.quantidade} arquivos,{' '}
+          {tamanhoLegivel(limites.porArquivo)} cada e {tamanhoLegivel(limites.bytes)} no total
+          {anexos.length ? ` (usando ${tamanhoLegivel(total)})` : ''}{nuvem ? '; fotos grandes são reduzidas' : ''}.
           A equipe lê tudo, e os anexos ficam guardados na pasta anexos/ (e no GitHub).
         </p>
         {nuvem && (

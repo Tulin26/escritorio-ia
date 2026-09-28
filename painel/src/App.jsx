@@ -25,6 +25,8 @@ export default function App() {
   const [festas, setFestas] = useState({});
   const [nivelNovo, setNivelNovo] = useState(null);
   const [aviso, setAviso] = useState(null);
+  const [soltos, setSoltos] = useState(null);
+  const [arrastandoArquivo, setArrastandoArquivo] = useState(false);
   const ultimoJson = useRef('');
   const anterior = useRef(null);
   // O aviso some com fade: o texto fica até o fim da transição.
@@ -110,6 +112,45 @@ export default function App() {
   }, [sessao, carregar]);
 
   const nuvem = sessao && sessao.modo === 'nuvem';
+  const pronto = Boolean(sessao && sessao.logado && estado);
+
+  // Arrastar arquivos para qualquer lugar do painel: aparece o aviso "solte aqui" e, ao soltar, abre uma nova missão
+  // com eles anexados. Dentro do formulário da nova missão quem cuida é o próprio formulário.
+  useEffect(() => {
+    if (!pronto) return undefined;
+    const temArquivos = (e) => e.dataTransfer && [...e.dataTransfer.types].includes('Files');
+    let saida;
+    const sobre = (e) => {
+      if (!temArquivos(e)) return;
+      e.preventDefault(); // sem isso o navegador abre o arquivo no lugar do painel
+      clearTimeout(saida);
+      setArrastandoArquivo(true);
+    };
+    const saiu = () => {
+      clearTimeout(saida);
+      saida = setTimeout(() => setArrastandoArquivo(false), 120);
+    };
+    const soltou = (e) => {
+      if (!temArquivos(e)) return;
+      e.preventDefault();
+      clearTimeout(saida);
+      setArrastandoArquivo(false);
+      if (!e.dataTransfer.files.length) return;
+      setSoltos({ chave: Date.now(), arquivos: [...e.dataTransfer.files] });
+      setNovaAberta(true);
+    };
+    window.addEventListener('dragenter', sobre);
+    window.addEventListener('dragover', sobre);
+    window.addEventListener('dragleave', saiu);
+    window.addEventListener('drop', soltou);
+    return () => {
+      clearTimeout(saida);
+      window.removeEventListener('dragenter', sobre);
+      window.removeEventListener('dragover', sobre);
+      window.removeEventListener('dragleave', saiu);
+      window.removeEventListener('drop', soltou);
+    };
+  }, [pronto]);
 
   async function decidir(id, acao, comentario) {
     aplicar(await api.decisao(id, acao, comentario));
@@ -210,7 +251,20 @@ export default function App() {
         onLigarGit={ligarGit}
         onEnviarGit={enviarGit}
       />
-      <NovaMissao aberto={novaAberta} estado={estado} nuvem={nuvem} onFechar={() => setNovaAberta(false)} onEnviar={novoPedido} />
+      <NovaMissao
+        aberto={novaAberta}
+        estado={estado}
+        nuvem={nuvem}
+        soltos={soltos}
+        onUsarSoltos={() => setSoltos(null)}
+        onFechar={() => setNovaAberta(false)}
+        onEnviar={novoPedido}
+      />
+      {arrastandoArquivo && !novaAberta && (
+        <div className="soltar-arquivos" aria-hidden="true">
+          <span>Solte os arquivos para criar uma nova missão com eles</span>
+        </div>
+      )}
       {nivelNovo && <div className="nivel-novo" key={nivelNovo.chave} role="status">Nível {nivelNovo.nivel}!</div>}
       <div className={`aviso-flutuante${aviso ? ' visivel' : ''}`} role="status" aria-live="polite">{textoAviso.current}</div>
     </>

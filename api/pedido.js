@@ -2,10 +2,10 @@
 // Com anexos ([{ nome, dados em base64 }]), os arquivos vão para anexos/<id do pedido>/ no mesmo commit.
 const { rota, comAutomacao } = require('../lib/nuvem');
 const { alterarEstado, alterarEstadoComArquivos } = require('../lib/github');
-const { novoPedido, prepararAnexos } = require('../lib/escritorio');
+const { novoPedido, prepararAnexos, LIMITES_ANEXOS } = require('../lib/escritorio');
 
 module.exports = rota('POST', async (req, res, corpo) => {
-  const anexos = prepararAnexos(corpo.anexos);
+  const anexos = prepararAnexos(corpo.anexos, LIMITES_ANEXOS.nuvem);
   const { estado, resultado } = anexos.length
     ? await alterarEstadoComArquivos((e) => {
       const pedido = novoPedido(e, corpo, anexos);

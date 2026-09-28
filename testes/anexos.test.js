@@ -37,13 +37,25 @@ test('tipo não aceito, conteúdo falso, vazio ou corrompido é recusado', () =>
   recusa('não é lista', /anexos inválidos/);
 });
 
-test('limites: 5 anexos e 3 MB no total', () => {
+test('limites do painel online (padrão): 5 anexos e 3 MB no total', () => {
   const seis = Array.from({ length: 6 }, (_, i) => anexo(`f${i}.png`, PNG));
   assert.throws(() => escritorio.prepararAnexos(seis), /no máximo 5/);
   const grande = Buffer.alloc(2 * 1024 * 1024, 'a');
   assert.throws(() => escritorio.prepararAnexos([anexo('a.txt', grande), anexo('b.txt', grande)]), (e) => e.status === 413);
   assert.equal(escritorio.prepararAnexos([anexo('a.txt', grande)]).length, 1);
   assert.deepEqual(escritorio.prepararAnexos(undefined), []);
+});
+
+test('limites do PC: 10 anexos, 25 MB cada e 50 MB no total', () => {
+  const pc = escritorio.LIMITES_ANEXOS.pc;
+  const dez = Array.from({ length: 10 }, (_, i) => anexo(`f${i}.png`, PNG));
+  assert.equal(escritorio.prepararAnexos(dez, pc).length, 10);
+  assert.throws(() => escritorio.prepararAnexos([...dez, anexo('onze.png', PNG)], pc), /no máximo 10/);
+  const vinte = Buffer.alloc(20 * 1024 * 1024, 'a');
+  assert.equal(escritorio.prepararAnexos([anexo('a.txt', vinte), anexo('b.txt', vinte)], pc).length, 2, '40 MB no PC passa');
+  assert.throws(() => escritorio.prepararAnexos([anexo('a.txt', vinte), anexo('b.txt', vinte), anexo('c.txt', vinte)], pc), /passam de 50 MB/);
+  assert.throws(() => escritorio.prepararAnexos([anexo('grande.txt', Buffer.alloc(26 * 1024 * 1024, 'a'))], pc), /passa de 25 MB/);
+  assert.throws(() => escritorio.prepararAnexos([anexo('a.txt', vinte)]), /passa de 3 MB/, 'online continua 3 MB');
 });
 
 test('pedido guarda os anexos em anexos/<id do pedido>/', () => {

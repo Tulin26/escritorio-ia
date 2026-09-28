@@ -103,7 +103,11 @@ test('painel do PC: pedido com anexos, Enviar agora, botão de ligar e envio dep
 
   // Outro site não cria pedido; corpo gigante é recusado.
   assert.equal((await pedir('/api/pedido', { corpo: { projeto: 'x', texto: 'teste teste' }, origem: 'https://site-malicioso.com' })).status, 403);
-  assert.equal((await pedir('/api/pedido', { corpo: JSON.stringify({ projeto: 'x', texto: 'x'.repeat(6 * 1024 * 1024) }) })).status, 413);
+  const grande = Buffer.alloc(26 * 1024 * 1024, 'a');
+  r = await pedir('/api/pedido', { corpo: { projeto: 'x', texto: 'anexo grande demais', anexos: [anexo('grande.txt', grande)] } });
+  assert.equal(r.status, 413);
+  assert.match(r.dados.erro, /passa de 25 MB/);
+  assert.equal((await pedir('/api/pedido', { corpo: JSON.stringify({ projeto: 'x', texto: 'x'.repeat(70 * 1024 * 1024) }) })).status, 413);
 
   // Enviar agora (com o envio automático desligado).
   r = await pedir('/api/git/enviar', { corpo: {} });

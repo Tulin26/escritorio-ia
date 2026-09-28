@@ -24,7 +24,8 @@ const MODELO = process.env.ESCRITORIO_MODELO || 'claude-opus-5-5';
 const ESFORCO = process.env.ESCRITORIO_ESFORCO || 'high';
 const LIMITE_RODADA_MS = 30 * 60 * 1000;
 const LIMITE_CORPO = 64 * 1024;
-const LIMITE_CORPO_PEDIDO = 5 * 1024 * 1024; // pedido com anexos: até 3 MB de arquivos, em base64
+// Pedido com anexos: os arquivos chegam em base64 (um terço maior), mais uma folga para o texto.
+const LIMITE_CORPO_PEDIDO = Math.ceil(escritorio.LIMITES_ANEXOS.pc.bytes * 4 / 3) + 1024 * 1024;
 const ESPERA_ENVIO_MS = 4000; // junta cliques seguidos num commit só
 const { agora } = escritorio;
 
@@ -280,7 +281,7 @@ async function novoPedido(req, res) {
   let pedido;
   let anexos;
   try {
-    anexos = escritorio.prepararAnexos(corpo.anexos);
+    anexos = escritorio.prepararAnexos(corpo.anexos, escritorio.LIMITES_ANEXOS.pc);
     pedido = escritorio.novoPedido(estado, corpo, anexos);
   } catch (e) {
     return responderErro(res, e);

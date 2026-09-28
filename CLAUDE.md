@@ -69,7 +69,8 @@ também os anexos), marque o pedido como "feito" e grave em `missao` o id do pla
 
 ## Anexos dos pedidos
 
-O dono pode mandar arquivos junto com o pedido: fotos, prints, logo, PDF, TXT, MD, CSV ou JSON (até 5 por pedido).
+O dono pode mandar arquivos junto com o pedido: fotos, prints, logo, PDF, TXT, MD, CSV ou JSON (no PC, até 10 por pedido e
+25 MB cada; no painel online, até 5 e 3 MB no total). PDF grande: leia em partes (a ferramenta Read aceita páginas).
 Eles ficam em `anexos/<id do pedido>/` e aparecem em `pedidos[].anexos` como `{ nome, arquivo, tipo, tamanho }`
 (`arquivo` é o caminho, ex.: `anexos/p-004/logo.png`).
 
