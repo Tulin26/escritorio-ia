@@ -44,8 +44,10 @@ então você pode parar a qualquer momento e voltar dias depois: o escritório c
 | Diretor | Diretoria | divide a missão, define ordem, dependências e XP | `diretor/` |
 | Pesquisador | Pesquisa | mercado, concorrentes, público, palavras-chave, sempre com 3+ fontes | `pesquisa/` |
 | Estrategista | Estratégia | posicionamento, ângulo da campanha, funil, metas com número e prazo, SEO | `estrategia/` |
+| Designer | Marca & Design | identidade visual, briefs de peças com medidas certas e prompts prontos para gerar imagens (não publica) | `design/` |
 | Copywriter | Copy | textos de site, anúncios, e-mails, roteiros e materiais de estudo, com variações | `copy/` |
 | Social | Social | posts, legendas, roteiros de vídeo e calendário, com texto alternativo (não publica) | `social/` |
+| Gestor de Tráfego | Tráfego & Mídia | plano de campanha paga e análise completa da conta: 7 e 30 dias, melhores e piores anúncios, criativos cansados (nunca mexe na conta nem gasta) | `trafego/` |
 | Vendas | Vendas | prospects só com dados públicos de empresas (LGPD), rascunhos, propostas e follow-ups (não envia) | `vendas/` |
 | Revisor | Revisão | refaz as contas, confere as fontes, dá nota por critério e aponta riscos | `revisor/` |
 
@@ -55,13 +57,20 @@ Cada agente termina com um checklist "Antes de entregar". A ficha de cada um no 
 ## O painel
 
 - **Escritório vivo:** planta vista de cima, uma sala por área, cada uma com a sua decoração (estante e globo na Pesquisa,
-  quadro com gráfico na Estratégia, mural de post-its na Copy, ring light na Social, gráfico de vendas, prancheta na Revisão,
-  servidor piscando na Memória, troféus e relógio na Diretoria).
+  quadro com gráfico na Estratégia, cartela de cores e cavalete no Design, mural de post-its na Copy, ring light na Social,
+  painel de anúncios no Tráfego, gráfico de vendas, prancheta na Revisão, servidor piscando na Memória, troféus e relógio na
+  Diretoria). Um agente com o campo `sala` igual ao nome de uma sala entra nela: uma sala pode virar um time.
+- **Salas especiais:** a **Recepção** mostra cada pedido novo como uma pessoa esperando no balcão; a **Sala de Reunião** mostra
+  a pauta (o pedido mais recente) e quem está em missão senta à mesa enquanto a equipe trabalha; a sala **Você** mostra a pilha
+  de envelopes esperando a sua aprovação (clique nela para ir à sua mesa).
 - **Dia e noite pela hora real:** o céu das janelas muda (amanhecer, dia, fim de tarde, noite, madrugada), as salas escurecem
   à noite e as luminárias acendem. De madrugada, quem está livre cochila. Para ver outra hora: `?hora=21` no endereço.
-- **Agentes:** piscam, tomam café, digitam com o monitor rolando código quando trabalham e mostram um envelope quando
-  entregaram algo. Quando você aprova, o agente comemora com confete e `+XP`; subir de nível mostra um aviso.
-- **Linhas:** amarelas levam trabalho da Diretoria até a sala; rosa trazem a entrega de volta. Um envelope anda por elas.
+- **Agentes:** piscam, tomam café, digitam com o monitor rolando código e um balão dizendo o que fazem ("Revisando m-004")
+  quando trabalham, e mostram um envelope quando entregaram algo. Quando você aprova, o agente comemora com confete e `+XP`;
+  subir de nível mostra um aviso.
+- **Linhas:** azuis levam o pedido da Recepção ao Diretor; amarelas levam trabalho da Diretoria até a sala; rosa levam a
+  entrega da sala até você. Um envelope anda por elas, pelos corredores entre as salas.
+- **Topo:** agentes, entregues, XP, em andamento, aguardando você, nível e o status da equipe.
 - **Sua mesa:** entregas esperando você, com leitura formatada do `.md`, Aprovar e Refazer.
 - **Missões:** aba com a lista de todas as missões, com filtro por status.
 - **Letreiro:** as últimas novidades do escritório passando no rodapé.
@@ -135,9 +144,21 @@ Abra o endereço que o Vercel mostrar, entre com a senha, crie uma missão com *
 
 ## Chat na nuvem
 
-Abra [claude.ai/code](https://claude.ai/code) (ou o app do Claude → aba **Code**), escolha este repositório e converse:
-"Diretor, missão: … projeto: …", "rode as missões", "aprovo a m-012", "processe as missões em refazer".
+Abra [claude.ai/code](https://claude.ai/code) (ou o app do Claude → aba **Code**), escolha este repositório e converse.
+Atalhos (também funcionam no app no PC):
+
+| Comando | Para quê |
+|---|---|
+| `/diretor <pedido>` | fala com o Diretor: missão nova, "aprovo a m-012", "refaz a m-013 mais curto" ou "bota o pessoal para trabalhar" |
+| `/rodada` | a equipe toca tudo o que está pendente |
+| `/escritorio` | mostra o que espera você, o que está em andamento e o XP, sem mexer em nada |
+
+Exemplo: `/diretor bom dia! faz a análise completa das campanhas da D2 Motors e me passa o texto para o cliente. projeto: D2 Motors`.
 No fim de cada rodada o Claude salva tudo no GitHub, então o painel online mostra o resultado.
+
+Para o Gestor de Tráfego analisar uma conta, exporte o relatório do Gerenciador de Anúncios (CSV ou planilha dos últimos
+30 dias, por anúncio) e salve em `trafego/dados/<projeto>/`. Se o repositório guardar dados de clientes, deixe-o **privado**
+no GitHub.
 
 ## Status das missões
 
@@ -173,6 +194,7 @@ Datas no formato `AAAA-MM-DD HH:MM`. Missões com `"exemplo": true` são só dem
 | `estado.json` | agentes, projetos, pedidos e missões |
 | `CLAUDE.md` | regras do escritório e protocolo de trabalho |
 | `.claude/agents/` | instruções de cada agente |
+| `.claude/skills/` | atalhos de chat: `/diretor`, `/rodada` e `/escritorio` |
 | `projetos/` | briefing de cada projeto (`_modelo.md` é o modelo) |
 | `diretor/` … `revisor/` | entregas de cada área |
 | `testes/` | testes do painel online (`npm test`) |

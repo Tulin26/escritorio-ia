@@ -81,6 +81,14 @@ function paletaPessoa(v) {
   };
 }
 export const spriteAgente = (id) => sprite(`ag:${id}`, () => folhaSprites(QUADROS_AGENTE, paletaPessoa(VISUAL[id] || VISUAL_PADRAO), 3));
+
+// Visitantes da Recepção (cada pedido na fila é uma pessoa esperando)
+const VISITANTES = [
+  { cabelo: '#6b3a1e', pele: '#e8b48c', roupa: '#3a7bd5' },
+  { cabelo: '#111111', pele: '#8d5a32', roupa: '#d5a13a' },
+  { cabelo: '#c9c9c9', pele: '#f1c29a', roupa: '#5a8f4e' },
+];
+export const spriteVisitante = (i) => sprite(`vis:${i % VISITANTES.length}`, () => folhaSprites(QUADROS_AGENTE, paletaPessoa(VISITANTES[i % VISITANTES.length]), 3));
 export const spriteDono = () => sprite('dono', () => folhaSprites([DONO], paletaPessoa({ cabelo: '#3b2718', pele: '#d9a074', roupa: '#2a2f45' }), 4));
 
 // ---------- Móveis e decoração ----------
@@ -272,6 +280,94 @@ const TROFEU = [
 ];
 export const spriteTrofeu = () => sprite('trofeu', () => folhaSprites([TROFEU], { Y: '#f2c14e', y: '#fff1a8', B: '#6b4423' }, 3));
 
+// Mesa comprida da Sala de Reunião e as cadeiras em volta
+const MESA_REUNIAO = [
+  '.KKKKKKKKKKKKKKKKKKKKKKKKKKKKKK.',
+  'KLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLK',
+  'KLllllllllllllllllllllllllllllLK',
+  'KLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLK',
+  '.KWWWWWWWWWWWWWWWWWWWWWWWWWWWWK.',
+  '..DD........................DD..',
+  '..DD........................DD..',
+];
+export const spriteMesaReuniao = () => sprite('mesa-reuniao', () => folhaSprites([MESA_REUNIAO], {
+  K: '#0f0d16', L: '#c08a55', l: '#d9a56b', W: '#9a6a3e', D: '#5e3f22',
+}, 3));
+
+const CADEIRA = [
+  '.kkkk.',
+  '.kCCk.',
+  '.kCCk.',
+  'kkkkkk',
+  'k....k',
+];
+export const spriteCadeira = () => sprite('cadeira', () => folhaSprites([CADEIRA], { k: '#2c2838', C: '#a3161f' }, 3));
+
+// Balcão da Recepção
+const BALCAO = [
+  'KKKKKKKKKKKKKKKKKKKKKKKKKKKK',
+  'KTTTTTTTTTTTTTTTTTTTTTTTTTTK',
+  'KWWWWWWWWWWWWWWWWWWWWWWWWWWK',
+  'KWwwwwwwwwwwwwwwwwwwwwwwwwWK',
+  'KWWWWWWWWWWWWWWWWWWWWWWWWWWK',
+  'KWwwwwwwwwwwwwwwwwwwwwwwwwWK',
+  'KWWWWWWWWWWWWWWWWWWWWWWWWWWK',
+  'KKKKKKKKKKKKKKKKKKKKKKKKKKKK',
+];
+export const spriteBalcao = () => sprite('balcao', () => folhaSprites([BALCAO], {
+  K: '#0f0d16', T: '#e8d4b0', W: '#9a6a3e', w: '#7d5530',
+}, 3));
+
+// Cavalete com tela pintada (Marca & Design)
+const CAVALETE = [
+  '....kkkk....',
+  '.kkkkkkkkkk.',
+  '.kWWWWWWWWk.',
+  '.kWrrWWbbWk.',
+  '.kWrrWWbbWk.',
+  '.kWWWyyWWWk.',
+  '.kWWWyyWWWk.',
+  '.kWggggggWk.',
+  '.kkkkkkkkkk.',
+  '...k....k...',
+  '..k......k..',
+  '.k........k.',
+];
+export const spriteCavalete = () => sprite('cavalete', () => folhaSprites([CAVALETE], {
+  k: '#6b4423', W: '#f2ecdc', r: '#e04848', b: '#4d7fe0', y: '#f2c14e', g: '#4caf50',
+}, 3));
+
+// Cartela de cores na parede (Marca & Design)
+const CARTELA = [
+  'KKKKKKKKKKKKKKKK',
+  'KrrKyyKggKbbKppK',
+  'KrrKyyKggKbbKppK',
+  'KrrKyyKggKbbKppK',
+  'KKKKKKKKKKKKKKKK',
+];
+export const spriteCartela = () => sprite('cartela', () => folhaSprites([CARTELA], {
+  K: '#1f1f2e', r: '#ff6f59', y: '#ffd23f', g: '#5ad17a', b: '#7cc4ff', p: '#ff6fb5',
+}, 3));
+
+// Painel de anúncios com a linha de resultado subindo (Tráfego & Mídia)
+const PAINEL_ADS_MIOLO = [
+  'dddddddddddddood',
+  'dddddddddooooddd',
+  'dddddooooddddddd',
+  'dddooddddddddddd',
+  'dooddddddddddddd',
+  'dgdgdgdgdgdgdgdd',
+  'dgdgdgdgdgdgdgdd',
+];
+const PAINEL_ADS = [
+  'K'.repeat(18), ...PAINEL_ADS_MIOLO.map((l) => `K${l}K`), 'K'.repeat(18),
+  '....K........K....',
+  '...KK........KK...',
+];
+export const spritePainelAds = () => sprite('painel-ads', () => folhaSprites([PAINEL_ADS], {
+  K: '#2b2f3a', d: '#141a2e', o: '#ff9f43', g: '#2fae5a',
+}, 3));
+
 // Envelope que anda pelas linhas: amarelo (trabalho indo para a sala) ou rosa (entrega voltando)
 const ENVELOPE = [
   'kkkkkkkk',
@@ -281,6 +377,7 @@ const ENVELOPE = [
   'kWWWWWWk',
   'kkkkkkkk',
 ];
+const COR_ENVELOPE = { aguardando: '#ffc6e3', rodando: '#fff1b0', chegada: '#c6e6ff' };
 export const spriteEnvelope = (tipo) => sprite(`env:${tipo}`, () => folhaSprites([ENVELOPE], {
-  k: '#2a1830', W: tipo === 'aguardando' ? '#ffc6e3' : '#fff1b0',
+  k: '#2a1830', W: COR_ENVELOPE[tipo] || COR_ENVELOPE.rodando,
 }, 2));

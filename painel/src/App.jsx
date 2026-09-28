@@ -149,6 +149,13 @@ export default function App() {
   if (!estado) return <div className="carregando">{erro || 'Abrindo o escritório…'}</div>;
 
   const abrirArquivo = (id) => setFicha({ tipo: 'arquivo', id });
+  // Clicar na sua sala leva até a sua mesa de aprovações (no celular ela fica embaixo do escritório).
+  const irParaSuaMesa = () => {
+    const alvo = document.getElementById('sua-mesa');
+    if (!alvo) return;
+    alvo.scrollIntoView({ behavior: reduzido ? 'auto' : 'smooth', block: 'start' });
+    alvo.focus({ preventScroll: true });
+  };
   return (
     <>
       <Topo
@@ -173,6 +180,8 @@ export default function App() {
               reduzido={reduzido}
               onAgente={(id) => setFicha({ tipo: 'agente', id })}
               onMemoria={() => setFicha({ tipo: 'memoria' })}
+              onPedidos={() => setFicha({ tipo: 'pedidos' })}
+              onVoce={irParaSuaMesa}
             />
           ) : (
             <Missoes estado={estado} onArquivo={abrirArquivo} />

@@ -14,30 +14,49 @@ export const PISOS = {
   marrom: ['#74502f', '#835c3a', '#3a2716', '#4f3620'],
   turquesa: ['#2a8584', '#349796', '#134242', '#1d5b5a'],
   vinho: ['#7a3446', '#883d51', '#3a1520', '#55222f'],
+  cinza: ['#4a4e5c', '#555a69', '#1f2129', '#34373f'],
+  bege: ['#8a7456', '#977f60', '#3f3222', '#5c4b35'],
+  rosa: ['#8c3f6e', '#9a4a7b', '#3f1a31', '#5e2a4a'],
+  laranja: ['#8a5a2a', '#976433', '#40290f', '#5c3d1c'],
 };
 
-// Uma sala por área; "mem" (Memória) não tem agente: guarda briefings e entregas aprovadas.
+// Salas do escritório. As de agentes listam quem senta nelas; um agente do estado.json cujo campo "sala" tenha o
+// nome de uma sala também entra nela (assim uma sala pode virar um time com vários agentes).
+// Salas especiais: reunião (pauta do último pedido), você (sua mesa), recepção (pedidos na fila) e memória.
 export const SALAS = [
-  { id: 'dir', agente: 'diretor', nome: 'Diretoria', piso: 'marrom', deco: 'diretoria' },
-  { id: 'pes', agente: 'pesquisador', nome: 'Pesquisa', piso: 'verde', deco: 'pesquisa' },
-  { id: 'est', agente: 'estrategista', nome: 'Estratégia', piso: 'azul', deco: 'estrategia' },
-  { id: 'cop', agente: 'copywriter', nome: 'Copy', piso: 'roxo', deco: 'copy' },
-  { id: 'soc', agente: 'social', nome: 'Social', piso: 'turquesa', deco: 'social' },
-  { id: 'ven', agente: 'vendas', nome: 'Vendas', piso: 'vinho', deco: 'vendas' },
-  { id: 'rev', agente: 'revisor', nome: 'Revisão', piso: 'roxo', deco: 'revisao' },
-  { id: 'mem', agente: null, nome: 'Memória', piso: 'azul', deco: 'memoria' },
+  { id: 'reu', nome: 'Sala de Reunião', piso: 'bege', tipo: 'reuniao' },
+  { id: 'dir', agentes: ['diretor'], nome: 'Diretoria', piso: 'marrom', deco: 'diretoria' },
+  { id: 'voc', nome: 'Você', piso: 'cinza', tipo: 'voce' },
+  { id: 'rec', nome: 'Recepção', piso: 'bege', tipo: 'recepcao' },
+  { id: 'pes', agentes: ['pesquisador'], nome: 'Pesquisa', piso: 'verde', deco: 'pesquisa' },
+  { id: 'est', agentes: ['estrategista'], nome: 'Estratégia', piso: 'azul', deco: 'estrategia' },
+  { id: 'des', agentes: ['designer'], nome: 'Marca & Design', piso: 'rosa', deco: 'design' },
+  { id: 'cop', agentes: ['copywriter'], nome: 'Copy', piso: 'roxo', deco: 'copy' },
+  { id: 'soc', agentes: ['social'], nome: 'Social', piso: 'turquesa', deco: 'social' },
+  { id: 'tra', agentes: ['trafego'], nome: 'Tráfego & Mídia', piso: 'laranja', deco: 'trafego' },
+  { id: 'ven', agentes: ['vendas'], nome: 'Vendas', piso: 'vinho', deco: 'vendas' },
+  { id: 'rev', agentes: ['revisor'], nome: 'Revisão', piso: 'roxo', deco: 'revisao' },
+  { id: 'mem', nome: 'Memória', piso: 'azul', tipo: 'memoria' },
 ];
 
 export const VISUAL = {
   diretor: { cabelo: '#2b1d14', pele: '#e0a878', roupa: '#2f3f73' },
   pesquisador: { cabelo: '#7a4a24', pele: '#f1c29a', roupa: '#3f8a4f' },
   estrategista: { cabelo: '#15131c', pele: '#c98c5e', roupa: '#4a5fc1' },
+  designer: { cabelo: '#e8d44d', pele: '#d9a074', roupa: '#1f1f2e' },
   copywriter: { cabelo: '#c4662a', pele: '#f3cfa8', roupa: '#9b3fa0' },
   social: { cabelo: '#5c2a6e', pele: '#e8b48c', roupa: '#e0567f' },
+  trafego: { cabelo: '#1c1410', pele: '#8d5a32', roupa: '#e07a2f' },
   vendas: { cabelo: '#3a2616', pele: '#a8703f', roupa: '#2f9c8a' },
   revisor: { cabelo: '#9a9aa8', pele: '#f0c8a0', roupa: '#5b5f6e' },
 };
 export const VISUAL_PADRAO = { cabelo: '#333', pele: '#e0b090', roupa: '#777' };
+
+// O que aparece no balão de quem está trabalhando.
+export const VERBO = {
+  diretor: 'Delegando', pesquisador: 'Pesquisando', estrategista: 'Traçando', designer: 'Desenhando',
+  copywriter: 'Escrevendo', social: 'Criando posts', trafego: 'Analisando', vendas: 'Prospectando', revisor: 'Revisando',
+};
 
 // Como cada agente trabalha, em 3 passos (aparece na ficha de cada um).
 export const COMO_TRABALHA = {
@@ -55,6 +74,16 @@ export const COMO_TRABALHA = {
     'Lê a pesquisa aprovada e define para quem, qual promessa e por que você e não a concorrência.',
     'Escolhe o ângulo da campanha, os canais e a meta de cada etapa do funil.',
     'Lista as peças que Copy, Social e Vendas vão produzir, em ordem de prioridade.',
+  ],
+  designer: [
+    'Define a identidade visual: paleta, fontes, estilo de foto e grade de posts.',
+    'Entrega briefs de criação com medidas certas para cada rede e prompts prontos para gerar imagens.',
+    'Não usa imagem de terceiros sem licença e confere se o texto sobre a imagem dá para ler.',
+  ],
+  trafego: [
+    'Planeja campanhas pagas (Meta e Google): objetivo, público, orçamento, estrutura e metas.',
+    'Analisa os números que você trouxer: saúde da conta, 7 e 30 dias, melhores e piores anúncios, criativos cansados.',
+    'Nunca mexe na conta nem gasta: tudo vira proposta com valores exatos para você aprovar e executar.',
   ],
   copywriter: [
     'Monta o perfil de voz da marca a partir de textos reais do briefing.',

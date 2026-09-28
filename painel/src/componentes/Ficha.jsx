@@ -13,6 +13,7 @@ export default function Ficha({ ficha, estado, onFechar, onArquivo }) {
   if (ficha && ficha.tipo === 'agente') conteudo = <FichaAgente id={ficha.id} estado={estado} onArquivo={onArquivo} />;
   if (ficha && ficha.tipo === 'memoria') conteudo = <FichaMemoria estado={estado} onArquivo={onArquivo} />;
   if (ficha && ficha.tipo === 'arquivo') conteudo = <FichaArquivo id={ficha.id} estado={estado} />;
+  if (ficha && ficha.tipo === 'pedidos') conteudo = <FichaPedidos estado={estado} onArquivo={onArquivo} />;
   return (
     <Dialogo aberto={Boolean(conteudo)} onFechar={onFechar} rotulo="fichaTitulo" className={ficha && ficha.tipo === 'arquivo' ? 'larga' : ''}>
       {conteudo}
@@ -92,6 +93,43 @@ function FichaMemoria({ estado, onArquivo }) {
         {aprovadas.length
           ? <ul className="entregas">{aprovadas.map((m) => <ItemEntrega key={m.id} m={m} onArquivo={onArquivo} />)}</ul>
           : <p className="origem">Nada aprovado ainda.</p>}
+      </div>
+    </>
+  );
+}
+
+const ROTULO_PEDIDO = { novo: 'na fila', feito: 'virou plano' };
+
+function FichaPedidos({ estado, onArquivo }) {
+  const pedidos = (estado.pedidos || []).slice().reverse();
+  const missoes = estado.missoes || [];
+  return (
+    <>
+      <div className="ficha-topo">
+        <div>
+          <h2 id="fichaTitulo">Pedidos e reuniões</h2>
+          <div className="sub">Tudo o que você pediu ao Diretor, do mais novo para o mais antigo</div>
+        </div>
+      </div>
+      <div className="ficha-corpo">
+        {pedidos.length ? (
+          <ul className="entregas">
+            {pedidos.map((p) => {
+              const plano = missoes.find((m) => m.id === p.missao);
+              return (
+                <li key={p.id} className="pedido-item">
+                  <span className={`estado-pedido ${p.status}`}>{ROTULO_PEDIDO[p.status] || p.status}</span>
+                  <b>{p.id} · {p.projetoNome || p.projeto}</b>
+                  <span className="data">{p.data}</span>
+                  <p>{p.texto}</p>
+                  {plano && plano.arquivo && (
+                    <button className="link" type="button" onClick={() => onArquivo(plano.id)}>Ver o plano {plano.id} ({plano.status})</button>
+                  )}
+                </li>
+              );
+            })}
+          </ul>
+        ) : <p className="origem">Nenhum pedido ainda. Use o botão "+ Nova missão" no topo.</p>}
       </div>
     </>
   );

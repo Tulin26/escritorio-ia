@@ -56,6 +56,22 @@
       "sala": "Revisão",
       "papel": "Revisa as entregas das outras salas: refaz as contas, confere as fontes, dá nota por critério e aponta erros, riscos e o que falta antes de chegar até você.",
       "origem": "ECC agents/agent-evaluator + agents/marketing-agent + skills/operator-approval-loop"
+    },
+    {
+      "id": "designer",
+      "nome": "Designer",
+      "area": "design",
+      "sala": "Marca & Design",
+      "papel": "Cuida da identidade visual e entrega briefs de posts, carrosséis, capas e banners com medidas certas e prompts prontos para gerar imagens. Não publica.",
+      "origem": "Escritório de IA (inspirado no Escritório Start Digital)"
+    },
+    {
+      "id": "trafego",
+      "nome": "Gestor de Tráfego",
+      "area": "trafego",
+      "sala": "Tráfego & Mídia",
+      "papel": "Planeja campanhas pagas e faz a análise completa das contas de anúncio: números de 7 e 30 dias, melhores e piores anúncios, criativos cansados e recomendações. Nunca mexe na conta nem gasta.",
+      "origem": "Escritório de IA (inspirado no Escritório Start Digital)"
     }
   ],
   "projetos": [

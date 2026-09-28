@@ -11,8 +11,10 @@ O estado de todas as missões fica em `estado.json`. O painel (`node server.js`)
 | diretor | `diretor/` | divide a missão, cria sub-missões no estado.json |
 | pesquisador | `pesquisa/` | mercado, concorrentes, público, palavras-chave (com fontes) |
 | estrategista | `estrategia/` | posicionamento, ângulo, funil, SEO |
+| designer | `design/` | identidade visual, briefs de peças com medidas e prompts de imagem (nunca publica) |
 | copywriter | `copy/` | textos na voz da marca |
 | social | `social/` | posts, roteiros, calendário |
+| trafego | `trafego/` | planos de campanha paga e análise de contas de anúncio (nunca mexe na conta nem gasta) |
 | vendas | `vendas/` | prospects, rascunhos de mensagens e propostas (nunca envia) |
 | revisor | `revisor/` | revisão de qualidade e risco antes da aprovação |
 

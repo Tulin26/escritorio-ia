@@ -42,8 +42,12 @@ button, input, textarea { font: inherit; color: inherit; }
   display: flex; flex-wrap: wrap; align-items: center; gap: 12px 20px;
   padding: 12px 18px; background: var(--fundo-2); border-bottom: 4px solid var(--contorno);
 }
-.logo { margin: 0; font: 14px/1.3 var(--pixel); letter-spacing: 1px; }
+.logo { display: flex; align-items: center; gap: 12px; margin: 0; font: 14px/1.3 var(--pixel); letter-spacing: 1px; }
 .logo small { display: block; margin-top: 6px; font: 18px/1 var(--vt); letter-spacing: 0; color: var(--apagado); }
+.logo-icone {
+  flex: none; width: 40px; height: 40px; background: url("/favicon.svg") center / 100% 100%;
+  image-rendering: pixelated; border: 3px solid var(--amarelo); box-shadow: 0 0 0 3px var(--contorno);
+}
 .contadores { display: flex; flex-wrap: wrap; gap: 10px; }
 .contador {
   min-width: 104px; padding: 7px 12px 6px; background: var(--painel); border: 4px solid var(--contorno);
@@ -57,6 +61,8 @@ button, input, textarea { font: inherit; color: inherit; }
 .abas { display: flex; gap: 6px; }
 .btn.nova { margin-left: auto; padding: 12px 12px 11px; font-size: 10px; background: var(--amarelo); color: #1b1606; border-width: 4px; }
 .equipe b { font-size: 10px; line-height: 1.4; }
+.contador.chamando { border-color: #5a1a3a; }
+.contador.chamando b { color: var(--rosa); }
 .equipe-trabalhando b { color: var(--amarelo); animation: pisca-texto 1s steps(1) infinite; }
 .equipe-erro b { color: var(--vermelho); }
 .equipe-parado b { color: var(--verde); }
@@ -83,6 +89,7 @@ button, input, textarea { font: inherit; color: inherit; }
 .traco { display: inline-block; width: 28px; height: 4px; background: repeating-linear-gradient(90deg, currentColor 0 7px, transparent 7px 11px); }
 .traco.rodando { color: var(--amarelo); }
 .traco.aguardando { color: var(--rosa); }
+.traco.chegada { color: var(--azul); }
 
 /* Céu das janelas em cada fase do dia */
 .escritorio { --ceu: #7cc4ff; }
@@ -97,17 +104,20 @@ button, input, textarea { font: inherit; color: inherit; }
   display: grid; gap: 18px;
   grid-template-columns: repeat(4, minmax(0, 1fr));
   grid-template-areas:
-    "dir dir dir dir"
-    "pes est cop soc"
-    "ven rev mem mem";
+    "reu dir dir voc"
+    "rec pes est des"
+    "cop soc tra ven"
+    "rev mem mem mem";
 }
 .linhas { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; pointer-events: none; z-index: 6; }
 .linha { fill: none; stroke-width: 4; stroke-dasharray: 10 8; shape-rendering: crispEdges; animation: marcha .9s linear infinite; }
 .linha.rodando { stroke: var(--amarelo); }
 .linha.aguardando { stroke: var(--rosa); }
+.linha.chegada { stroke: var(--azul); }
 .ponta { shape-rendering: crispEdges; stroke: var(--contorno); stroke-width: 2; }
 .ponta.rodando { fill: var(--amarelo); }
 .ponta.aguardando { fill: var(--rosa); }
+.ponta.chegada { fill: var(--azul); }
 .envelope { image-rendering: pixelated; }
 @keyframes marcha { to { stroke-dashoffset: -18; } }
 
@@ -181,6 +191,9 @@ button, input, textarea { font: inherit; color: inherit; }
 .deco.chao { bottom: 12px; left: 44px; }
 .globo { width: 24px; height: 24px; }
 .ring { width: 30px; height: 35px; filter: drop-shadow(0 0 4px rgba(255, 246, 201, .55)); }
+.cartela { width: 38px; height: 12px; top: 13px; }
+.cavalete { width: 30px; height: 30px; }
+.painel-ads { width: 40px; height: 24px; top: 6px; }
 .bolinhas { display: flex; gap: 3px; align-items: flex-end; }
 .bolinhas i { width: 6px; height: 5px; background: #f2ecdc; box-shadow: inset -2px -2px 0 #bdb6a2; }
 .bolinhas i:nth-child(2) { width: 5px; height: 4px; }
@@ -229,6 +242,48 @@ button, input, textarea { font: inherit; color: inherit; }
   position: relative; z-index: 2; align-self: center; margin-top: auto; padding: 7px 9px 6px; text-align: center; cursor: pointer;
   font: 8px/1.7 var(--pixel); color: #dfe8ff; background: rgba(7, 6, 11, .75); border: 2px solid var(--contorno);
 }
+
+/* Sala de Reunião */
+.mesa-reuniao-area { position: relative; z-index: 2; display: flex; flex-direction: column; align-items: center; margin: auto 0 8px; }
+.cadeiras { display: flex; gap: 8px; margin-bottom: -12px; }
+.lugar { display: flex; align-items: flex-end; justify-content: center; width: 24px; height: 32px; }
+.cadeira { width: 18px; height: 15px; background-size: 100% 100%; image-rendering: pixelated; }
+.mini-agente {
+  width: 24px; height: 32px; background-size: 144px 32px; background-repeat: no-repeat; image-rendering: pixelated;
+  animation: respira 2.4s steps(1) infinite;
+}
+.lugar:nth-child(2) .mini-agente { animation-delay: -.6s; }
+.lugar:nth-child(3) .mini-agente { animation-delay: -1.2s; }
+.lugar:nth-child(4) .mini-agente { animation-delay: -1.8s; }
+.mesa-reuniao { position: relative; z-index: 1; width: 120px; height: 26px; background-size: 100% 100%; image-rendering: pixelated; }
+.mem-info.pauta {
+  margin-top: 0; max-width: 100%; overflow: hidden;
+  display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical;
+}
+.ao-vivo { display: block; margin-bottom: 3px; color: var(--rosa); animation: pisca-texto 1s steps(1) infinite; }
+
+/* Recepção: balcão e a fila de pedidos */
+.recepcao-area { position: relative; z-index: 2; display: flex; align-items: flex-end; justify-content: center; gap: 8px; margin: auto 0 8px; }
+.balcao { position: relative; width: 84px; height: 24px; background-size: 100% 100%; image-rendering: pixelated; }
+.sino.no-balcao { position: absolute; top: -10px; right: 10px; width: 10px; height: 10px; }
+.fila-visitantes { display: flex; gap: 4px; align-items: flex-end; min-height: 32px; }
+.visitante {
+  width: 24px; height: 32px; background-size: 144px 32px; background-repeat: no-repeat; image-rendering: pixelated;
+  animation: ocioso-mini 12s step-end infinite, respira 2.4s steps(1) infinite;
+}
+.visitante:nth-child(2) { animation-delay: -4s, -.8s; }
+.visitante:nth-child(3) { animation-delay: -8s, -1.6s; }
+@keyframes ocioso-mini {
+  0% { background-position: 0 0; }
+  30% { background-position: -72px 0; }
+  31.5% { background-position: 0 0; }
+}
+
+/* Sua sala: a pilha de envelopes esperando aprovação */
+.agente.dono-posto .boneco.dono { background-size: 36px 48px; background-position: 0 0; animation: respira 2.4s steps(1) infinite; }
+.pilha { position: absolute; top: -18px; right: 2px; z-index: 4; width: 16px; height: 32px; }
+.pilha i { position: absolute; left: 0; width: 16px; height: 12px; background-size: 100% 100%; image-rendering: pixelated; }
+.tarefa.livre { background: var(--verde); color: #0b2412; }
 
 /* ---------- Agentes ---------- */
 .agente {
@@ -305,15 +360,18 @@ button, input, textarea { font: inherit; color: inherit; }
 .tarefa { margin-top: 3px; padding: 3px 4px 2px; white-space: nowrap; font: 6px/1.2 var(--pixel); border: 2px solid var(--contorno); }
 .tarefa.rodando { background: var(--amarelo); color: #1b1606; }
 .tarefa.aguardando { background: var(--rosa); color: #2a0a1b; }
+/* Balão de quem está trabalhando: o que está fazendo e em qual missão */
 .balao {
-  position: absolute; top: -30px; left: 50%; z-index: 4; display: flex; gap: 3px;
-  padding: 6px 7px; background: #fff; border: 3px solid var(--contorno);
+  position: absolute; top: -30px; left: 50%; z-index: 4; transform: translateX(-50%);
+  display: flex; align-items: center; gap: 3px; white-space: nowrap;
+  padding: 5px 6px 4px; font: 6px/1 var(--pixel); color: #111; background: #fff; border: 3px solid var(--contorno);
 }
 .balao::after {
-  content: ""; position: absolute; left: 4px; bottom: -9px; width: 6px; height: 6px;
-  background: #fff; border-right: 3px solid var(--contorno); border-bottom: 3px solid var(--contorno);
+  content: ""; position: absolute; left: 50%; bottom: -9px; width: 6px; height: 6px; margin-left: -4px;
+  background: #fff; border-right: 3px solid var(--contorno); border-bottom: 3px solid var(--contorno); transform: rotate(45deg);
 }
-.balao i { width: 4px; height: 4px; background: #111; animation: ponto 1.2s steps(1) infinite; }
+.balao i { width: 3px; height: 3px; background: #111; animation: ponto 1.2s steps(1) infinite; }
+.balao i:first-of-type { margin-left: 2px; }
 .balao i:nth-child(2) { animation-delay: .3s; }
 .balao i:nth-child(3) { animation-delay: .6s; }
 @keyframes ponto { 0%, 100% { opacity: .2; } 25%, 75% { opacity: 1; } }
@@ -465,6 +523,9 @@ dialog[open]::backdrop { animation: escurecer 200ms var(--ease-out); }
 .entregas { margin: 0; padding: 0; list-style: none; }
 .entregas li { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 8px; padding: 6px 0; border-top: 2px solid #2f2945; }
 .entregas .data { color: var(--apagado); font-size: 17px; }
+.pedido-item p { flex-basis: 100%; margin: 2px 0 4px; }
+.fila-titulo:focus-visible { outline-offset: 4px; }
+#sua-mesa { scroll-margin-top: 200px; }
 .ficha-rodape { display: flex; justify-content: flex-end; padding: 10px 18px 14px; border-top: 4px solid var(--contorno); }
 
 /* Entregas em Markdown */
@@ -535,6 +596,9 @@ dialog[open]::backdrop { animation: escurecer 200ms var(--ease-out); }
 @container (max-width: 190px) {
   .janela.e, .deco.parede { display: none; }
 }
+@container (max-width: 420px) {
+  .trofeus { display: none; }
+}
 @container (max-width: 150px) {
   .deco.chao { display: none; }
 }
@@ -545,11 +609,17 @@ dialog[open]::backdrop { animation: escurecer 200ms var(--ease-out); }
   .lado { position: static; max-height: none; }
 }
 @media (max-width: 760px) {
-  .planta { grid-template-columns: repeat(2, minmax(0, 1fr)); grid-template-areas: "dir dir" "pes est" "cop soc" "ven rev" "mem mem"; }
+  .planta {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-areas: "dir dir" "reu voc" "rec pes" "est des" "cop soc" "tra ven" "rev mem";
+  }
   .trofeus, .relogio { display: none; }
 }
 @media (max-width: 440px) {
-  .planta { grid-template-columns: minmax(0, 1fr); grid-template-areas: "dir" "pes" "est" "cop" "soc" "ven" "rev" "mem"; }
+  .planta {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas: "dir" "voc" "reu" "rec" "pes" "est" "des" "cop" "soc" "tra" "ven" "rev" "mem";
+  }
   .corpo { padding: 12px 16px; }
   .topo { gap: 10px; padding: 10px 16px; }
   .contadores { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; width: 100%; }

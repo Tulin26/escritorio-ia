@@ -17,7 +17,7 @@ export default function Lado({ estado, onDecidir, onChamar, onArquivo }) {
 
       <Equipe auto={estado._automacao || {}} onChamar={onChamar} />
 
-      <h2 className="fila-titulo">Sua mesa: aguardando aprovação ({fila.length})</h2>
+      <h2 className="fila-titulo" id="sua-mesa" tabIndex={-1}>Sua mesa: aguardando aprovação ({fila.length})</h2>
       {fila.length
         ? fila.map((m, i) => <Cartao key={m.id} missao={m} ordem={i} estado={estado} onDecidir={onDecidir} onArquivo={onArquivo} />)
         : <p className="vazio">Nada esperando por você agora.</p>}

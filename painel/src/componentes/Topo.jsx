@@ -13,18 +13,26 @@ export default function Topo({ estado, agora, fase, aba, onAba, onNovaMissao, mo
   const auto = estado._automacao || {};
   const [classe, texto] = statusEquipe(auto);
   const hora = agora.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+  const emAndamento = missoes.filter((m) => m.status === 'rodando' || m.status === 'refazer').length;
+  const aguardando = missoes.filter((m) => m.status === 'aguardando').length;
   return (
     <header className="topo">
       <h1 className="logo">
-        Escritório de IA
-        <small>
-          {(estado.projetos || []).length} projeto(s) · {missoes.length} missão(ões) · {fase.nome}, {hora}
-          {modo === 'nuvem' ? ' · online' : ' · no PC'}
-        </small>
+        <span className="logo-icone" aria-hidden="true" />
+        <span>
+          Escritório de IA
+          <small>
+            Time de agentes · orquestrado pelo Diretor · {fase.nome}, {hora}
+            {modo === 'nuvem' ? ' · online' : ' · no PC'}
+          </small>
+        </span>
       </h1>
       <div className="contadores">
+        <div className="contador"><span>Agentes</span><b>{(estado.agentes || []).length}</b></div>
         <div className="contador"><span>Entregues</span><b>{missoes.filter((m) => m.status === 'aprovado').length}</b></div>
         <div className="contador"><span>XP</span><b>{xp}</b></div>
+        <div className="contador"><span>Em andamento</span><b>{emAndamento}</b></div>
+        <div className={`contador${aguardando ? ' chamando' : ''}`}><span>Aguardando você</span><b>{aguardando}</b></div>
         <div className="contador">
           <span>Nível</span><b>{nivelDe(xp)}</b>
           <div className="nivel-barra"><i style={{ transform: `scaleX(${(xp % 100) / 100})` }} /></div>
