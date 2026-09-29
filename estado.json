@@ -1,7 +1,7 @@
 {
   "escritorio": "Escritório de IA",
   "git": {
-    "ligado": false
+    "ligado": true
   },
   "numeracao": {
     "missao": 4,
