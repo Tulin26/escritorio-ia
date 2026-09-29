@@ -241,6 +241,8 @@ function FichaGit({ estado, onLigar, onEnviar, onRepo }) {
                 className="btn enviar-git"
                 type="button"
                 disabled={Boolean(ocupado) || Boolean(motivoBloqueio)}
+                aria-busy={ocupado === 'enviar' || Boolean(g.enviando)}
+                title={motivoBloqueio}
                 onClick={() => fazer('enviar', onEnviar)}
               >
                 {ocupado === 'enviar' || g.enviando ? 'Enviando…' : `Enviar agora${falta ? ` (${g.pendentes || g.adiante})` : ''}`}

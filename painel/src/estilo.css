@@ -507,7 +507,9 @@ td.mono { white-space: nowrap; }
   transition: transform 120ms var(--ease-out);
 }
 .btn:active:not(:disabled) { transform: translateY(2px); box-shadow: none; }
-.btn:disabled { opacity: .5; cursor: wait; }
+/* Desativado não é "carregando": o cursor de espera fazia parecer que o botão travou. */
+.btn:disabled { opacity: .5; cursor: not-allowed; }
+.btn[aria-busy="true"]:disabled { cursor: progress; }
 .btn.aprovar { background: var(--verde); color: #0b2412; }
 .btn.refazer { background: var(--vermelho); color: #2a0707; }
 .btn.neutro { background: var(--fundo-2); color: var(--texto); }
