@@ -4,7 +4,7 @@
     "ligado": true
   },
   "numeracao": {
-    "missao": 4,
+    "missao": 7,
     "pedido": 1
   },
   "agentes": [
@@ -134,8 +134,80 @@
       "id": "matriz",
       "nome": "Matriz",
       "briefing": "projetos/matriz.md"
+    },
+    {
+      "id": "alinhamento-dos-nomes-e-janelas",
+      "nome": "alinhamento dos nomes e janelas",
+      "briefing": "projetos/alinhamento-dos-nomes-e-janelas.md"
     }
   ],
-  "pedidos": [],
-  "missoes": []
+  "pedidos": [
+    {
+      "id": "p-002",
+      "projeto": "alinhamento-dos-nomes-e-janelas",
+      "projetoNome": "alinhamento dos nomes e janelas",
+      "texto": "como pode ver na imagem abaixo tem alguns nomes das salas que estão sobrepondo as janelas , corrija isso para todas ficarema linhadas e nenhuma sobre a outra",
+      "status": "feito",
+      "missao": "m-005",
+      "data": "2026-09-29 08:08",
+      "anexos": [
+        {
+          "nome": "image.png",
+          "arquivo": "anexos/p-002/image.png",
+          "tipo": "image/png",
+          "tamanho": 68639
+        }
+      ]
+    }
+  ],
+  "missoes": [
+    {
+      "id": "m-005",
+      "projeto": "alinhamento-dos-nomes-e-janelas",
+      "area": "diretor",
+      "agente": "diretor",
+      "titulo": "Plano: placas dos nomes sem sobrepor as janelas",
+      "resumo": "Pedido p-002. Manda direto para Marca & Design (UI/UX) corrigir a placa do nome, que fica por cima da janela e da decoração da parede em várias salas (m-006), com Revisão no fim (m-007). Hipótese: a placa continua centralizada e alinhada em todas as salas, sem invadir nada, e o Designer mexe direto em painel/src/. Entrega: diretor/m-005-alinhamento-dos-nomes-e-janelas-plano.md | depende de: -",
+      "arquivo": "diretor/m-005-alinhamento-dos-nomes-e-janelas-plano.md",
+      "status": "aprovado",
+      "xp": 10,
+      "data": "2026-09-29 08:11",
+      "comentario": "",
+      "anexos": [
+        "anexos/p-002/image.png"
+      ]
+    },
+    {
+      "id": "m-006",
+      "projeto": "alinhamento-dos-nomes-e-janelas",
+      "area": "design",
+      "agente": "designer",
+      "titulo": "Corrigir a sobreposição das placas com as janelas e decorações em todas as salas",
+      "resumo": "Placa corrigida em painel/src/estilo.css (+1 variável no Escritorio.jsx): continua centralizada a 9px do topo, presa entre a janela e a decoração, com a letra que diminui até 6px (e quebra em 2 linhas só se preciso); na Diretoria cedem primeiro os troféus e o relógio. Falta rodar npm run painel para gerar o build. | depende de: m-005",
+      "arquivo": "design/m-006-alinhamento-dos-nomes-e-janelas-placas.md",
+      "status": "aprovado",
+      "xp": 30,
+      "data": "2026-09-29 08:22",
+      "comentario": "",
+      "anexos": [
+        "anexos/p-002/image.png"
+      ]
+    },
+    {
+      "id": "m-007",
+      "projeto": "alinhamento-dos-nomes-e-janelas",
+      "area": "revisor",
+      "agente": "revisor",
+      "titulo": "Revisar o alinhamento das placas em todas as salas e larguras",
+      "resumo": "Pode ir para aprovação: contas refeitas em 14 salas x 16 larguras, a placa não cruza janela, decoração, troféus nem relógio em nenhuma largura; 3 pontos MÉDIOS para você decidir (troféus e relógio somem em mais larguras que o necessário, letra menor também em tela cheia) e erros de texto no 'antes' da m-006. | depende de: m-006",
+      "arquivo": "revisor/m-007-alinhamento-dos-nomes-e-janelas-revisao.md",
+      "status": "aprovado",
+      "xp": 20,
+      "data": "2026-09-29 08:32",
+      "comentario": "",
+      "anexos": [
+        "anexos/p-002/image.png"
+      ]
+    }
+  ]
 }

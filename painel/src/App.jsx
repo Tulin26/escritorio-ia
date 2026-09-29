@@ -186,6 +186,11 @@ export default function App() {
     aplicar(await api.enviarGit());
   }
 
+  // Repositório próprio de um projeto: criar (pasta + GitHub) ou enviar o que mudou nele.
+  async function repoProjeto(acao, id) {
+    aplicar(await (acao === 'criar' ? api.criarRepo(id) : api.enviarRepo(id)));
+  }
+
   async function sair() {
     await api.logout().catch(() => {});
     ultimoJson.current = '';
@@ -250,6 +255,7 @@ export default function App() {
         onArquivo={abrirArquivo}
         onLigarGit={ligarGit}
         onEnviarGit={enviarGit}
+        onRepo={repoProjeto}
       />
       <NovaMissao
         aberto={novaAberta}

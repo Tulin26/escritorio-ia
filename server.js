@@ -4,6 +4,8 @@
 //   ESCRITORIO_AUTOMACAO=0 desliga · ESCRITORIO_MODELO / ESCRITORIO_ESFORCO trocam modelo e esforço · CLAUDE_BIN caminho do claude
 // Sala Git & GitHub: com o envio automático ligado (estado.json > git.ligado), o servidor faz commit e push desta pasta
 //   depois de cada rodada e de cada decisão. ESCRITORIO_GIT_REMOTO troca o remoto (padrão: origin).
+// Repositórios dos projetos: cada projeto pode ganhar uma pasta própria fora do escritório com um repositório privado
+//   no GitHub (criado pelo GitHub CLI, gh). ESCRITORIO_PROJETOS troca a pasta (padrão: <usuário>/projetos).
 // O painel (React) fica em painel/ e é servido já montado a partir de painel/dist.
 const http = require('http');
 const fs = require('fs');
@@ -11,6 +13,7 @@ const path = require('path');
 const { spawn } = require('child_process');
 const escritorio = require('./lib/escritorio');
 const { criarGit } = require('./lib/git');
+const { criarRepos } = require('./lib/repos');
 
 const ROOT = __dirname;
 const ESTADO = path.join(ROOT, 'estado.json');
@@ -114,12 +117,22 @@ function statusAutomacao(estado) {
 
 // ---------- Sala Git & GitHub ----------
 const git = criarGit(ROOT, { remoto: process.env.ESCRITORIO_GIT_REMOTO || 'origin' });
+const repos = criarRepos({ raiz: ROOT });
 const gitLigado = (estado) => Boolean(estado && estado.git && estado.git.ligado);
 
 async function statusGit(estado) {
   const r = await git.resumo();
+  let projetos;
+  try {
+    projetos = await repos.resumo(estado);
+  } catch (e) {
+    projetos = { gh: { pronto: false, conta: '', motivo: e.message }, pasta: repos.pastaProjetos, projetos: [] };
+  }
   // "fila": tem trabalho indo (ou esperando para ir) para o GitHub; o painel desenha a linha Revisão → Git.
-  return { modo: 'local', ...r, ligado: gitLigado(estado), fila: r.disponivel && (r.enviando || r.pendentes > 0 || r.adiante > 0) };
+  return {
+    modo: 'local', ...r, ligado: gitLigado(estado), fila: r.disponivel && (r.enviando || r.pendentes > 0 || r.adiante > 0),
+    repos: projetos,
+  };
 }
 
 // O que o painel recebe: o estado.json mais o status da equipe e do Git (campos com _ não são gravados).
@@ -341,6 +354,42 @@ async function enviarGitAgora(req, res) {
   enviar(res, 200, { ...(await completar(lerEstado())), aviso: ultimo.resumo });
 }
 
+// POST /api/projeto/repo { id }: cria a pasta do projeto e o repositório privado dele no GitHub.
+// Espera a equipe: a rodada também grava o estado.json.
+async function criarRepoProjeto(req, res) {
+  const corpo = await lerPedidoJson(req, res);
+  if (!corpo) return;
+  if (typeof corpo.id !== 'string' || !corpo.id) return enviar(res, 400, { erro: 'diga o id do projeto' });
+  if (auto.rodando) return enviar(res, 409, { erro: 'A equipe está trabalhando. Espere a rodada terminar para criar o repositório.' });
+  let repo;
+  try {
+    repo = await repos.criar(lerEstado(), corpo.id);
+  } catch (e) {
+    return responderErro(res, e);
+  }
+  const estado = lerEstado(); // relido: pode ter mudado enquanto o GitHub respondia
+  const projeto = (estado.projetos || []).find((p) => p.id === corpo.id);
+  if (projeto) projeto.repo = repo;
+  salvarEstado(estado);
+  git.invalidar();
+  console.log(`[git] repositório do projeto ${corpo.id}: ${repo.url} (${repo.pasta})`);
+  agendarEnvio(`repositório do projeto ${corpo.id} criado`);
+  enviar(res, 200, { ...(await completar(estado)), aviso: `Repositório criado: ${repo.nome}. Pasta do projeto: ${repo.pasta}` });
+}
+
+// POST /api/projeto/repo/enviar { id }: commit e push da pasta do projeto.
+async function enviarRepoProjeto(req, res) {
+  const corpo = await lerPedidoJson(req, res);
+  if (!corpo) return;
+  let ultimo;
+  try {
+    ultimo = await repos.enviar(lerEstado(), corpo.id);
+  } catch (e) {
+    return responderErro(res, e);
+  }
+  enviar(res, 200, { ...(await completar(lerEstado())), aviso: ultimo.resumo });
+}
+
 function entregarArquivo(res, id) {
   let caminho;
   try {
@@ -401,6 +450,8 @@ async function atender(req, res) {
     if (req.method === 'POST' && url.pathname === '/api/rodada') return await rodarAgora(req, res);
     if (req.method === 'POST' && url.pathname === '/api/git') return await ligarGit(req, res);
     if (req.method === 'POST' && url.pathname === '/api/git/enviar') return await enviarGitAgora(req, res);
+    if (req.method === 'POST' && url.pathname === '/api/projeto/repo') return await criarRepoProjeto(req, res);
+    if (req.method === 'POST' && url.pathname === '/api/projeto/repo/enviar') return await enviarRepoProjeto(req, res);
     if (req.method === 'GET' && entregarPainel(res, url.pathname)) return;
     enviar(res, 404, { erro: 'não encontrado' });
   } catch (erro) {

@@ -30,6 +30,8 @@ export const api = {
   rodada: () => enviar('/api/rodada'),
   ligarGit: (ligado) => enviar('/api/git', { ligado }),
   enviarGit: () => enviar('/api/git/enviar'),
+  criarRepo: (id) => enviar('/api/projeto/repo', { id }),
+  enviarRepo: (id) => enviar('/api/projeto/repo/enviar', { id }),
   login: (senha) => enviar('/api/login', { senha }),
   logout: () => enviar('/api/logout'),
 };

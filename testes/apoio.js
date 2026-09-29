@@ -22,6 +22,7 @@ function estadoDeExemplo() {
   const real = JSON.parse(fs.readFileSync(path.join(RAIZ, 'estado.json'), 'utf8').replace(/^﻿/, ''));
   return `${JSON.stringify({
     ...real,
+    git: { ligado: false }, // o envio automático de verdade pode estar ligado; os testes começam desligados
     numeracao: { missao: 4, pedido: 1 },
     projetos: [{ id: 'matriz', nome: 'Matriz', briefing: 'projetos/matriz.md' }],
     pedidos: [{ id: 'p-001', projeto: 'matriz', projetoNome: 'Matriz', texto: 'eu quero um resumo sobre matrizes', status: 'feito', missao: 'm-001', data: '2026-09-25 15:25' }],

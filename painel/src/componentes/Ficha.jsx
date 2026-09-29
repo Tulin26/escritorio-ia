@@ -9,13 +9,13 @@ import {
 import { spriteAgente, spriteEstante } from '../sprites.js';
 
 // Uma janela só para as fichas: agente, memória, pedidos, Git & GitHub e arquivo entregue.
-export default function Ficha({ ficha, estado, onFechar, onArquivo, onLigarGit, onEnviarGit }) {
+export default function Ficha({ ficha, estado, onFechar, onArquivo, onLigarGit, onEnviarGit, onRepo }) {
   let conteudo = null;
   if (ficha && ficha.tipo === 'agente') conteudo = <FichaAgente id={ficha.id} estado={estado} onArquivo={onArquivo} />;
   if (ficha && ficha.tipo === 'memoria') conteudo = <FichaMemoria estado={estado} onArquivo={onArquivo} />;
   if (ficha && ficha.tipo === 'arquivo') conteudo = <FichaArquivo id={ficha.id} estado={estado} />;
   if (ficha && ficha.tipo === 'pedidos') conteudo = <FichaPedidos estado={estado} onArquivo={onArquivo} />;
-  if (ficha && ficha.tipo === 'git') conteudo = <FichaGit estado={estado} onLigar={onLigarGit} onEnviar={onEnviarGit} />;
+  if (ficha && ficha.tipo === 'git') conteudo = <FichaGit estado={estado} onLigar={onLigarGit} onEnviar={onEnviarGit} onRepo={onRepo} />;
   return (
     <Dialogo aberto={Boolean(conteudo)} onFechar={onFechar} rotulo="fichaTitulo" className={ficha && ficha.tipo === 'arquivo' ? 'larga' : ''}>
       {conteudo}
@@ -155,7 +155,7 @@ function FichaPedidos({ estado, onArquivo }) {
 
 // Git & GitHub: o botão de ligar (envio automático) e o "Enviar agora". No painel online não há o que ligar:
 // cada pedido e decisão já vira um commit no GitHub.
-function FichaGit({ estado, onLigar, onEnviar }) {
+function FichaGit({ estado, onLigar, onEnviar, onRepo }) {
   const g = estado._git || {};
   const auto = estado._automacao || {};
   const nuvem = g.modo === 'nuvem';
@@ -248,6 +248,8 @@ function FichaGit({ estado, onLigar, onEnviar }) {
             </div>
             {motivoBloqueio && g.disponivel && <p className="comentario">{motivoBloqueio}</p>}
             {aviso && <div className="aviso" role="status">{aviso}</div>}
+
+            <ReposProjetos r={g.repos} rodando={Boolean(auto.rodando)} onRepo={onRepo} />
           </>
         )}
         <h3>Como trabalha</h3>
@@ -255,6 +257,85 @@ function FichaGit({ estado, onLigar, onEnviar }) {
         <p className="origem">Vai tudo o que mudou na pasta: entregas, anexos e o estado.json. Se o repositório for público,
           qualquer pessoa vê; deixe-o privado se houver dados de clientes.</p>
       </div>
+    </>
+  );
+}
+
+// Repositórios dos projetos: cada projeto pode ter uma pasta própria fora do escritório, com um repositório privado
+// só dele no GitHub, para o código do projeto não se misturar com o escritório.
+function ReposProjetos({ r, rodando, onRepo }) {
+  const [ocupado, setOcupado] = useState('');
+  const [aviso, setAviso] = useState('');
+  if (!r) return null;
+  const gh = r.gh || {};
+
+  async function fazer(acao, id) {
+    setOcupado(`${acao}:${id}`);
+    setAviso('');
+    try {
+      await onRepo(acao, id);
+    } catch (e) {
+      setAviso(e.message);
+    } finally {
+      setOcupado('');
+    }
+  }
+
+  const linha = { display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12, flexWrap: 'wrap', padding: '6px 0' };
+  return (
+    <>
+      <h3>Repositórios dos projetos</h3>
+      <p className="comentario">
+        Cada projeto pode ter uma pasta própria em {r.pasta || 'projetos'} com um repositório privado só dele no GitHub,
+        separado do escritório. O briefing e as entregas da equipe continuam aqui.
+      </p>
+      {gh.pronto
+        ? <p className="comentario">GitHub CLI conectado como {gh.conta}.</p>
+        : <p className="aviso">{gh.motivo || 'Verificando o GitHub CLI…'}</p>}
+      {(r.projetos || []).length ? (
+        <ul className="arquivos-git">
+          {r.projetos.map((p) => {
+            const g = p.git || {};
+            const falta = (g.pendentes || 0) + (g.adiante || 0);
+            return (
+              <li key={p.id} style={linha}>
+                <span>
+                  <strong>{p.nome}</strong>
+                  {p.repo && p.repo.url ? (
+                    <>
+                      {' · '}<a href={p.repo.url} target="_blank" rel="noreferrer">{p.repo.nome || p.repo.url}</a>
+                      <br /><span className="comentario">{p.repo.pasta}{g.disponivel === false && g.motivo ? ` · ${g.motivo}` : ''}</span>
+                    </>
+                  ) : <span className="comentario"> · sem repositório</span>}
+                </span>
+                {p.repo && p.repo.url ? (
+                  <button
+                    className="btn enviar-git"
+                    type="button"
+                    disabled={Boolean(ocupado) || !g.disponivel || g.enviando || !falta}
+                    title={falta ? '' : 'Nada novo nesta pasta'}
+                    onClick={() => fazer('enviar', p.id)}
+                  >
+                    {ocupado === `enviar:${p.id}` || g.enviando ? 'Enviando…' : `Enviar${falta ? ` (${g.pendentes || g.adiante})` : ''}`}
+                  </button>
+                ) : (
+                  <button
+                    className="btn neutro"
+                    type="button"
+                    disabled={Boolean(ocupado) || p.criando || !gh.pronto || rodando}
+                    title={rodando ? 'Espere a rodada da equipe terminar' : ''}
+                    onClick={() => fazer('criar', p.id)}
+                  >
+                    {ocupado === `criar:${p.id}` || p.criando ? 'Criando…' : 'Criar repositório'}
+                  </button>
+                )}
+              </li>
+            );
+          })}
+        </ul>
+      ) : <p className="comentario">Nenhum projeto ainda.</p>}
+      {rodando && gh.pronto && <p className="comentario">A equipe está trabalhando: dá para criar repositórios quando a rodada terminar.</p>}
+      {aviso && <div className="aviso" role="status">{aviso}</div>}
     </>
   );
 }

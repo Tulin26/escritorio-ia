@@ -129,6 +129,13 @@ Na ficha dela, o dono liga o **envio automático** (`estado.json > git.ligado`: 
 clica em **Enviar agora**. Quem faz isso é o servidor do painel, não os agentes: nas rodadas do PC ninguém roda git.
 Só o dono muda `git.ligado` (pelo painel). No painel online não há o que ligar: cada ação já vira um commit.
 
+**Repositórios dos projetos.** Na mesma ficha, cada projeto pode ganhar uma pasta própria **fora** do escritório
+(padrão `C:\Users\<usuário>\projetos\<id>`, ou a pasta de `ESCRITORIO_PROJETOS`) com um repositório **privado** só dele
+no GitHub, criado pelo GitHub CLI (`gh`, com login feito uma vez no PC). O servidor grava em `estado.json > projetos[].repo`
+(`pasta`, `url`, `nome`, `privado`, `criado`). Isso separa o código do projeto do repositório do escritório: briefing,
+entregas e anexos continuam aqui. Para os agentes, `repo.pasta` é a **"Pasta do código"** do briefing: só leem; mudar
+arquivos lá é ação externa (regra de ouro). Só o dono cria o repositório e envia (botões "Criar repositório" e "Enviar").
+
 ## Usando pelo claude.ai/code (chat na nuvem)
 
 O dono também pode abrir este repositório em claude.ai/code (ou no app do Claude, aba Code) e conversar como no PC

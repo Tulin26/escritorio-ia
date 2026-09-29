@@ -146,13 +146,26 @@ button, input, textarea { font: inherit; color: inherit; }
   transition: opacity 1.2s var(--ease-in-out);
 }
 .sala-dir { min-height: 250px; }
+/* Placa do nome: fica centralizada na faixa livre da parede, entre duas reservas iguais (a da janela da esquerda e,
+   espelhada, a da decoração da direita), sempre a 9px do topo. Nunca passa por cima da janela nem da decoração:
+   se o nome não cabe em 9px, a letra diminui até 6px (--letras vem do Escritorio.jsx); se nem assim cabe, quebra em
+   2 linhas. */
 .placa {
-  position: absolute; top: 9px; left: 50%; z-index: 3; transform: translateX(-50%);
-  padding: 6px 10px 5px; white-space: nowrap;
-  font: 9px/1 var(--pixel); color: #ffe7a8;
+  --reserva: 64px; /* janela: 12px da borda + 46px de largura + 6px de folga */
+  position: absolute; top: 9px; left: var(--reserva); right: var(--reserva); z-index: 3;
+  width: fit-content; margin: 0 auto;
+  padding: 5px calc(10em / 9) 4px; text-align: center; overflow-wrap: anywhere;
+  font: 9px/1.2 var(--pixel); color: #ffe7a8;
   background: #2a1a0e; border: 3px solid #120a04;
   box-shadow: inset 0 -3px 0 rgba(0, 0, 0, .45), 0 3px 0 rgba(0, 0, 0, .45);
 }
+/* 100cqi = largura útil da sala (sem o padding de 10px de cada lado). Largura da placa = letras x fonte + 2 x 1,11em de
+   padding + 6px de borda; 2px de folga para arredondamento. */
+@supports (width: 1cqi) {
+  .placa { font-size: clamp(6px, calc((100cqi + 12px - 2 * var(--reserva)) / (var(--letras, 10) + 2.23)), 9px); }
+}
+/* Diretoria: troféus (até 5, terminam a 188px da esquerda) e relógio (começa a 142px da direita) também ficam na parede. */
+.sala-dir .placa { --reserva: 194px; }
 .postos { position: relative; z-index: 2; display: flex; flex-wrap: wrap; justify-content: center; gap: 16px; margin-top: auto; }
 .sala-dir .postos { margin: auto 0; }
 
@@ -729,9 +742,16 @@ dialog[open]::backdrop { animation: escurecer 200ms var(--ease-out); }
 /* ---------- Salas estreitas: menos enfeite, mais espaço para o nome ---------- */
 @container (max-width: 190px) {
   .janela.e, .deco.parede, .interruptor-parede { display: none; }
+  .placa { --reserva: 12px; } /* parede sem janela nem decoração: a placa usa quase a largura toda */
 }
-@container (max-width: 420px) {
+/* Diretoria: primeiro somem os troféus, depois o relógio; a placa segue em 9px sem encostar em nada. */
+@container (max-width: 480px) {
   .trofeus { display: none; }
+  .sala-dir .placa { --reserva: 148px; } /* relógio: 74px da borda + 68px de largura + 6px de folga */
+}
+@container (max-width: 390px) {
+  .relogio { display: none; }
+  .sala-dir .placa { --reserva: 64px; }
 }
 @container (max-width: 150px) {
   .deco.chao { display: none; }
@@ -748,6 +768,7 @@ dialog[open]::backdrop { animation: escurecer 200ms var(--ease-out); }
     grid-template-areas: "dir dir" "reu voc" "rec pes" "est des" "cop soc" "tra ven" "rev git" "mem mem";
   }
   .trofeus, .relogio { display: none; }
+  .sala-dir .placa { --reserva: 64px; }
 }
 @media (max-width: 440px) {
   .planta {

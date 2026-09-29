@@ -104,7 +104,8 @@ function Sala({ sala, primeiroIndice, estado, fase, agora, festas, madrugada, on
     >
       <Janela fase={fase} lado="e" />
       {sala.id === 'dir' && <Janela fase={fase} lado="d" />}
-      <div className="placa">{sala.nome}</div>
+      {/* --letras: o CSS usa o tamanho do nome para a placa caber entre a janela e a decoração. */}
+      <div className="placa" style={{ '--letras': [...String(sala.nome || '')].length || 1 }}>{sala.nome}</div>
       {sala.id === 'dir' && <div className="tapete" aria-hidden="true" />}
       <Decoracao tipo={sala.deco} estado={estado} agora={agora} />
       <span className="deco-planta e" aria-hidden="true" style={fundo(spritePlanta())} />
