@@ -20,7 +20,7 @@ export default function Topo({ estado, agora, fase, aba, onAba, onNovaMissao, mo
       <h1 className="logo">
         <span className="logo-icone" aria-hidden="true" />
         <span>
-          Escritório de IA
+          {estado.escritorio || 'Escritório de IA'}
           <small>
             Time de agentes · orquestrado pelo Diretor · {fase.nome}, {hora}
             {modo === 'nuvem' ? ' · online' : ' · no PC'}
@@ -42,9 +42,9 @@ export default function Topo({ estado, agora, fase, aba, onAba, onNovaMissao, mo
         </div>
       </div>
       <button className="btn nova" type="button" onClick={onNovaMissao}>+ Nova missão</button>
-      <nav className="abas" role="tablist" aria-label="Visões do painel">
-        <button className="aba" role="tab" type="button" aria-selected={aba === 'escritorio'} onClick={() => onAba('escritorio')}>Escritório</button>
-        <button className="aba" role="tab" type="button" aria-selected={aba === 'missoes'} onClick={() => onAba('missoes')}>Missões</button>
+      <nav className="abas" aria-label="Visões do painel">
+        <button className="aba" type="button" aria-pressed={aba === 'escritorio'} onClick={() => onAba('escritorio')}>Escritório</button>
+        <button className="aba" type="button" aria-pressed={aba === 'missoes'} onClick={() => onAba('missoes')}>Missões</button>
         {modo === 'nuvem' && <button className="aba" type="button" onClick={onSair}>Sair</button>}
       </nav>
     </header>

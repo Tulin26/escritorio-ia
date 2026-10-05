@@ -3,7 +3,8 @@ import { api } from './api.js';
 import { faseDoDia, nivelDe, xpDe } from './dados.js';
 import { useMovimentoReduzido, useRelogio } from './ganchos.js';
 import Topo from './componentes/Topo.jsx';
-import Escritorio from './componentes/Escritorio.jsx';
+import MapaEscritorio from './componentes/MapaEscritorio.jsx';
+import EquipePainel from './componentes/EquipePainel.jsx';
 import Lado from './componentes/Lado.jsx';
 import Missoes from './componentes/Missoes.jsx';
 import Letreiro from './componentes/Letreiro.jsx';
@@ -20,6 +21,7 @@ export default function App() {
   const [estado, setEstado] = useState(null);
   const [erro, setErro] = useState('');
   const [aba, setAba] = useState('escritorio');
+  const [selecionado, setSelecionado] = useState('diretor');
   const [ficha, setFicha] = useState(null);
   const [novaAberta, setNovaAberta] = useState(false);
   const [festas, setFestas] = useState({});
@@ -215,6 +217,7 @@ export default function App() {
   };
   return (
     <>
+      <a className="pular-conteudo" href="#conteudo">Pular para o conteúdo</a>
       <Topo
         estado={estado}
         agora={agora}
@@ -227,15 +230,16 @@ export default function App() {
       />
       {erro && <div className="erro" role="alert">{erro}</div>}
       <div className="corpo">
-        <main>
+        <main id="conteudo" tabIndex={-1}>
           {aba === 'escritorio' ? (
-            <Escritorio
+            <MapaEscritorio
               estado={estado}
               fase={fase}
               agora={agora}
               festas={festas}
               reduzido={reduzido}
-              onAgente={(id) => setFicha({ tipo: 'agente', id })}
+              selecionado={selecionado}
+              onAgente={setSelecionado}
               onMemoria={() => setFicha({ tipo: 'memoria' })}
               onPedidos={() => setFicha({ tipo: 'pedidos' })}
               onVoce={irParaSuaMesa}
@@ -245,7 +249,10 @@ export default function App() {
             <Missoes estado={estado} onArquivo={abrirArquivo} />
           )}
         </main>
-        <Lado estado={estado} onDecidir={decidir} onChamar={chamarEquipe} onArquivo={abrirArquivo} />
+        <div className="coluna-equipe">
+          <EquipePainel estado={estado} selecionado={selecionado} onSelecionar={setSelecionado} onDetalhes={(id) => setFicha({ tipo: 'agente', id })} />
+          <Lado estado={estado} onDecidir={decidir} onChamar={chamarEquipe} onArquivo={abrirArquivo} />
+        </div>
       </div>
       <Letreiro estado={estado} />
       <Ficha

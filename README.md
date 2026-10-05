@@ -85,6 +85,15 @@ Para trocar as skills de um setor, edite a lista `skills:` no arquivo do agente 
 
 ## O painel
 
+O mapa compacto reúne as salas em três fileiras, com corredores, personagens e indicadores do estado real das missões.
+Selecione um agente para ver sua ficha ao lado; **Ranking** mostra somente XP de entregas aprovadas.
+O botão **Ver entregas e detalhes** abre a ficha completa. Recepção, Memória, Git & GitHub e a mesa de aprovações
+continuam acessíveis. **Pausar animação** interrompe o movimento; a preferência de movimento reduzido do sistema também
+é respeitada. No celular, deslize o mapa para os lados: a rolagem fica dentro dele, sem alargar a página.
+
+A apresentação foi inspirada no `escritorio-demo`, com arte construída a partir dos sprites deste projeto. Não foram
+importados agentes fictícios, integrações nem regras de XP do exemplo. Agentes adicionais aparecem em novas salas.
+
 - **Escritório vivo:** planta vista de cima, uma sala por área, cada uma com a sua decoração (estante e globo na Pesquisa,
   quadro com gráfico na Estratégia, cartela de cores e cavalete no Design, mural de post-its na Copy, ring light na Social,
   painel de anúncios no Tráfego, gráfico de vendas, prancheta na Revisão, servidor piscando na Memória, troféus e relógio na
