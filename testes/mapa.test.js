@@ -28,6 +28,14 @@ test('salas adicionais ficam dentro do mapa e não sobrepõem as existentes', as
   assert.equal(altura, 800);
 });
 
+test('agente de sala fixa não é duplicado por um nome de sala desatualizado', async () => {
+  const { salasDoEstado } = await carregar();
+  const salas = salasDoEstado({ agentes: [{ id: 'designer', nome: 'Designer', sala: 'Pesquisa' }] });
+  assert.deepEqual(salas.find((s) => s.id === 'des').agentes, ['designer']);
+  assert.deepEqual(salas.find((s) => s.id === 'pes').agentes, []);
+  assert.equal(salas.flatMap((s) => s.agentes).length, 1);
+});
+
 test('fluxos usam status reais, deduplicam rotas e incluem pedidos e Git', async () => {
   const { salasDoEstado, fluxosDoEstado } = await carregar();
   const estado = { agentes: [{ id: 'designer' }, { id: 'copywriter' }], pedidos: [{ status: 'novo' }], _git: { fila: true }, missoes: [{ agente: 'designer', status: 'rodando' }, { agente: 'designer', status: 'refazer' }, { agente: 'copywriter', status: 'aguardando' }, { agente: 'designer', status: 'aprovado' }] };

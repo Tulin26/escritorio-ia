@@ -12,9 +12,10 @@ export const ALTURA_SALA = 160;
 // A planta é apenas apresentação: missões e decisões continuam no estado real.
 export function salasDoEstado(estado) {
   const agentes = estado.agentes || [];
+  const salasFixas = new Map(SALAS.flatMap((s) => (s.agentes || []).map((id) => [id, s.id])));
   const usados = new Set();
   const salas = SALAS.map((s) => {
-    const ids = s.agentes ? agentes.filter((a) => s.agentes.includes(a.id) || normalizar(a.sala) === normalizar(s.nome)).map((a) => a.id) : [];
+    const ids = s.agentes ? agentes.filter((a) => salasFixas.get(a.id) === s.id || (!salasFixas.has(a.id) && normalizar(a.sala) === normalizar(s.nome))).map((a) => a.id) : [];
     ids.forEach((id) => usados.add(id));
     const [coluna, linha, largura] = PLANTA[s.id];
     return { ...s, agentes: ids, x: coluna * 160, y: linha * ALTURA_SALA, w: largura * 160, h: ALTURA_SALA };
