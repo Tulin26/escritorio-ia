@@ -18,14 +18,20 @@ const enviar = (url, corpo) => pedir(url, {
   body: JSON.stringify(corpo || {}),
 });
 
-// Endereço de um anexo (imagem, PDF ou texto) para miniaturas e links.
+// Endereço de um anexo para miniaturas e links (imagem, PDF e texto abrem; o resto é baixado).
 export const urlAnexo = (caminho) => `/api/anexo?caminho=${encodeURIComponent(caminho)}`;
 
 export const api = {
   sessao: () => pedir('/api/sessao'),
   estado: () => pedir('/api/estado'),
   arquivo: (id) => pedir(`/api/arquivo?id=${encodeURIComponent(id)}`),
-  pedido: (projeto, texto, anexos) => enviar('/api/pedido', { projeto, texto, anexos }),
+  // Com "lote" (só no PC), os anexos já subiram um a um por enviarAnexo; sem ele, vão em base64 no próprio pedido.
+  pedido: (projeto, texto, { anexos, lote } = {}) => enviar('/api/pedido', { projeto, texto, anexos, lote }),
+  enviarAnexo: (lote, caminho, blob) => pedir(`/api/anexo/enviar?lote=${encodeURIComponent(lote)}&caminho=${encodeURIComponent(caminho)}`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/octet-stream' },
+    body: blob,
+  }),
   decisao: (id, acao, comentario) => enviar('/api/decisao', { id, acao, comentario }),
   rodada: () => enviar('/api/rodada'),
   ligarGit: (ligado) => enviar('/api/git', { ligado }),

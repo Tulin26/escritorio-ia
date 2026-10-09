@@ -1,0 +1,161 @@
+{% extends "base.html" %}
+{% block title %}EducaGame IA - Escolha sua escola{% endblock %}
+{% block topnav %}{% endblock %}
+{% block header %}{% endblock %}
+{% block content %}
+{# A splash tambem nao roda quando ha aviso: ela leva 2,85 s e, com uma
+   escola so, redireciona sozinha -- a pessoa nunca leria o motivo de ter
+   sido desconectada. #}
+{# No modo desenvolvedor nao ha splash nem redirecionamento automatico: esta
+   tela e uma ferramenta de trabalho, nao a entrada do app -- e quem chega
+   aqui ja escolheu vir, vindo do painel global.
+
+   Com o formulario do ADM aberto e pior que estetica: havendo UMA escola
+   cadastrada, o script abaixo redireciona sozinho depois de 2,85 s e
+   arrancaria a pessoa do formulario no meio da digitacao. #}
+{% set mostrar_intro = not erro and not aviso and not modo_desenvolvedor and not abrir_adm %}
+{% set escola_unica = escolas|length == 1 %}
+
+{% if mostrar_intro %}
+<section class="school-splash" aria-hidden="true">
+    <img
+        class="school-splash-logo"
+        src="{{ url_for('static', filename='img/educagames_ia_logo.jpeg') }}"
+        alt=""
+    >
+</section>
+{% endif %}
+
+{% if mostrar_intro and escola_unica %}
+    <script>
+        // MELHORIA: com uma unica escola cadastrada, pedir pra clicar nela
+        // toda vez que a sessao reinicia (login, trocar de conta etc.) e um
+        // clique sem escolha real nenhuma pra fazer. A splash (que ja
+        // existia como animacao) passa a servir de transicao: toca a
+        // mesma animacao de sempre e, ao terminar, segue direto pra unica
+        // escola -- sem exigir clique.
+        //
+        // Isto NAO pula o codigo da escola: o destino e a tela que pede o
+        // codigo, nao a entrada. O que se poupa e so o clique de escolher
+        // entre uma opcao so.
+        //
+        // MELHORIA: quem esconde a lista agora e este script, nao mais o
+        // template. Esconder e redirecionar viraram a mesma decisao: se
+        // este codigo nao rodar, a lista continua visivel e a pessoa
+        // escolhe a escola na mao, em vez de encarar uma tela vazia.
+        (function () {
+            var secao = document.querySelector('.school-entry');
+            if (secao) {
+                secao.classList.add('school-entry-oculta');
+            }
+            window.setTimeout(function () {
+                window.location.href = {{ url_for('home.entrar_escola', escola_id=escolas[0].id, next=next) | tojson }};
+            }, 2850);
+        })();
+    </script>
+{% endif %}
+
+{% if mostrar_intro %}
+    <script>
+        // Rede de seguranca da splash: ela cobre a tela inteira e so sai por
+        // animacao CSS. Se a animacao nao rodar -- foi o que aconteceu
+        // quando os @keyframes nao existiam -- ela ficaria na frente para
+        // sempre, e a tela de escolher escola vira uma tela preta. Isto
+        // garante a saida mesmo que o CSS falhe.
+        window.setTimeout(function () {
+            var splash = document.querySelector('.school-splash');
+            if (splash) {
+                splash.remove();
+            }
+        }, 3200);
+    </script>
+{% endif %}
+
+{# MELHORIA: "school-entry-oculta" e opacity: 0 permanente -- nada de animacao
+   traz esta secao de volta. Ela so pode entrar quando o redirecionamento
+   automatico vai mesmo acontecer, que e a condicao do bloco de script acima
+   (mostrar_intro AND escola_unica).
+
+   Antes dependia so de escola_unica. Com uma escola cadastrada E um erro
+   ("Escola nao encontrada", por exemplo), mostrar_intro fica falso: nao ha
+   splash, nao ha script de redirect -- e a secao era escondida assim mesmo.
+   O resultado era uma pagina completamente preta, sem nem mostrar o motivo,
+   porque a propria mensagem de erro vive aqui dentro. Visto em producao: o
+   mesmo endereco abria normal num computador e em branco no outro, conforme
+   a sessao de cada um resolvesse a escola ou nao. #}
+<section class="school-entry {% if mostrar_intro %}school-entry-delayed{% endif %}">
+    <div class="school-entry-copy">
+        {% if modo_desenvolvedor %}
+            <p class="eyebrow">Desenvolvedor</p>
+            <h1>Qual escola você quer acompanhar?</h1>
+            <p class="muted">Abre direto, sem o código — ele é o combinado que o professor passa à turma.</p>
+        {% else %}
+            <p class="eyebrow">EducaGame IA</p>
+            <h1>Escolha sua escola</h1>
+            <p class="muted">Selecione sua unidade para continuar.</p>
+        {% endif %}
+    </div>
+
+    {% if erro %}
+        <p class="notice warn">{{ erro }}</p>
+    {% endif %}
+
+    {% if aviso %}
+        <p class="notice">{{ aviso }}</p>
+    {% endif %}
+
+    {% if escolas %}
+        <div class="school-grid">
+            {% for escola in escolas %}
+                <a
+                    class="school-card"
+                    href="{{ url_for('home.entrar_escola', escola_id=escola.id, next=next) }}"
+                >
+                    <strong>{{ escola.nome }}</strong>
+                    <span class="school-card-hint">Acessar</span>
+                </a>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p class="notice">Nenhuma escola cadastrada foi encontrada.</p>
+    {% endif %}
+
+    {% if modo_desenvolvedor %}
+        <p class="school-entry-adm">
+            <a href="{{ url_for('professor.tela_professor') }}">← Voltar ao painel global</a>
+        </p>
+    {% else %}
+        {# A conta de desenvolvedor nao pertence a escola nenhuma. Sem esta
+           porta, a unica forma de chegar ao ADM era escolher uma unidade
+           qualquer e digitar o codigo dela -- inclusive quando a escola que
+           se quer cadastrar ainda nao existe.
+
+           O formulario fica atras de um clique, e nao aberto na tela: quem
+           chega aqui e aluno, e um par usuario/senha no meio da entrada
+           convida a turma a tentar. #}
+        <section class="school-entry-adm">
+            {% if not abrir_adm %}
+                <a class="school-adm-link" href="{{ url_for('home.index', adm=1) }}#adm">
+                    É o desenvolvedor? Entre sem escolher escola
+                </a>
+            {% else %}
+                <form id="adm" class="school-adm-form" method="post" action="{{ url_for('auth.entrar_como_desenvolvedor') }}">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <p class="eyebrow">ADM</p>
+                    <p class="muted">Entre com a conta de desenvolvedor. Não é preciso escolher escola.</p>
+                    {% if erro_adm %}
+                        <p class="notice warn">{{ erro_adm }}</p>
+                    {% endif %}
+                    <label for="adm_username">Usuário</label>
+                    <input id="adm_username" name="username" autocomplete="username" required>
+                    <label for="adm_senha">Senha</label>
+                    <input id="adm_senha" name="senha" type="password" autocomplete="current-password" required>
+                    <button type="submit">Acessar ADM</button>
+                </form>
+            {% endif %}
+        </section>
+    {% endif %}
+
+    <p class="developer-credit">Desenvolvido por: Lucas Barbosa Nishigima e João Artur Parmezan</p>
+</section>
+{% endblock %}

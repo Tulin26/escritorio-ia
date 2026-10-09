@@ -139,6 +139,11 @@
       "id": "alinhamento-dos-nomes-e-janelas",
       "nome": "alinhamento dos nomes e janelas",
       "briefing": "projetos/alinhamento-dos-nomes-e-janelas.md"
+    },
+    {
+      "id": "tcc",
+      "nome": "TCC",
+      "briefing": "projetos/tcc.md"
     }
   ],
   "pedidos": [
@@ -156,6 +161,2375 @@
           "arquivo": "anexos/p-002/image.png",
           "tipo": "image/png",
           "tamanho": 68639
+        }
+      ]
+    },
+    {
+      "id": "p-003",
+      "projeto": "tcc",
+      "projetoNome": "TCC",
+      "texto": "eu quero que voce analise meu projeto de tcc , me de propostas do que melhorar ou do que adicionar , ver se teria como melhorar  a arquitetura tambem me de um resumo de tudo antes de subir para esse git https://github.com/LucasNishigima/EducaGame",
+      "status": "feito",
+      "missao": "m-008",
+      "data": "2026-10-09 13:53",
+      "anexos": [
+        {
+          "nome": "tcc/educagame/app.py",
+          "arquivo": "anexos/p-003/tcc/educagame/app.py",
+          "tipo": "text/plain",
+          "tamanho": 10011
+        },
+        {
+          "nome": "tcc/educagame/assets/deltaeducacional.jpg",
+          "arquivo": "anexos/p-003/tcc/educagame/assets/deltaeducacional.jpg",
+          "tipo": "image/jpeg",
+          "tamanho": 15267
+        },
+        {
+          "nome": "tcc/educagame/assets/etecaracatuba.png",
+          "arquivo": "anexos/p-003/tcc/educagame/assets/etecaracatuba.png",
+          "tipo": "application/octet-stream",
+          "tamanho": 7939
+        },
+        {
+          "nome": "tcc/educagame/claude/launch.json",
+          "arquivo": "anexos/p-003/tcc/educagame/claude/launch.json",
+          "tipo": "application/json",
+          "tamanho": 427
+        },
+        {
+          "nome": "tcc/educagame/core/ajuda.py",
+          "arquivo": "anexos/p-003/tcc/educagame/core/ajuda.py",
+          "tipo": "text/plain",
+          "tamanho": 7788
+        },
+        {
+          "nome": "tcc/educagame/core/answer-equivalence.py",
+          "arquivo": "anexos/p-003/tcc/educagame/core/answer-equivalence.py",
+          "tipo": "text/plain",
+          "tamanho": 4581
+        },
+        {
+          "nome": "tcc/educagame/core/config.py",
+          "arquivo": "anexos/p-003/tcc/educagame/core/config.py",
+          "tipo": "text/plain",
+          "tamanho": 25727
+        },
+        {
+          "nome": "tcc/educagame/core/dados.py",
+          "arquivo": "anexos/p-003/tcc/educagame/core/dados.py",
+          "tipo": "text/plain",
+          "tamanho": 747
+        },
+        {
+          "nome": "tcc/educagame/core/design-system-base.py",
+          "arquivo": "anexos/p-003/tcc/educagame/core/design-system-base.py",
+          "tipo": "text/plain",
+          "tamanho": 1605
+        },
+        {
+          "nome": "tcc/educagame/core/design-system-global.py",
+          "arquivo": "anexos/p-003/tcc/educagame/core/design-system-global.py",
+          "tipo": "text/plain",
+          "tamanho": 1931
+        },
+        {
+          "nome": "tcc/educagame/core/design-system-rpg.py",
+          "arquivo": "anexos/p-003/tcc/educagame/core/design-system-rpg.py",
+          "tipo": "text/plain",
+          "tamanho": 336
+        },
+        {
+          "nome": "tcc/educagame/core/design-system.py",
+          "arquivo": "anexos/p-003/tcc/educagame/core/design-system.py",
+          "tipo": "text/plain",
+          "tamanho": 239
+        },
+        {
+          "nome": "tcc/educagame/core/diagnostico-config.py",
+          "arquivo": "anexos/p-003/tcc/educagame/core/diagnostico-config.py",
+          "tipo": "text/plain",
+          "tamanho": 6252
+        },
+        {
+          "nome": "tcc/educagame/core/estilos/design-system-global.css",
+          "arquivo": "anexos/p-003/tcc/educagame/core/estilos/design-system-global.css",
+          "tipo": "text/plain",
+          "tamanho": 28600
+        },
+        {
+          "nome": "tcc/educagame/core/estilos/design-system-rpg.css",
+          "arquivo": "anexos/p-003/tcc/educagame/core/estilos/design-system-rpg.css",
+          "tipo": "text/plain",
+          "tamanho": 11447
+        },
+        {
+          "nome": "tcc/educagame/core/estilos/init.py",
+          "arquivo": "anexos/p-003/tcc/educagame/core/estilos/init.py",
+          "tipo": "text/plain",
+          "tamanho": 673
+        },
+        {
+          "nome": "tcc/educagame/core/expoentes-html.py",
+          "arquivo": "anexos/p-003/tcc/educagame/core/expoentes-html.py",
+          "tipo": "text/plain",
+          "tamanho": 4124
+        },
+        {
+          "nome": "tcc/educagame/core/formatters.py",
+          "arquivo": "anexos/p-003/tcc/educagame/core/formatters.py",
+          "tipo": "text/plain",
+          "tamanho": 11607
+        },
+        {
+          "nome": "tcc/educagame/core/formula-formatting.py",
+          "arquivo": "anexos/p-003/tcc/educagame/core/formula-formatting.py",
+          "tipo": "text/plain",
+          "tamanho": 12898
+        },
+        {
+          "nome": "tcc/educagame/core/init.py",
+          "arquivo": "anexos/p-003/tcc/educagame/core/init.py",
+          "tipo": "text/plain",
+          "tamanho": 0
+        },
+        {
+          "nome": "tcc/educagame/core/marcacao-crua.py",
+          "arquivo": "anexos/p-003/tcc/educagame/core/marcacao-crua.py",
+          "tipo": "text/plain",
+          "tamanho": 5461
+        },
+        {
+          "nome": "tcc/educagame/core/metas.py",
+          "arquivo": "anexos/p-003/tcc/educagame/core/metas.py",
+          "tipo": "text/plain",
+          "tamanho": 7547
+        },
+        {
+          "nome": "tcc/educagame/core/origem-questao.py",
+          "arquivo": "anexos/p-003/tcc/educagame/core/origem-questao.py",
+          "tipo": "text/plain",
+          "tamanho": 2918
+        },
+        {
+          "nome": "tcc/educagame/core/privacidade.py",
+          "arquivo": "anexos/p-003/tcc/educagame/core/privacidade.py",
+          "tipo": "text/plain",
+          "tamanho": 9491
+        },
+        {
+          "nome": "tcc/educagame/core/rate-limit.py",
+          "arquivo": "anexos/p-003/tcc/educagame/core/rate-limit.py",
+          "tipo": "text/plain",
+          "tamanho": 168
+        },
+        {
+          "nome": "tcc/educagame/core/runtime-context.py",
+          "arquivo": "anexos/p-003/tcc/educagame/core/runtime-context.py",
+          "tipo": "text/plain",
+          "tamanho": 9327
+        },
+        {
+          "nome": "tcc/educagame/core/senhas.py",
+          "arquivo": "anexos/p-003/tcc/educagame/core/senhas.py",
+          "tipo": "text/plain",
+          "tamanho": 2227
+        },
+        {
+          "nome": "tcc/educagame/core/sessao.py",
+          "arquivo": "anexos/p-003/tcc/educagame/core/sessao.py",
+          "tipo": "text/plain",
+          "tamanho": 7660
+        },
+        {
+          "nome": "tcc/educagame/core/simbolos.py",
+          "arquivo": "anexos/p-003/tcc/educagame/core/simbolos.py",
+          "tipo": "text/plain",
+          "tamanho": 6556
+        },
+        {
+          "nome": "tcc/educagame/core/text-cleanup.py",
+          "arquivo": "anexos/p-003/tcc/educagame/core/text-cleanup.py",
+          "tipo": "text/plain",
+          "tamanho": 31692
+        },
+        {
+          "nome": "tcc/educagame/core/unidades.py",
+          "arquivo": "anexos/p-003/tcc/educagame/core/unidades.py",
+          "tipo": "text/plain",
+          "tamanho": 4513
+        },
+        {
+          "nome": "tcc/educagame/core/utils.py",
+          "arquivo": "anexos/p-003/tcc/educagame/core/utils.py",
+          "tipo": "text/plain",
+          "tamanho": 25399
+        },
+        {
+          "nome": "tcc/educagame/data/banco-especifico-ef.json",
+          "arquivo": "anexos/p-003/tcc/educagame/data/banco-especifico-ef.json",
+          "tipo": "application/json",
+          "tamanho": 493958
+        },
+        {
+          "nome": "tcc/educagame/data/banco-especifico-em.json",
+          "arquivo": "anexos/p-003/tcc/educagame/data/banco-especifico-em.json",
+          "tipo": "application/json",
+          "tamanho": 1144481
+        },
+        {
+          "nome": "tcc/educagame/devcontainer/devcontainer.json",
+          "arquivo": "anexos/p-003/tcc/educagame/devcontainer/devcontainer.json",
+          "tipo": "application/json",
+          "tamanho": 1014
+        },
+        {
+          "nome": "tcc/educagame/env.example",
+          "arquivo": "anexos/p-003/tcc/educagame/env.example",
+          "tipo": "text/plain",
+          "tamanho": 6811
+        },
+        {
+          "nome": "tcc/educagame/flask-app.py",
+          "arquivo": "anexos/p-003/tcc/educagame/flask-app.py",
+          "tipo": "text/plain",
+          "tamanho": 16382
+        },
+        {
+          "nome": "tcc/educagame/gitattributes",
+          "arquivo": "anexos/p-003/tcc/educagame/gitattributes",
+          "tipo": "text/plain",
+          "tamanho": 127
+        },
+        {
+          "nome": "tcc/educagame/github/dependabot.yml",
+          "arquivo": "anexos/p-003/tcc/educagame/github/dependabot.yml",
+          "tipo": "text/plain",
+          "tamanho": 1083
+        },
+        {
+          "nome": "tcc/educagame/github/workflows/dependency-audit.yml",
+          "arquivo": "anexos/p-003/tcc/educagame/github/workflows/dependency-audit.yml",
+          "tipo": "text/plain",
+          "tamanho": 1532
+        },
+        {
+          "nome": "tcc/educagame/gitignore",
+          "arquivo": "anexos/p-003/tcc/educagame/gitignore",
+          "tipo": "text/plain",
+          "tamanho": 2178
+        },
+        {
+          "nome": "tcc/educagame/gunicorn-conf.py",
+          "arquivo": "anexos/p-003/tcc/educagame/gunicorn-conf.py",
+          "tipo": "text/plain",
+          "tamanho": 1447
+        },
+        {
+          "nome": "tcc/educagame/notes-codex.md",
+          "arquivo": "anexos/p-003/tcc/educagame/notes-codex.md",
+          "tipo": "text/markdown",
+          "tamanho": 698
+        },
+        {
+          "nome": "tcc/educagame/package-lock.json",
+          "arquivo": "anexos/p-003/tcc/educagame/package-lock.json",
+          "tipo": "application/json",
+          "tamanho": 11204
+        },
+        {
+          "nome": "tcc/educagame/package.json",
+          "arquivo": "anexos/p-003/tcc/educagame/package.json",
+          "tipo": "application/json",
+          "tamanho": 57
+        },
+        {
+          "nome": "tcc/educagame/procfile",
+          "arquivo": "anexos/p-003/tcc/educagame/procfile",
+          "tipo": "text/plain",
+          "tamanho": 64
+        },
+        {
+          "nome": "tcc/educagame/proximos-passos.md",
+          "arquivo": "anexos/p-003/tcc/educagame/proximos-passos.md",
+          "tipo": "text/markdown",
+          "tamanho": 86369
+        },
+        {
+          "nome": "tcc/educagame/pytest.ini",
+          "arquivo": "anexos/p-003/tcc/educagame/pytest.ini",
+          "tipo": "text/plain",
+          "tamanho": 85
+        },
+        {
+          "nome": "tcc/educagame/readme-flask.md",
+          "arquivo": "anexos/p-003/tcc/educagame/readme-flask.md",
+          "tipo": "text/markdown",
+          "tamanho": 756
+        },
+        {
+          "nome": "tcc/educagame/readme-ordem-execucao.txt",
+          "arquivo": "anexos/p-003/tcc/educagame/readme-ordem-execucao.txt",
+          "tipo": "text/plain",
+          "tamanho": 1635
+        },
+        {
+          "nome": "tcc/educagame/readme.md",
+          "arquivo": "anexos/p-003/tcc/educagame/readme.md",
+          "tipo": "text/markdown",
+          "tamanho": 7165
+        },
+        {
+          "nome": "tcc/educagame/render.yaml",
+          "arquivo": "anexos/p-003/tcc/educagame/render.yaml",
+          "tipo": "text/plain",
+          "tamanho": 1804
+        },
+        {
+          "nome": "tcc/educagame/repositories/aluno-repo.py",
+          "arquivo": "anexos/p-003/tcc/educagame/repositories/aluno-repo.py",
+          "tipo": "text/plain",
+          "tamanho": 5490
+        },
+        {
+          "nome": "tcc/educagame/repositories/cache-repo.py",
+          "arquivo": "anexos/p-003/tcc/educagame/repositories/cache-repo.py",
+          "tipo": "text/plain",
+          "tamanho": 2090
+        },
+        {
+          "nome": "tcc/educagame/repositories/database-repo.py",
+          "arquivo": "anexos/p-003/tcc/educagame/repositories/database-repo.py",
+          "tipo": "text/plain",
+          "tamanho": 10387
+        },
+        {
+          "nome": "tcc/educagame/repositories/escola-repo.py",
+          "arquivo": "anexos/p-003/tcc/educagame/repositories/escola-repo.py",
+          "tipo": "text/plain",
+          "tamanho": 3128
+        },
+        {
+          "nome": "tcc/educagame/repositories/gravacao.py",
+          "arquivo": "anexos/p-003/tcc/educagame/repositories/gravacao.py",
+          "tipo": "text/plain",
+          "tamanho": 2138
+        },
+        {
+          "nome": "tcc/educagame/repositories/init.py",
+          "arquivo": "anexos/p-003/tcc/educagame/repositories/init.py",
+          "tipo": "text/plain",
+          "tamanho": 0
+        },
+        {
+          "nome": "tcc/educagame/repositories/log-repo.py",
+          "arquivo": "anexos/p-003/tcc/educagame/repositories/log-repo.py",
+          "tipo": "text/plain",
+          "tamanho": 10970
+        },
+        {
+          "nome": "tcc/educagame/repositories/meta-repo.py",
+          "arquivo": "anexos/p-003/tcc/educagame/repositories/meta-repo.py",
+          "tipo": "text/plain",
+          "tamanho": 5018
+        },
+        {
+          "nome": "tcc/educagame/repositories/rpg-config-repo.py",
+          "arquivo": "anexos/p-003/tcc/educagame/repositories/rpg-config-repo.py",
+          "tipo": "text/plain",
+          "tamanho": 2749
+        },
+        {
+          "nome": "tcc/educagame/repositories/supabase-client.py",
+          "arquivo": "anexos/p-003/tcc/educagame/repositories/supabase-client.py",
+          "tipo": "text/plain",
+          "tamanho": 10652
+        },
+        {
+          "nome": "tcc/educagame/repositories/usuario-repo.py",
+          "arquivo": "anexos/p-003/tcc/educagame/repositories/usuario-repo.py",
+          "tipo": "text/plain",
+          "tamanho": 2407
+        },
+        {
+          "nome": "tcc/educagame/requirements-base.txt",
+          "arquivo": "anexos/p-003/tcc/educagame/requirements-base.txt",
+          "tipo": "text/plain",
+          "tamanho": 761
+        },
+        {
+          "nome": "tcc/educagame/requirements-dev.txt",
+          "arquivo": "anexos/p-003/tcc/educagame/requirements-dev.txt",
+          "tipo": "text/plain",
+          "tamanho": 50
+        },
+        {
+          "nome": "tcc/educagame/requirements-flask.txt",
+          "arquivo": "anexos/p-003/tcc/educagame/requirements-flask.txt",
+          "tipo": "text/plain",
+          "tamanho": 292
+        },
+        {
+          "nome": "tcc/educagame/requirements.txt",
+          "arquivo": "anexos/p-003/tcc/educagame/requirements.txt",
+          "tipo": "text/plain",
+          "tamanho": 161
+        },
+        {
+          "nome": "tcc/educagame/runtime.txt",
+          "arquivo": "anexos/p-003/tcc/educagame/runtime.txt",
+          "tipo": "text/plain",
+          "tamanho": 15
+        },
+        {
+          "nome": "tcc/educagame/scripts/criar-alunos-teste.py",
+          "arquivo": "anexos/p-003/tcc/educagame/scripts/criar-alunos-teste.py",
+          "tipo": "text/plain",
+          "tamanho": 15371
+        },
+        {
+          "nome": "tcc/educagame/scripts/dados-do-aluno.py",
+          "arquivo": "anexos/p-003/tcc/educagame/scripts/dados-do-aluno.py",
+          "tipo": "text/plain",
+          "tamanho": 2745
+        },
+        {
+          "nome": "tcc/educagame/scripts/excluir-aluno.py",
+          "arquivo": "anexos/p-003/tcc/educagame/scripts/excluir-aluno.py",
+          "tipo": "text/plain",
+          "tamanho": 4368
+        },
+        {
+          "nome": "tcc/educagame/scripts/gerar-env-para-secret-file.py",
+          "arquivo": "anexos/p-003/tcc/educagame/scripts/gerar-env-para-secret-file.py",
+          "tipo": "text/plain",
+          "tamanho": 3586
+        },
+        {
+          "nome": "tcc/educagame/scripts/gerar-guia-acesso.py",
+          "arquivo": "anexos/p-003/tcc/educagame/scripts/gerar-guia-acesso.py",
+          "tipo": "text/plain",
+          "tamanho": 18940
+        },
+        {
+          "nome": "tcc/educagame/scripts/seed-usuarios.py",
+          "arquivo": "anexos/p-003/tcc/educagame/scripts/seed-usuarios.py",
+          "tipo": "text/plain",
+          "tamanho": 1711
+        },
+        {
+          "nome": "tcc/educagame/services/aluno-auth-service.py",
+          "arquivo": "anexos/p-003/tcc/educagame/services/aluno-auth-service.py",
+          "tipo": "text/plain",
+          "tamanho": 19269
+        },
+        {
+          "nome": "tcc/educagame/services/aluno-service.py",
+          "arquivo": "anexos/p-003/tcc/educagame/services/aluno-service.py",
+          "tipo": "text/plain",
+          "tamanho": 2520
+        },
+        {
+          "nome": "tcc/educagame/services/auth-service.py",
+          "arquivo": "anexos/p-003/tcc/educagame/services/auth-service.py",
+          "tipo": "text/plain",
+          "tamanho": 4881
+        },
+        {
+          "nome": "tcc/educagame/services/avisos-de-gravacao.py",
+          "arquivo": "anexos/p-003/tcc/educagame/services/avisos-de-gravacao.py",
+          "tipo": "text/plain",
+          "tamanho": 488
+        },
+        {
+          "nome": "tcc/educagame/services/banks/base.py",
+          "arquivo": "anexos/p-003/tcc/educagame/services/banks/base.py",
+          "tipo": "text/plain",
+          "tamanho": 6935
+        },
+        {
+          "nome": "tcc/educagame/services/banks/em.py",
+          "arquivo": "anexos/p-003/tcc/educagame/services/banks/em.py",
+          "tipo": "text/plain",
+          "tamanho": 41500
+        },
+        {
+          "nome": "tcc/educagame/services/banks/fundamental.py",
+          "arquivo": "anexos/p-003/tcc/educagame/services/banks/fundamental.py",
+          "tipo": "text/plain",
+          "tamanho": 23621
+        },
+        {
+          "nome": "tcc/educagame/services/banks/init.py",
+          "arquivo": "anexos/p-003/tcc/educagame/services/banks/init.py",
+          "tipo": "text/plain",
+          "tamanho": 0
+        },
+        {
+          "nome": "tcc/educagame/services/banks/laboratorio.py",
+          "arquivo": "anexos/p-003/tcc/educagame/services/banks/laboratorio.py",
+          "tipo": "text/plain",
+          "tamanho": 67256
+        },
+        {
+          "nome": "tcc/educagame/services/banks/rpg.py",
+          "arquivo": "anexos/p-003/tcc/educagame/services/banks/rpg.py",
+          "tipo": "text/plain",
+          "tamanho": 41682
+        },
+        {
+          "nome": "tcc/educagame/services/calculo-service.py",
+          "arquivo": "anexos/p-003/tcc/educagame/services/calculo-service.py",
+          "tipo": "text/plain",
+          "tamanho": 13481
+        },
+        {
+          "nome": "tcc/educagame/services/dados-pessoais.py",
+          "arquivo": "anexos/p-003/tcc/educagame/services/dados-pessoais.py",
+          "tipo": "text/plain",
+          "tamanho": 8454
+        },
+        {
+          "nome": "tcc/educagame/services/dados-service.py",
+          "arquivo": "anexos/p-003/tcc/educagame/services/dados-service.py",
+          "tipo": "text/plain",
+          "tamanho": 465
+        },
+        {
+          "nome": "tcc/educagame/services/email-service.py",
+          "arquivo": "anexos/p-003/tcc/educagame/services/email-service.py",
+          "tipo": "text/plain",
+          "tamanho": 6483
+        },
+        {
+          "nome": "tcc/educagame/services/enem-service.py",
+          "arquivo": "anexos/p-003/tcc/educagame/services/enem-service.py",
+          "tipo": "text/plain",
+          "tamanho": 52984
+        },
+        {
+          "nome": "tcc/educagame/services/escola-service.py",
+          "arquivo": "anexos/p-003/tcc/educagame/services/escola-service.py",
+          "tipo": "text/plain",
+          "tamanho": 6289
+        },
+        {
+          "nome": "tcc/educagame/services/exatas-bank.py",
+          "arquivo": "anexos/p-003/tcc/educagame/services/exatas-bank.py",
+          "tipo": "text/plain",
+          "tamanho": 5161
+        },
+        {
+          "nome": "tcc/educagame/services/fundamental-conteudo-especifico.py",
+          "arquivo": "anexos/p-003/tcc/educagame/services/fundamental-conteudo-especifico.py",
+          "tipo": "text/plain",
+          "tamanho": 2310
+        },
+        {
+          "nome": "tcc/educagame/services/gamification-service.py",
+          "arquivo": "anexos/p-003/tcc/educagame/services/gamification-service.py",
+          "tipo": "text/plain",
+          "tamanho": 4296
+        },
+        {
+          "nome": "tcc/educagame/services/guildas-service.py",
+          "arquivo": "anexos/p-003/tcc/educagame/services/guildas-service.py",
+          "tipo": "text/plain",
+          "tamanho": 3484
+        },
+        {
+          "nome": "tcc/educagame/services/historico-perguntas.py",
+          "arquivo": "anexos/p-003/tcc/educagame/services/historico-perguntas.py",
+          "tipo": "text/plain",
+          "tamanho": 4716
+        },
+        {
+          "nome": "tcc/educagame/services/ia-service.py",
+          "arquivo": "anexos/p-003/tcc/educagame/services/ia-service.py",
+          "tipo": "text/plain",
+          "tamanho": 1204
+        },
+        {
+          "nome": "tcc/educagame/services/ia/base.py",
+          "arquivo": "anexos/p-003/tcc/educagame/services/ia/base.py",
+          "tipo": "text/plain",
+          "tamanho": 174
+        },
+        {
+          "nome": "tcc/educagame/services/ia/citacao-alternativas.py",
+          "arquivo": "anexos/p-003/tcc/educagame/services/ia/citacao-alternativas.py",
+          "tipo": "text/plain",
+          "tamanho": 2359
+        },
+        {
+          "nome": "tcc/educagame/services/ia/enigma.py",
+          "arquivo": "anexos/p-003/tcc/educagame/services/ia/enigma.py",
+          "tipo": "text/plain",
+          "tamanho": 54854
+        },
+        {
+          "nome": "tcc/educagame/services/ia/explicacao-vazia.py",
+          "arquivo": "anexos/p-003/tcc/educagame/services/ia/explicacao-vazia.py",
+          "tipo": "text/plain",
+          "tamanho": 2105
+        },
+        {
+          "nome": "tcc/educagame/services/ia/fatos-canonicos.py",
+          "arquivo": "anexos/p-003/tcc/educagame/services/ia/fatos-canonicos.py",
+          "tipo": "text/plain",
+          "tamanho": 10325
+        },
+        {
+          "nome": "tcc/educagame/services/ia/ingles.py",
+          "arquivo": "anexos/p-003/tcc/educagame/services/ia/ingles.py",
+          "tipo": "text/plain",
+          "tamanho": 7032
+        },
+        {
+          "nome": "tcc/educagame/services/ia/init.py",
+          "arquivo": "anexos/p-003/tcc/educagame/services/ia/init.py",
+          "tipo": "text/plain",
+          "tamanho": 136
+        },
+        {
+          "nome": "tcc/educagame/services/ia/normalizacao.py",
+          "arquivo": "anexos/p-003/tcc/educagame/services/ia/normalizacao.py",
+          "tipo": "text/plain",
+          "tamanho": 16718
+        },
+        {
+          "nome": "tcc/educagame/services/ia/opcoes-no-enunciado.py",
+          "arquivo": "anexos/p-003/tcc/educagame/services/ia/opcoes-no-enunciado.py",
+          "tipo": "text/plain",
+          "tamanho": 1434
+        },
+        {
+          "nome": "tcc/educagame/services/ia/providers.py",
+          "arquivo": "anexos/p-003/tcc/educagame/services/ia/providers.py",
+          "tipo": "text/plain",
+          "tamanho": 31722
+        },
+        {
+          "nome": "tcc/educagame/services/ia/questoes.py",
+          "arquivo": "anexos/p-003/tcc/educagame/services/ia/questoes.py",
+          "tipo": "text/plain",
+          "tamanho": 2802
+        },
+        {
+          "nome": "tcc/educagame/services/ia/resposta-no-enunciado.py",
+          "arquivo": "anexos/p-003/tcc/educagame/services/ia/resposta-no-enunciado.py",
+          "tipo": "text/plain",
+          "tamanho": 5899
+        },
+        {
+          "nome": "tcc/educagame/services/ia/validacao.py",
+          "arquivo": "anexos/p-003/tcc/educagame/services/ia/validacao.py",
+          "tipo": "text/plain",
+          "tamanho": 95856
+        },
+        {
+          "nome": "tcc/educagame/services/init.py",
+          "arquivo": "anexos/p-003/tcc/educagame/services/init.py",
+          "tipo": "text/plain",
+          "tamanho": 0
+        },
+        {
+          "nome": "tcc/educagame/services/metas-service.py",
+          "arquivo": "anexos/p-003/tcc/educagame/services/metas-service.py",
+          "tipo": "text/plain",
+          "tamanho": 5213
+        },
+        {
+          "nome": "tcc/educagame/services/oraculo-conteudo-especifico.py",
+          "arquivo": "anexos/p-003/tcc/educagame/services/oraculo-conteudo-especifico.py",
+          "tipo": "text/plain",
+          "tamanho": 1210
+        },
+        {
+          "nome": "tcc/educagame/services/pedagogical-feedback.py",
+          "arquivo": "anexos/p-003/tcc/educagame/services/pedagogical-feedback.py",
+          "tipo": "text/plain",
+          "tamanho": 16413
+        },
+        {
+          "nome": "tcc/educagame/services/professor-service.py",
+          "arquivo": "anexos/p-003/tcc/educagame/services/professor-service.py",
+          "tipo": "text/plain",
+          "tamanho": 6728
+        },
+        {
+          "nome": "tcc/educagame/services/relatorios/commons.py",
+          "arquivo": "anexos/p-003/tcc/educagame/services/relatorios/commons.py",
+          "tipo": "text/plain",
+          "tamanho": 31195
+        },
+        {
+          "nome": "tcc/educagame/services/relatorios/init.py",
+          "arquivo": "anexos/p-003/tcc/educagame/services/relatorios/init.py",
+          "tipo": "text/plain",
+          "tamanho": 1177
+        },
+        {
+          "nome": "tcc/educagame/services/relatorios/pdf-boss-rush.py",
+          "arquivo": "anexos/p-003/tcc/educagame/services/relatorios/pdf-boss-rush.py",
+          "tipo": "text/plain",
+          "tamanho": 5586
+        },
+        {
+          "nome": "tcc/educagame/services/relatorios/pdf-enem.py",
+          "arquivo": "anexos/p-003/tcc/educagame/services/relatorios/pdf-enem.py",
+          "tipo": "text/plain",
+          "tamanho": 6362
+        },
+        {
+          "nome": "tcc/educagame/services/relatorios/pdf-escape-room.py",
+          "arquivo": "anexos/p-003/tcc/educagame/services/relatorios/pdf-escape-room.py",
+          "tipo": "text/plain",
+          "tamanho": 5254
+        },
+        {
+          "nome": "tcc/educagame/services/relatorios/pdf-guildas.py",
+          "arquivo": "anexos/p-003/tcc/educagame/services/relatorios/pdf-guildas.py",
+          "tipo": "text/plain",
+          "tamanho": 5296
+        },
+        {
+          "nome": "tcc/educagame/services/relatorios/pdf-revisao.py",
+          "arquivo": "anexos/p-003/tcc/educagame/services/relatorios/pdf-revisao.py",
+          "tipo": "text/plain",
+          "tamanho": 5468
+        },
+        {
+          "nome": "tcc/educagame/services/relatorios/pdf-rpg.py",
+          "arquivo": "anexos/p-003/tcc/educagame/services/relatorios/pdf-rpg.py",
+          "tipo": "text/plain",
+          "tamanho": 3315
+        },
+        {
+          "nome": "tcc/educagame/services/relatorios/pdf-turma.py",
+          "arquivo": "anexos/p-003/tcc/educagame/services/relatorios/pdf-turma.py",
+          "tipo": "text/plain",
+          "tamanho": 3505
+        },
+        {
+          "nome": "tcc/educagame/services/rpg-config-service.py",
+          "arquivo": "anexos/p-003/tcc/educagame/services/rpg-config-service.py",
+          "tipo": "text/plain",
+          "tamanho": 2638
+        },
+        {
+          "nome": "tcc/educagame/services/rpg-service.py",
+          "arquivo": "anexos/p-003/tcc/educagame/services/rpg-service.py",
+          "tipo": "text/plain",
+          "tamanho": 52535
+        },
+        {
+          "nome": "tcc/educagame/services/usuario-service.py",
+          "arquivo": "anexos/p-003/tcc/educagame/services/usuario-service.py",
+          "tipo": "text/plain",
+          "tamanho": 9374
+        },
+        {
+          "nome": "tcc/educagame/st/init.py",
+          "arquivo": "anexos/p-003/tcc/educagame/st/init.py",
+          "tipo": "text/plain",
+          "tamanho": 37
+        },
+        {
+          "nome": "tcc/educagame/st/ui/admin-st.py",
+          "arquivo": "anexos/p-003/tcc/educagame/st/ui/admin-st.py",
+          "tipo": "text/plain",
+          "tamanho": 19428
+        },
+        {
+          "nome": "tcc/educagame/st/ui/ajuda-st.py",
+          "arquivo": "anexos/p-003/tcc/educagame/st/ui/ajuda-st.py",
+          "tipo": "text/plain",
+          "tamanho": 2076
+        },
+        {
+          "nome": "tcc/educagame/st/ui/home-st.py",
+          "arquivo": "anexos/p-003/tcc/educagame/st/ui/home-st.py",
+          "tipo": "text/plain",
+          "tamanho": 34141
+        },
+        {
+          "nome": "tcc/educagame/st/ui/init.py",
+          "arquivo": "anexos/p-003/tcc/educagame/st/ui/init.py",
+          "tipo": "text/plain",
+          "tamanho": 36
+        },
+        {
+          "nome": "tcc/educagame/st/ui/mode-common-st.py",
+          "arquivo": "anexos/p-003/tcc/educagame/st/ui/mode-common-st.py",
+          "tipo": "text/plain",
+          "tamanho": 33963
+        },
+        {
+          "nome": "tcc/educagame/st/ui/perfil-aluno-st.py",
+          "arquivo": "anexos/p-003/tcc/educagame/st/ui/perfil-aluno-st.py",
+          "tipo": "text/plain",
+          "tamanho": 2552
+        },
+        {
+          "nome": "tcc/educagame/st/ui/professor-analises-st.py",
+          "arquivo": "anexos/p-003/tcc/educagame/st/ui/professor-analises-st.py",
+          "tipo": "text/plain",
+          "tamanho": 12092
+        },
+        {
+          "nome": "tcc/educagame/st/ui/professor-panel-st.py",
+          "arquivo": "anexos/p-003/tcc/educagame/st/ui/professor-panel-st.py",
+          "tipo": "text/plain",
+          "tamanho": 30846
+        },
+        {
+          "nome": "tcc/educagame/st/ui/rpg-helpers-st.py",
+          "arquivo": "anexos/p-003/tcc/educagame/st/ui/rpg-helpers-st.py",
+          "tipo": "text/plain",
+          "tamanho": 19236
+        },
+        {
+          "nome": "tcc/educagame/st/ui/tela-boss-rush-enem-st.py",
+          "arquivo": "anexos/p-003/tcc/educagame/st/ui/tela-boss-rush-enem-st.py",
+          "tipo": "text/plain",
+          "tamanho": 16005
+        },
+        {
+          "nome": "tcc/educagame/st/ui/tela-enem-st.py",
+          "arquivo": "anexos/p-003/tcc/educagame/st/ui/tela-enem-st.py",
+          "tipo": "text/plain",
+          "tamanho": 24888
+        },
+        {
+          "nome": "tcc/educagame/st/ui/tela-escape-room-st.py",
+          "arquivo": "anexos/p-003/tcc/educagame/st/ui/tela-escape-room-st.py",
+          "tipo": "text/plain",
+          "tamanho": 10780
+        },
+        {
+          "nome": "tcc/educagame/st/ui/tela-guildas-st.py",
+          "arquivo": "anexos/p-003/tcc/educagame/st/ui/tela-guildas-st.py",
+          "tipo": "text/plain",
+          "tamanho": 7387
+        },
+        {
+          "nome": "tcc/educagame/st/ui/tela-laboratorio-st.py",
+          "arquivo": "anexos/p-003/tcc/educagame/st/ui/tela-laboratorio-st.py",
+          "tipo": "text/plain",
+          "tamanho": 7853
+        },
+        {
+          "nome": "tcc/educagame/st/ui/tela-oraculo-st.py",
+          "arquivo": "anexos/p-003/tcc/educagame/st/ui/tela-oraculo-st.py",
+          "tipo": "text/plain",
+          "tamanho": 8343
+        },
+        {
+          "nome": "tcc/educagame/st/ui/tela-rpg-st.py",
+          "arquivo": "anexos/p-003/tcc/educagame/st/ui/tela-rpg-st.py",
+          "tipo": "text/plain",
+          "tamanho": 34060
+        },
+        {
+          "nome": "tcc/educagame/st/ui/tela-treino-st.py",
+          "arquivo": "anexos/p-003/tcc/educagame/st/ui/tela-treino-st.py",
+          "tipo": "text/plain",
+          "tamanho": 9847
+        },
+        {
+          "nome": "tcc/educagame/suno/no-letters-no-goodbye.mp3",
+          "arquivo": "anexos/p-003/tcc/educagame/suno/no-letters-no-goodbye.mp3",
+          "tipo": "application/octet-stream",
+          "tamanho": 5037155
+        },
+        {
+          "nome": "tcc/educagame/supabase/migrations/20260803120000-bootstrap.sql",
+          "arquivo": "anexos/p-003/tcc/educagame/supabase/migrations/20260803120000-bootstrap.sql",
+          "tipo": "text/plain",
+          "tamanho": 2863
+        },
+        {
+          "nome": "tcc/educagame/supabase/migrations/20260803120100-usuarios.sql",
+          "arquivo": "anexos/p-003/tcc/educagame/supabase/migrations/20260803120100-usuarios.sql",
+          "tipo": "text/plain",
+          "tamanho": 1101
+        },
+        {
+          "nome": "tcc/educagame/supabase/migrations/20260803120200-logs-pontos.sql",
+          "arquivo": "anexos/p-003/tcc/educagame/supabase/migrations/20260803120200-logs-pontos.sql",
+          "tipo": "text/plain",
+          "tamanho": 2945
+        },
+        {
+          "nome": "tcc/educagame/supabase/migrations/20260803120300-rpg-progressos.sql",
+          "arquivo": "anexos/p-003/tcc/educagame/supabase/migrations/20260803120300-rpg-progressos.sql",
+          "tipo": "text/plain",
+          "tamanho": 1220
+        },
+        {
+          "nome": "tcc/educagame/supabase/migrations/20260803120400-estados-sessao.sql",
+          "arquivo": "anexos/p-003/tcc/educagame/supabase/migrations/20260803120400-estados-sessao.sql",
+          "tipo": "text/plain",
+          "tamanho": 868
+        },
+        {
+          "nome": "tcc/educagame/supabase/migrations/20260803120500-views.sql",
+          "arquivo": "anexos/p-003/tcc/educagame/supabase/migrations/20260803120500-views.sql",
+          "tipo": "text/plain",
+          "tamanho": 1753
+        },
+        {
+          "nome": "tcc/educagame/supabase/migrations/20260803120600-seed.sql",
+          "arquivo": "anexos/p-003/tcc/educagame/supabase/migrations/20260803120600-seed.sql",
+          "tipo": "text/plain",
+          "tamanho": 529
+        },
+        {
+          "nome": "tcc/educagame/supabase/migrations/20260804120000-cache-dados.sql",
+          "arquivo": "anexos/p-003/tcc/educagame/supabase/migrations/20260804120000-cache-dados.sql",
+          "tipo": "text/plain",
+          "tamanho": 984
+        },
+        {
+          "nome": "tcc/educagame/supabase/migrations/20260806120000-alunos-login.sql",
+          "arquivo": "anexos/p-003/tcc/educagame/supabase/migrations/20260806120000-alunos-login.sql",
+          "tipo": "text/plain",
+          "tamanho": 899
+        },
+        {
+          "nome": "tcc/educagame/supabase/migrations/20260810120000-alunos-username.sql",
+          "arquivo": "anexos/p-003/tcc/educagame/supabase/migrations/20260810120000-alunos-username.sql",
+          "tipo": "text/plain",
+          "tamanho": 618
+        },
+        {
+          "nome": "tcc/educagame/supabase/migrations/20260814120000-view-resumo-turma-rls.sql",
+          "arquivo": "anexos/p-003/tcc/educagame/supabase/migrations/20260814120000-view-resumo-turma-rls.sql",
+          "tipo": "text/plain",
+          "tamanho": 1449
+        },
+        {
+          "nome": "tcc/educagame/supabase/migrations/20260831120000-usuarios-escola.sql",
+          "arquivo": "anexos/p-003/tcc/educagame/supabase/migrations/20260831120000-usuarios-escola.sql",
+          "tipo": "text/plain",
+          "tamanho": 2256
+        },
+        {
+          "nome": "tcc/educagame/supabase/migrations/20260903120000-logs-passos-json.sql",
+          "arquivo": "anexos/p-003/tcc/educagame/supabase/migrations/20260903120000-logs-passos-json.sql",
+          "tipo": "text/plain",
+          "tamanho": 2439
+        },
+        {
+          "nome": "tcc/educagame/supabase/migrations/20260903130000-dificuldade-uma-grafia.sql",
+          "arquivo": "anexos/p-003/tcc/educagame/supabase/migrations/20260903130000-dificuldade-uma-grafia.sql",
+          "tipo": "text/plain",
+          "tamanho": 2446
+        },
+        {
+          "nome": "tcc/educagame/supabase/migrations/20260909120000-logs-formula-e-legenda.sql",
+          "arquivo": "anexos/p-003/tcc/educagame/supabase/migrations/20260909120000-logs-formula-e-legenda.sql",
+          "tipo": "text/plain",
+          "tamanho": 2571
+        },
+        {
+          "nome": "tcc/educagame/supabase/migrations/20260910120000-logs-opcoes.sql",
+          "arquivo": "anexos/p-003/tcc/educagame/supabase/migrations/20260910120000-logs-opcoes.sql",
+          "tipo": "text/plain",
+          "tamanho": 3156
+        },
+        {
+          "nome": "tcc/educagame/supabase/migrations/20260913120000-pontos-por-dificuldade-no.sql",
+          "arquivo": "anexos/p-003/tcc/educagame/supabase/migrations/20260913120000-pontos-por-dificuldade-no.sql",
+          "tipo": "text/plain",
+          "tamanho": 4023
+        },
+        {
+          "nome": "tcc/educagame/supabase/migrations/20260925120000-consentimento-lgpd.sql",
+          "arquivo": "anexos/p-003/tcc/educagame/supabase/migrations/20260925120000-consentimento-lgpd.sql",
+          "tipo": "text/plain",
+          "tamanho": 609
+        },
+        {
+          "nome": "tcc/educagame/supabase/migrations/20260929120000-metas-e-foco.sql",
+          "arquivo": "anexos/p-003/tcc/educagame/supabase/migrations/20260929120000-metas-e-foco.sql",
+          "tipo": "text/plain",
+          "tamanho": 2961
+        },
+        {
+          "nome": "tcc/educagame/tests/apoio-flask.py",
+          "arquivo": "anexos/p-003/tcc/educagame/tests/apoio-flask.py",
+          "tipo": "text/plain",
+          "tamanho": 772
+        },
+        {
+          "nome": "tcc/educagame/tests/apoio-streamlit.py",
+          "arquivo": "anexos/p-003/tcc/educagame/tests/apoio-streamlit.py",
+          "tipo": "text/plain",
+          "tamanho": 14465
+        },
+        {
+          "nome": "tcc/educagame/tests/conftest.py",
+          "arquivo": "anexos/p-003/tcc/educagame/tests/conftest.py",
+          "tipo": "text/plain",
+          "tamanho": 9382
+        },
+        {
+          "nome": "tcc/educagame/tests/init.py",
+          "arquivo": "anexos/p-003/tcc/educagame/tests/init.py",
+          "tipo": "text/plain",
+          "tamanho": 0
+        },
+        {
+          "nome": "tcc/educagame/tests/test-aba-de-treino.py",
+          "arquivo": "anexos/p-003/tcc/educagame/tests/test-aba-de-treino.py",
+          "tipo": "text/plain",
+          "tamanho": 4255
+        },
+        {
+          "nome": "tcc/educagame/tests/test-acento-nao-troca-verbo.py",
+          "arquivo": "anexos/p-003/tcc/educagame/tests/test-acento-nao-troca-verbo.py",
+          "tipo": "text/plain",
+          "tamanho": 5432
+        },
+        {
+          "nome": "tcc/educagame/tests/test-acentos-dos-temas.py",
+          "arquivo": "anexos/p-003/tcc/educagame/tests/test-acentos-dos-temas.py",
+          "tipo": "text/plain",
+          "tamanho": 3796
+        },
+        {
+          "nome": "tcc/educagame/tests/test-acentos-nao-colam-palavras.py",
+          "arquivo": "anexos/p-003/tcc/educagame/tests/test-acentos-nao-colam-palavras.py",
+          "tipo": "text/plain",
+          "tamanho": 3556
+        },
+        {
+          "nome": "tcc/educagame/tests/test-acentos-nao-estragam-ingles.py",
+          "arquivo": "anexos/p-003/tcc/educagame/tests/test-acentos-nao-estragam-ingles.py",
+          "tipo": "text/plain",
+          "tamanho": 5696
+        },
+        {
+          "nome": "tcc/educagame/tests/test-acentos-rpg.py",
+          "arquivo": "anexos/p-003/tcc/educagame/tests/test-acentos-rpg.py",
+          "tipo": "text/plain",
+          "tamanho": 7003
+        },
+        {
+          "nome": "tcc/educagame/tests/test-acentuacao-das-mensagens.py",
+          "arquivo": "anexos/p-003/tcc/educagame/tests/test-acentuacao-das-mensagens.py",
+          "tipo": "text/plain",
+          "tamanho": 13889
+        },
+        {
+          "nome": "tcc/educagame/tests/test-adm-streamlit-por-papel.py",
+          "arquivo": "anexos/p-003/tcc/educagame/tests/test-adm-streamlit-por-papel.py",
+          "tipo": "text/plain",
+          "tamanho": 20137
+        },
+        {
+          "nome": "tcc/educagame/tests/test-ajuda-dentro-do-app.py",
+          "arquivo": "anexos/p-003/tcc/educagame/tests/test-ajuda-dentro-do-app.py",
+          "tipo": "text/plain",
+          "tamanho": 7870
+        },
+        {
+          "nome": "tcc/educagame/tests/test-alternativa-contradita.py",
+          "arquivo": "anexos/p-003/tcc/educagame/tests/test-alternativa-contradita.py",
+          "tipo": "text/plain",
+          "tamanho": 8174
+        },
+        {
+          "nome": "tcc/educagame/tests/test-aluno-auth.py",
+          "arquivo": "anexos/p-003/tcc/educagame/tests/test-aluno-auth.py",
+          "tipo": "text/plain",
+          "tamanho": 19866
+        },
+        {
+          "nome": "tcc/educagame/tests/test-aluno-travado-na-propria-conta.py",
+          "arquivo": "anexos/p-003/tcc/educagame/tests/test-aluno-travado-na-propria-conta.py",
+          "tipo": "text/plain",
+          "tamanho": 3355
+        },
+        {
+          "nome": "tcc/educagame/tests/test-analises-do-professor.py",
+          "arquivo": "anexos/p-003/tcc/educagame/tests/test-analises-do-professor.py",
+          "tipo": "text/plain",
+          "tamanho": 11038
+        },
+        {
+          "nome": "tcc/educagame/tests/test-animacoes-css.py",
+          "arquivo": "anexos/p-003/tcc/educagame/tests/test-animacoes-css.py",
+          "tipo": "text/plain",
+          "tamanho": 6150
+        },
+        {
+          "nome": "tcc/educagame/tests/test-answer-equivalence.py",
+          "arquivo": "anexos/p-003/tcc/educagame/tests/test-answer-equivalence.py",
+          "tipo": "text/plain",
+          "tamanho": 1620
+        },
+        {
+          "nome": "tcc/educagame/tests/test-auth-service.py",
+          "arquivo": "anexos/p-003/tcc/educagame/tests/test-auth-service.py",
+          "tipo": "text/plain",
+          "tamanho": 1453
+        },
+        {
+          "nome": "tcc/educagame/tests/test-aventura-presa-a-escola.py",
+          "arquivo": "anexos/p-003/tcc/educagame/tests/test-aventura-presa-a-escola.py",
+          "tipo": "text/plain",
+          "tamanho": 11186
+        },
+        {
+          "nome": "tcc/educagame/tests/test-aviso-de-banco-proprio.py",
+          "arquivo": "anexos/p-003/tcc/educagame/tests/test-aviso-de-banco-proprio.py",
+          "tipo": "text/plain",
+          "tamanho": 23305
+        },
+        {
+          "nome": "tcc/educagame/tests/test-aviso-de-carregamento-e-tempo.py",
+          "arquivo": "anexos/p-003/tcc/educagame/tests/test-aviso-de-carregamento-e-tempo.py",
+          "tipo": "text/plain",
+          "tamanho": 11056
+        },
+        {
+          "nome": "tcc/educagame/tests/test-banco-quimica-e-legenda.py",
+          "arquivo": "anexos/p-003/tcc/educagame/tests/test-banco-quimica-e-legenda.py",
+          "tipo": "text/plain",
+          "tamanho": 6055
+        },
+        {
+          "nome": "tcc/educagame/tests/test-bancos-proprios.py",
+          "arquivo": "anexos/p-003/tcc/educagame/tests/test-bancos-proprios.py",
+          "tipo": "text/plain",
+          "tamanho": 7956
+        },
+        {
+          "nome": "tcc/educagame/tests/test-bncc-codigo-e-habilidade.py",
+          "arquivo": "anexos/p-003/tcc/educagame/tests/test-bncc-codigo-e-habilidade.py",
+          "tipo": "text/plain",
+          "tamanho": 12080
+        },
+        {
+          "nome": "tcc/educagame/tests/test-cache-dois-niveis.py",
+          "arquivo": "anexos/p-003/tcc/educagame/tests/test-cache-dois-niveis.py",
+          "tipo": "text/plain",
+          "tamanho": 4888
+        },
+        {
+          "nome": "tcc/educagame/tests/test-calculo-service.py",
+          "arquivo": "anexos/p-003/tcc/educagame/tests/test-calculo-service.py",
+          "tipo": "text/plain",
+          "tamanho": 16172
+        },
+        {
+          "nome": "tcc/educagame/tests/test-codigo-da-escola.py",
+          "arquivo": "anexos/p-003/tcc/educagame/tests/test-codigo-da-escola.py",
+          "tipo": "text/plain",
+          "tamanho": 6871
+        },
+        {
+          "nome": "tcc/educagame/tests/test-codigo-no-streamlit.py",
+          "arquivo": "anexos/p-003/tcc/educagame/tests/test-codigo-no-streamlit.py",
+          "tipo": "text/plain",
+          "tamanho": 7922
+        },
+        {
+          "nome": "tcc/educagame/tests/test-config-materias.py",
+          "arquivo": "anexos/p-003/tcc/educagame/tests/test-config-materias.py",
+          "tipo": "text/plain",
+          "tamanho": 2198
+        },
+        {
+          "nome": "tcc/educagame/tests/test-conta-efetuada-laboratorio.py",
+          "arquivo": "anexos/p-003/tcc/educagame/tests/test-conta-efetuada-laboratorio.py",
+          "tipo": "text/plain",
+          "tamanho": 9473
+        },
+        {
+          "nome": "tcc/educagame/tests/test-conta-presa-a-escola.py",
+          "arquivo": "anexos/p-003/tcc/educagame/tests/test-conta-presa-a-escola.py",
+          "tipo": "text/plain",
+          "tamanho": 12081
+        },
+        {
+          "nome": "tcc/educagame/tests/test-conta-sem-igual-e-raiz.py",
+          "arquivo": "anexos/p-003/tcc/educagame/tests/test-conta-sem-igual-e-raiz.py",
+          "tipo": "text/plain",
+          "tamanho": 7391
+        },
+        {
+          "nome": "tcc/educagame/tests/test-cooldown-do-gemini.py",
+          "arquivo": "anexos/p-003/tcc/educagame/tests/test-cooldown-do-gemini.py",
+          "tipo": "text/plain",
+          "tamanho": 8301
+        },
+        {
+          "nome": "tcc/educagame/tests/test-dados-pessoais.py",
+          "arquivo": "anexos/p-003/tcc/educagame/tests/test-dados-pessoais.py",
+          "tipo": "text/plain",
+          "tamanho": 11080
+        },
+        {
+          "nome": "tcc/educagame/tests/test-database-repo.py",
+          "arquivo": "anexos/p-003/tcc/educagame/tests/test-database-repo.py",
+          "tipo": "text/plain",
+          "tamanho": 1181
+        },
+        {
+          "nome": "tcc/educagame/tests/test-defeitos-cosmeticos-qa.py",
+          "arquivo": "anexos/p-003/tcc/educagame/tests/test-defeitos-cosmeticos-qa.py",
+          "tipo": "text/plain",
+          "tamanho": 4956
+        },
+        {
+          "nome": "tcc/educagame/tests/test-defeitos-visiveis.py",
+          "arquivo": "anexos/p-003/tcc/educagame/tests/test-defeitos-visiveis.py",
+          "tipo": "text/plain",
+          "tamanho": 10597
+        },
+        {
+          "nome": "tcc/educagame/tests/test-dfrac-nao-quebra.py",
+          "arquivo": "anexos/p-003/tcc/educagame/tests/test-dfrac-nao-quebra.py",
+          "tipo": "text/plain",
+          "tamanho": 2023
+        },
+        {
+          "nome": "tcc/educagame/tests/test-diagnostico-config.py",
+          "arquivo": "anexos/p-003/tcc/educagame/tests/test-diagnostico-config.py",
+          "tipo": "text/plain",
+          "tamanho": 4122
+        },
+        {
+          "nome": "tcc/educagame/tests/test-dificuldade-uma-grafia.py",
+          "arquivo": "anexos/p-003/tcc/educagame/tests/test-dificuldade-uma-grafia.py",
+          "tipo": "text/plain",
+          "tamanho": 5408
+        },
+        {
+          "nome": "tcc/educagame/tests/test-duas-areas-do-desenvolvedor.py",
+          "arquivo": "anexos/p-003/tcc/educagame/tests/test-duas-areas-do-desenvolvedor.py",
+          "tipo": "text/plain",
+          "tamanho": 24595
+        },
+        {
+          "nome": "tcc/educagame/tests/test-duas-solucoes.py",
+          "arquivo": "anexos/p-003/tcc/educagame/tests/test-duas-solucoes.py",
+          "tipo": "text/plain",
+          "tamanho": 4418
+        },
+        {
+          "nome": "tcc/educagame/tests/test-e2e-auth-navegacao.py",
+          "arquivo": "anexos/p-003/tcc/educagame/tests/test-e2e-auth-navegacao.py",
+          "tipo": "text/plain",
+          "tamanho": 11295
+        },
+        {
+          "nome": "tcc/educagame/tests/test-e2e-jogos.py",
+          "arquivo": "anexos/p-003/tcc/educagame/tests/test-e2e-jogos.py",
+          "tipo": "text/plain",
+          "tamanho": 3629
+        },
+        {
+          "nome": "tcc/educagame/tests/test-email-service.py",
+          "arquivo": "anexos/p-003/tcc/educagame/tests/test-email-service.py",
+          "tipo": "text/plain",
+          "tamanho": 4400
+        },
+        {
+          "nome": "tcc/educagame/tests/test-embaralhar-opcoes.py",
+          "arquivo": "anexos/p-003/tcc/educagame/tests/test-embaralhar-opcoes.py",
+          "tipo": "text/plain",
+          "tamanho": 3634
+        },
+        {
+          "nome": "tcc/educagame/tests/test-enem-fallback-offline.py",
+          "arquivo": "anexos/p-003/tcc/educagame/tests/test-enem-fallback-offline.py",
+          "tipo": "text/plain",
+          "tamanho": 1744
+        },
+        {
+          "nome": "tcc/educagame/tests/test-enem-nao-repete-questao.py",
+          "arquivo": "anexos/p-003/tcc/educagame/tests/test-enem-nao-repete-questao.py",
+          "tipo": "text/plain",
+          "tamanho": 5851
+        },
+        {
+          "nome": "tcc/educagame/tests/test-enem-orcamento-ia.py",
+          "arquivo": "anexos/p-003/tcc/educagame/tests/test-enem-orcamento-ia.py",
+          "tipo": "text/plain",
+          "tamanho": 1796
+        },
+        {
+          "nome": "tcc/educagame/tests/test-enem-service.py",
+          "arquivo": "anexos/p-003/tcc/educagame/tests/test-enem-service.py",
+          "tipo": "text/plain",
+          "tamanho": 8443
+        },
+        {
+          "nome": "tcc/educagame/tests/test-enigma-oracular.py",
+          "arquivo": "anexos/p-003/tcc/educagame/tests/test-enigma-oracular.py",
+          "tipo": "text/plain",
+          "tamanho": 5497
+        },
+        {
+          "nome": "tcc/educagame/tests/test-env-example.py",
+          "arquivo": "anexos/p-003/tcc/educagame/tests/test-env-example.py",
+          "tipo": "text/plain",
+          "tamanho": 3536
+        },
+        {
+          "nome": "tcc/educagame/tests/test-escape-exige-acertar.py",
+          "arquivo": "anexos/p-003/tcc/educagame/tests/test-escape-exige-acertar.py",
+          "tipo": "text/plain",
+          "tamanho": 2580
+        },
+        {
+          "nome": "tcc/educagame/tests/test-escolher-escola-no-streamlit.py",
+          "arquivo": "anexos/p-003/tcc/educagame/tests/test-escolher-escola-no-streamlit.py",
+          "tipo": "text/plain",
+          "tamanho": 9958
+        },
+        {
+          "nome": "tcc/educagame/tests/test-estado-do-rpg.py",
+          "arquivo": "anexos/p-003/tcc/educagame/tests/test-estado-do-rpg.py",
+          "tipo": "text/plain",
+          "tamanho": 13074
+        },
+        {
+          "nome": "tcc/educagame/tests/test-estilos-em-arquivo.py",
+          "arquivo": "anexos/p-003/tcc/educagame/tests/test-estilos-em-arquivo.py",
+          "tipo": "text/plain",
+          "tamanho": 5585
+        },
+        {
+          "nome": "tcc/educagame/tests/test-explicacao-e-feedback.py",
+          "arquivo": "anexos/p-003/tcc/educagame/tests/test-explicacao-e-feedback.py",
+          "tipo": "text/plain",
+          "tamanho": 10447
+        },
+        {
+          "nome": "tcc/educagame/tests/test-expoente-no-oraculo.py",
+          "arquivo": "anexos/p-003/tcc/educagame/tests/test-expoente-no-oraculo.py",
+          "tipo": "text/plain",
+          "tamanho": 3074
+        },
+        {
+          "nome": "tcc/educagame/tests/test-fatos-canonicos.py",
+          "arquivo": "anexos/p-003/tcc/educagame/tests/test-fatos-canonicos.py",
+          "tipo": "text/plain",
+          "tamanho": 2167
+        },
+        {
+          "nome": "tcc/educagame/tests/test-fatos-errados-do-qa.py",
+          "arquivo": "anexos/p-003/tcc/educagame/tests/test-fatos-errados-do-qa.py",
+          "tipo": "text/plain",
+          "tamanho": 6121
+        },
+        {
+          "nome": "tcc/educagame/tests/test-feedback-sem-alarme-falso.py",
+          "arquivo": "anexos/p-003/tcc/educagame/tests/test-feedback-sem-alarme-falso.py",
+          "tipo": "text/plain",
+          "tamanho": 3961
+        },
+        {
+          "nome": "tcc/educagame/tests/test-filtro-de-materia-do-aluno-logado.py",
+          "arquivo": "anexos/p-003/tcc/educagame/tests/test-filtro-de-materia-do-aluno-logado.py",
+          "tipo": "text/plain",
+          "tamanho": 3237
+        },
+        {
+          "nome": "tcc/educagame/tests/test-flask-parallel-structure.py",
+          "arquivo": "anexos/p-003/tcc/educagame/tests/test-flask-parallel-structure.py",
+          "tipo": "text/plain",
+          "tamanho": 29141
+        },
+        {
+          "nome": "tcc/educagame/tests/test-formatacao-latex.py",
+          "arquivo": "anexos/p-003/tcc/educagame/tests/test-formatacao-latex.py",
+          "tipo": "text/plain",
+          "tamanho": 6446
+        },
+        {
+          "nome": "tcc/educagame/tests/test-formula-da-ia-na-tela.py",
+          "arquivo": "anexos/p-003/tcc/educagame/tests/test-formula-da-ia-na-tela.py",
+          "tipo": "text/plain",
+          "tamanho": 3648
+        },
+        {
+          "nome": "tcc/educagame/tests/test-formula-duplicada-na-tela.py",
+          "arquivo": "anexos/p-003/tcc/educagame/tests/test-formula-duplicada-na-tela.py",
+          "tipo": "text/plain",
+          "tamanho": 3955
+        },
+        {
+          "nome": "tcc/educagame/tests/test-formula-e-legenda-no-log.py",
+          "arquivo": "anexos/p-003/tcc/educagame/tests/test-formula-e-legenda-no-log.py",
+          "tipo": "text/plain",
+          "tamanho": 9046
+        },
+        {
+          "nome": "tcc/educagame/tests/test-formula-html.py",
+          "arquivo": "anexos/p-003/tcc/educagame/tests/test-formula-html.py",
+          "tipo": "text/plain",
+          "tamanho": 1919
+        },
+        {
+          "nome": "tcc/educagame/tests/test-formula-nas-telas.py",
+          "arquivo": "anexos/p-003/tcc/educagame/tests/test-formula-nas-telas.py",
+          "tipo": "text/plain",
+          "tamanho": 6102
+        },
+        {
+          "nome": "tcc/educagame/tests/test-formula-que-falta-e-simbolo-apagado.py",
+          "arquivo": "anexos/p-003/tcc/educagame/tests/test-formula-que-falta-e-simbolo-apagado.py",
+          "tipo": "text/plain",
+          "tamanho": 15852
+        },
+        {
+          "nome": "tcc/educagame/tests/test-frase-de-acento-respeita-palavra.py",
+          "arquivo": "anexos/p-003/tcc/educagame/tests/test-frase-de-acento-respeita-palavra.py",
+          "tipo": "text/plain",
+          "tamanho": 4053
+        },
+        {
+          "nome": "tcc/educagame/tests/test-fumaca-atributos.py",
+          "arquivo": "anexos/p-003/tcc/educagame/tests/test-fumaca-atributos.py",
+          "tipo": "text/plain",
+          "tamanho": 5040
+        },
+        {
+          "nome": "tcc/educagame/tests/test-fumaca-importacoes.py",
+          "arquivo": "anexos/p-003/tcc/educagame/tests/test-fumaca-importacoes.py",
+          "tipo": "text/plain",
+          "tamanho": 2905
+        },
+        {
+          "nome": "tcc/educagame/tests/test-fundamental-offline-bank.py",
+          "arquivo": "anexos/p-003/tcc/educagame/tests/test-fundamental-offline-bank.py",
+          "tipo": "text/plain",
+          "tamanho": 6078
+        },
+        {
+          "nome": "tcc/educagame/tests/test-gamification-service.py",
+          "arquivo": "anexos/p-003/tcc/educagame/tests/test-gamification-service.py",
+          "tipo": "text/plain",
+          "tamanho": 1153
+        },
+        {
+          "nome": "tcc/educagame/tests/test-gestao-de-contas.py",
+          "arquivo": "anexos/p-003/tcc/educagame/tests/test-gestao-de-contas.py",
+          "tipo": "text/plain",
+          "tamanho": 15710
+        },
+        {
+          "nome": "tcc/educagame/tests/test-gravacao-diz-quando-nao-grava.py",
+          "arquivo": "anexos/p-003/tcc/educagame/tests/test-gravacao-diz-quando-nao-grava.py",
+          "tipo": "text/plain",
+          "tamanho": 30842
+        },
+        {
+          "nome": "tcc/educagame/tests/test-guia-de-acesso.py",
+          "arquivo": "anexos/p-003/tcc/educagame/tests/test-guia-de-acesso.py",
+          "tipo": "text/plain",
+          "tamanho": 6783
+        },
+        {
+          "nome": "tcc/educagame/tests/test-headers-de-seguranca.py",
+          "arquivo": "anexos/p-003/tcc/educagame/tests/test-headers-de-seguranca.py",
+          "tipo": "text/plain",
+          "tamanho": 2702
+        },
+        {
+          "nome": "tcc/educagame/tests/test-historico-fora-do-cookie.py",
+          "arquivo": "anexos/p-003/tcc/educagame/tests/test-historico-fora-do-cookie.py",
+          "tipo": "text/plain",
+          "tamanho": 9659
+        },
+        {
+          "nome": "tcc/educagame/tests/test-ia-providers.py",
+          "arquivo": "anexos/p-003/tcc/educagame/tests/test-ia-providers.py",
+          "tipo": "text/plain",
+          "tamanho": 10761
+        },
+        {
+          "nome": "tcc/educagame/tests/test-ia-service.py",
+          "arquivo": "anexos/p-003/tcc/educagame/tests/test-ia-service.py",
+          "tipo": "text/plain",
+          "tamanho": 7943
+        },
+        {
+          "nome": "tcc/educagame/tests/test-ingles-nao-e-confundido-com-portugu.py",
+          "arquivo": "anexos/p-003/tcc/educagame/tests/test-ingles-nao-e-confundido-com-portugu.py",
+          "tipo": "text/plain",
+          "tamanho": 8586
+        },
+        {
+          "nome": "tcc/educagame/tests/test-ingles-no-meio-do-portugues.py",
+          "arquivo": "anexos/p-003/tcc/educagame/tests/test-ingles-no-meio-do-portugues.py",
+          "tipo": "text/plain",
+          "tamanho": 4725
+        },
+        {
+          "nome": "tcc/educagame/tests/test-laboratorio-alternativas.py",
+          "arquivo": "anexos/p-003/tcc/educagame/tests/test-laboratorio-alternativas.py",
+          "tipo": "text/plain",
+          "tamanho": 3859
+        },
+        {
+          "nome": "tcc/educagame/tests/test-laboratorio-formatacao.py",
+          "arquivo": "anexos/p-003/tcc/educagame/tests/test-laboratorio-formatacao.py",
+          "tipo": "text/plain",
+          "tamanho": 14667
+        },
+        {
+          "nome": "tcc/educagame/tests/test-laboratorio-invocar-enigma.py",
+          "arquivo": "anexos/p-003/tcc/educagame/tests/test-laboratorio-invocar-enigma.py",
+          "tipo": "text/plain",
+          "tamanho": 16593
+        },
+        {
+          "nome": "tcc/educagame/tests/test-laboratorio-quadratica.py",
+          "arquivo": "anexos/p-003/tcc/educagame/tests/test-laboratorio-quadratica.py",
+          "tipo": "text/plain",
+          "tamanho": 3684
+        },
+        {
+          "nome": "tcc/educagame/tests/test-leitura-de-segredo.py",
+          "arquivo": "anexos/p-003/tcc/educagame/tests/test-leitura-de-segredo.py",
+          "tipo": "text/plain",
+          "tamanho": 6199
+        },
+        {
+          "nome": "tcc/educagame/tests/test-leitura-de-unidade-e-detectores.py",
+          "arquivo": "anexos/p-003/tcc/educagame/tests/test-leitura-de-unidade-e-detectores.py",
+          "tipo": "text/plain",
+          "tamanho": 17922
+        },
+        {
+          "nome": "tcc/educagame/tests/test-letra-citada-fora-do-enem.py",
+          "arquivo": "anexos/p-003/tcc/educagame/tests/test-letra-citada-fora-do-enem.py",
+          "tipo": "text/plain",
+          "tamanho": 4859
+        },
+        {
+          "nome": "tcc/educagame/tests/test-letra-citada-no-enem.py",
+          "arquivo": "anexos/p-003/tcc/educagame/tests/test-letra-citada-no-enem.py",
+          "tipo": "text/plain",
+          "tamanho": 9675
+        },
+        {
+          "nome": "tcc/educagame/tests/test-log-guarda-as-alternativas.py",
+          "arquivo": "anexos/p-003/tcc/educagame/tests/test-log-guarda-as-alternativas.py",
+          "tipo": "text/plain",
+          "tamanho": 6324
+        },
+        {
+          "nome": "tcc/educagame/tests/test-log-nao-derruba-questao.py",
+          "arquivo": "anexos/p-003/tcc/educagame/tests/test-log-nao-derruba-questao.py",
+          "tipo": "text/plain",
+          "tamanho": 6294
+        },
+        {
+          "nome": "tcc/educagame/tests/test-log-repo.py",
+          "arquivo": "anexos/p-003/tcc/educagame/tests/test-log-repo.py",
+          "tipo": "text/plain",
+          "tamanho": 3013
+        },
+        {
+          "nome": "tcc/educagame/tests/test-login-streamlit.py",
+          "arquivo": "anexos/p-003/tcc/educagame/tests/test-login-streamlit.py",
+          "tipo": "text/plain",
+          "tamanho": 6776
+        },
+        {
+          "nome": "tcc/educagame/tests/test-logo-por-escola.py",
+          "arquivo": "anexos/p-003/tcc/educagame/tests/test-logo-por-escola.py",
+          "tipo": "text/plain",
+          "tamanho": 4639
+        },
+        {
+          "nome": "tcc/educagame/tests/test-marcacao-crua-na-tela.py",
+          "arquivo": "anexos/p-003/tcc/educagame/tests/test-marcacao-crua-na-tela.py",
+          "tipo": "text/plain",
+          "tamanho": 10417
+        },
+        {
+          "nome": "tcc/educagame/tests/test-materia-de-cada-sala.py",
+          "arquivo": "anexos/p-003/tcc/educagame/tests/test-materia-de-cada-sala.py",
+          "tipo": "text/plain",
+          "tamanho": 3432
+        },
+        {
+          "nome": "tcc/educagame/tests/test-matricula-diz-quando-nao-grava.py",
+          "arquivo": "anexos/p-003/tcc/educagame/tests/test-matricula-diz-quando-nao-grava.py",
+          "tipo": "text/plain",
+          "tamanho": 16432
+        },
+        {
+          "nome": "tcc/educagame/tests/test-meta-le-as-partidas-no-banco-real.py",
+          "arquivo": "anexos/p-003/tcc/educagame/tests/test-meta-le-as-partidas-no-banco-real.py",
+          "tipo": "text/plain",
+          "tamanho": 3620
+        },
+        {
+          "nome": "tcc/educagame/tests/test-meta-no-app.py",
+          "arquivo": "anexos/p-003/tcc/educagame/tests/test-meta-no-app.py",
+          "tipo": "text/plain",
+          "tamanho": 8576
+        },
+        {
+          "nome": "tcc/educagame/tests/test-metas-da-semana.py",
+          "arquivo": "anexos/p-003/tcc/educagame/tests/test-metas-da-semana.py",
+          "tipo": "text/plain",
+          "tamanho": 7483
+        },
+        {
+          "nome": "tcc/educagame/tests/test-mode-common.py",
+          "arquivo": "anexos/p-003/tcc/educagame/tests/test-mode-common.py",
+          "tipo": "text/plain",
+          "tamanho": 6676
+        },
+        {
+          "nome": "tcc/educagame/tests/test-nivel-e-materia-do-item.py",
+          "arquivo": "anexos/p-003/tcc/educagame/tests/test-nivel-e-materia-do-item.py",
+          "tipo": "text/plain",
+          "tamanho": 7122
+        },
+        {
+          "nome": "tcc/educagame/tests/test-normalizacao-alternativas.py",
+          "arquivo": "anexos/p-003/tcc/educagame/tests/test-normalizacao-alternativas.py",
+          "tipo": "text/plain",
+          "tamanho": 2832
+        },
+        {
+          "nome": "tcc/educagame/tests/test-offline-em-bank.py",
+          "arquivo": "anexos/p-003/tcc/educagame/tests/test-offline-em-bank.py",
+          "tipo": "text/plain",
+          "tamanho": 7432
+        },
+        {
+          "nome": "tcc/educagame/tests/test-opcoes-no-enunciado.py",
+          "arquivo": "anexos/p-003/tcc/educagame/tests/test-opcoes-no-enunciado.py",
+          "tipo": "text/plain",
+          "tamanho": 5373
+        },
+        {
+          "nome": "tcc/educagame/tests/test-oraculo-conteudo-especifico.py",
+          "arquivo": "anexos/p-003/tcc/educagame/tests/test-oraculo-conteudo-especifico.py",
+          "tipo": "text/plain",
+          "tamanho": 4716
+        },
+        {
+          "nome": "tcc/educagame/tests/test-oraculo-devolve-materia-marcada.py",
+          "arquivo": "anexos/p-003/tcc/educagame/tests/test-oraculo-devolve-materia-marcada.py",
+          "tipo": "text/plain",
+          "tamanho": 2538
+        },
+        {
+          "nome": "tcc/educagame/tests/test-oraculo-invocar-enigma.py",
+          "arquivo": "anexos/p-003/tcc/educagame/tests/test-oraculo-invocar-enigma.py",
+          "tipo": "text/plain",
+          "tamanho": 19374
+        },
+        {
+          "nome": "tcc/educagame/tests/test-oraculo-orcamento-ia.py",
+          "arquivo": "anexos/p-003/tcc/educagame/tests/test-oraculo-orcamento-ia.py",
+          "tipo": "text/plain",
+          "tamanho": 2188
+        },
+        {
+          "nome": "tcc/educagame/tests/test-ortografia-do-banco.py",
+          "arquivo": "anexos/p-003/tcc/educagame/tests/test-ortografia-do-banco.py",
+          "tipo": "text/plain",
+          "tamanho": 5484
+        },
+        {
+          "nome": "tcc/educagame/tests/test-painel-da-turma-nao-mente.py",
+          "arquivo": "anexos/p-003/tcc/educagame/tests/test-painel-da-turma-nao-mente.py",
+          "tipo": "text/plain",
+          "tamanho": 23093
+        },
+        {
+          "nome": "tcc/educagame/tests/test-painel-desenvolvedor.py",
+          "arquivo": "anexos/p-003/tcc/educagame/tests/test-painel-desenvolvedor.py",
+          "tipo": "text/plain",
+          "tamanho": 8891
+        },
+        {
+          "nome": "tcc/educagame/tests/test-par-ordenado-nao-e-raiz.py",
+          "arquivo": "anexos/p-003/tcc/educagame/tests/test-par-ordenado-nao-e-raiz.py",
+          "tipo": "text/plain",
+          "tamanho": 5186
+        },
+        {
+          "nome": "tcc/educagame/tests/test-passo-a-passo-completo.py",
+          "arquivo": "anexos/p-003/tcc/educagame/tests/test-passo-a-passo-completo.py",
+          "tipo": "text/plain",
+          "tamanho": 5130
+        },
+        {
+          "nome": "tcc/educagame/tests/test-passo-com-prosa.py",
+          "arquivo": "anexos/p-003/tcc/educagame/tests/test-passo-com-prosa.py",
+          "tipo": "text/plain",
+          "tamanho": 8914
+        },
+        {
+          "nome": "tcc/educagame/tests/test-passo-final-atras-de-repeticao.py",
+          "arquivo": "anexos/p-003/tcc/educagame/tests/test-passo-final-atras-de-repeticao.py",
+          "tipo": "text/plain",
+          "tamanho": 9155
+        },
+        {
+          "nome": "tcc/educagame/tests/test-passo-final-em-todos-os-modos.py",
+          "arquivo": "anexos/p-003/tcc/educagame/tests/test-passo-final-em-todos-os-modos.py",
+          "tipo": "text/plain",
+          "tamanho": 10129
+        },
+        {
+          "nome": "tcc/educagame/tests/test-passo-virgula-decimal.py",
+          "arquivo": "anexos/p-003/tcc/educagame/tests/test-passo-virgula-decimal.py",
+          "tipo": "text/plain",
+          "tamanho": 3109
+        },
+        {
+          "nome": "tcc/educagame/tests/test-passos-no-log.py",
+          "arquivo": "anexos/p-003/tcc/educagame/tests/test-passos-no-log.py",
+          "tipo": "text/plain",
+          "tamanho": 6437
+        },
+        {
+          "nome": "tcc/educagame/tests/test-pedagogical-feedback.py",
+          "arquivo": "anexos/p-003/tcc/educagame/tests/test-pedagogical-feedback.py",
+          "tipo": "text/plain",
+          "tamanho": 6299
+        },
+        {
+          "nome": "tcc/educagame/tests/test-placar-de-guildas.py",
+          "arquivo": "anexos/p-003/tcc/educagame/tests/test-placar-de-guildas.py",
+          "tipo": "text/plain",
+          "tamanho": 5344
+        },
+        {
+          "nome": "tcc/educagame/tests/test-pontos-so-no-banco.py",
+          "arquivo": "anexos/p-003/tcc/educagame/tests/test-pontos-so-no-banco.py",
+          "tipo": "text/plain",
+          "tamanho": 3270
+        },
+        {
+          "nome": "tcc/educagame/tests/test-privacidade-dentro-do-app.py",
+          "arquivo": "anexos/p-003/tcc/educagame/tests/test-privacidade-dentro-do-app.py",
+          "tipo": "text/plain",
+          "tamanho": 4299
+        },
+        {
+          "nome": "tcc/educagame/tests/test-prompt-nao-ensina-o-defeito.py",
+          "arquivo": "anexos/p-003/tcc/educagame/tests/test-prompt-nao-ensina-o-defeito.py",
+          "tipo": "text/plain",
+          "tamanho": 5948
+        },
+        {
+          "nome": "tcc/educagame/tests/test-proxy-rate-limit.py",
+          "arquivo": "anexos/p-003/tcc/educagame/tests/test-proxy-rate-limit.py",
+          "tipo": "text/plain",
+          "tamanho": 2579
+        },
+        {
+          "nome": "tcc/educagame/tests/test-raciocinio-do-groq.py",
+          "arquivo": "anexos/p-003/tcc/educagame/tests/test-raciocinio-do-groq.py",
+          "tipo": "text/plain",
+          "tamanho": 3837
+        },
+        {
+          "nome": "tcc/educagame/tests/test-raiz-no-passo-final.py",
+          "arquivo": "anexos/p-003/tcc/educagame/tests/test-raiz-no-passo-final.py",
+          "tipo": "text/plain",
+          "tamanho": 10098
+        },
+        {
+          "nome": "tcc/educagame/tests/test-ranking-e-guildas-por-escola.py",
+          "arquivo": "anexos/p-003/tcc/educagame/tests/test-ranking-e-guildas-por-escola.py",
+          "tipo": "text/plain",
+          "tamanho": 23387
+        },
+        {
+          "nome": "tcc/educagame/tests/test-readme-confere-com-o-projeto.py",
+          "arquivo": "anexos/p-003/tcc/educagame/tests/test-readme-confere-com-o-projeto.py",
+          "tipo": "text/plain",
+          "tamanho": 16608
+        },
+        {
+          "nome": "tcc/educagame/tests/test-relatorios-novos.py",
+          "arquivo": "anexos/p-003/tcc/educagame/tests/test-relatorios-novos.py",
+          "tipo": "text/plain",
+          "tamanho": 3326
+        },
+        {
+          "nome": "tcc/educagame/tests/test-reserva-da-cascata.py",
+          "arquivo": "anexos/p-003/tcc/educagame/tests/test-reserva-da-cascata.py",
+          "tipo": "text/plain",
+          "tamanho": 4778
+        },
+        {
+          "nome": "tcc/educagame/tests/test-resolucao-substitui-os-valores.py",
+          "arquivo": "anexos/p-003/tcc/educagame/tests/test-resolucao-substitui-os-valores.py",
+          "tipo": "text/plain",
+          "tamanho": 10998
+        },
+        {
+          "nome": "tcc/educagame/tests/test-resolver-tema-evita-repeticao.py",
+          "arquivo": "anexos/p-003/tcc/educagame/tests/test-resolver-tema-evita-repeticao.py",
+          "tipo": "text/plain",
+          "tamanho": 4348
+        },
+        {
+          "nome": "tcc/educagame/tests/test-resposta-e-da-questao-na-tela.py",
+          "arquivo": "anexos/p-003/tcc/educagame/tests/test-resposta-e-da-questao-na-tela.py",
+          "tipo": "text/plain",
+          "tamanho": 10308
+        },
+        {
+          "nome": "tcc/educagame/tests/test-resposta-final-nos-passos.py",
+          "arquivo": "anexos/p-003/tcc/educagame/tests/test-resposta-final-nos-passos.py",
+          "tipo": "text/plain",
+          "tamanho": 6419
+        },
+        {
+          "nome": "tcc/educagame/tests/test-resposta-no-enunciado.py",
+          "arquivo": "anexos/p-003/tcc/educagame/tests/test-resposta-no-enunciado.py",
+          "tipo": "text/plain",
+          "tamanho": 12069
+        },
+        {
+          "nome": "tcc/educagame/tests/test-resultado-sem-marca-no-passo-final.py",
+          "arquivo": "anexos/p-003/tcc/educagame/tests/test-resultado-sem-marca-no-passo-final.py",
+          "tipo": "text/plain",
+          "tamanho": 10335
+        },
+        {
+          "nome": "tcc/educagame/tests/test-rota-do-painel-do-professor.py",
+          "arquivo": "anexos/p-003/tcc/educagame/tests/test-rota-do-painel-do-professor.py",
+          "tipo": "text/plain",
+          "tamanho": 8928
+        },
+        {
+          "nome": "tcc/educagame/tests/test-rotulo-da-matriz-enem.py",
+          "arquivo": "anexos/p-003/tcc/educagame/tests/test-rotulo-da-matriz-enem.py",
+          "tipo": "text/plain",
+          "tamanho": 12631
+        },
+        {
+          "nome": "tcc/educagame/tests/test-rpg-service.py",
+          "arquivo": "anexos/p-003/tcc/educagame/tests/test-rpg-service.py",
+          "tipo": "text/plain",
+          "tamanho": 16804
+        },
+        {
+          "nome": "tcc/educagame/tests/test-runtime-context.py",
+          "arquivo": "anexos/p-003/tcc/educagame/tests/test-runtime-context.py",
+          "tipo": "text/plain",
+          "tamanho": 7171
+        },
+        {
+          "nome": "tcc/educagame/tests/test-sem-definicao-duplicada.py",
+          "arquivo": "anexos/p-003/tcc/educagame/tests/test-sem-definicao-duplicada.py",
+          "tipo": "text/plain",
+          "tamanho": 4528
+        },
+        {
+          "nome": "tcc/educagame/tests/test-senhas.py",
+          "arquivo": "anexos/p-003/tcc/educagame/tests/test-senhas.py",
+          "tipo": "text/plain",
+          "tamanho": 3663
+        },
+        {
+          "nome": "tcc/educagame/tests/test-serie-ensino-medio.py",
+          "arquivo": "anexos/p-003/tcc/educagame/tests/test-serie-ensino-medio.py",
+          "tipo": "text/plain",
+          "tamanho": 4959
+        },
+        {
+          "nome": "tcc/educagame/tests/test-sessao-expira.py",
+          "arquivo": "anexos/p-003/tcc/educagame/tests/test-sessao-expira.py",
+          "tipo": "text/plain",
+          "tamanho": 12302
+        },
+        {
+          "nome": "tcc/educagame/tests/test-simbolos-na-legenda.py",
+          "arquivo": "anexos/p-003/tcc/educagame/tests/test-simbolos-na-legenda.py",
+          "tipo": "text/plain",
+          "tamanho": 11277
+        },
+        {
+          "nome": "tcc/educagame/tests/test-simulado-enem.py",
+          "arquivo": "anexos/p-003/tcc/educagame/tests/test-simulado-enem.py",
+          "tipo": "text/plain",
+          "tamanho": 6431
+        },
+        {
+          "nome": "tcc/educagame/tests/test-slug-de-escola-envelhecido.py",
+          "arquivo": "anexos/p-003/tcc/educagame/tests/test-slug-de-escola-envelhecido.py",
+          "tipo": "text/plain",
+          "tamanho": 4605
+        },
+        {
+          "nome": "tcc/educagame/tests/test-supabase-client.py",
+          "arquivo": "anexos/p-003/tcc/educagame/tests/test-supabase-client.py",
+          "tipo": "text/plain",
+          "tamanho": 1816
+        },
+        {
+          "nome": "tcc/educagame/tests/test-supabase-repete-em-504.py",
+          "arquivo": "anexos/p-003/tcc/educagame/tests/test-supabase-repete-em-504.py",
+          "tipo": "text/plain",
+          "tamanho": 3041
+        },
+        {
+          "nome": "tcc/educagame/tests/test-suporte-da-questao.py",
+          "arquivo": "anexos/p-003/tcc/educagame/tests/test-suporte-da-questao.py",
+          "tipo": "text/plain",
+          "tamanho": 10139
+        },
+        {
+          "nome": "tcc/educagame/tests/test-tabela-de-metas.py",
+          "arquivo": "anexos/p-003/tcc/educagame/tests/test-tabela-de-metas.py",
+          "tipo": "text/plain",
+          "tamanho": 2267
+        },
+        {
+          "nome": "tcc/educagame/tests/test-tela-do-desenvolvedor.py",
+          "arquivo": "anexos/p-003/tcc/educagame/tests/test-tela-do-desenvolvedor.py",
+          "tipo": "text/plain",
+          "tamanho": 10967
+        },
+        {
+          "nome": "tcc/educagame/tests/test-tela-laboratorio.py",
+          "arquivo": "anexos/p-003/tcc/educagame/tests/test-tela-laboratorio.py",
+          "tipo": "text/plain",
+          "tamanho": 418
+        },
+        {
+          "nome": "tcc/educagame/tests/test-tela-rpg.py",
+          "arquivo": "anexos/p-003/tcc/educagame/tests/test-tela-rpg.py",
+          "tipo": "text/plain",
+          "tamanho": 10684
+        },
+        {
+          "nome": "tcc/educagame/tests/test-tela-selecionar-escola.py",
+          "arquivo": "anexos/p-003/tcc/educagame/tests/test-tela-selecionar-escola.py",
+          "tipo": "text/plain",
+          "tamanho": 2741
+        },
+        {
+          "nome": "tcc/educagame/tests/test-tema-com-acento-na-tela.py",
+          "arquivo": "anexos/p-003/tcc/educagame/tests/test-tema-com-acento-na-tela.py",
+          "tipo": "text/plain",
+          "tamanho": 5231
+        },
+        {
+          "nome": "tcc/educagame/tests/test-temas-do-fundamental-acentuados.py",
+          "arquivo": "anexos/p-003/tcc/educagame/tests/test-temas-do-fundamental-acentuados.py",
+          "tipo": "text/plain",
+          "tamanho": 5161
+        },
+        {
+          "nome": "tcc/educagame/tests/test-temas-do-laboratorio.py",
+          "arquivo": "anexos/p-003/tcc/educagame/tests/test-temas-do-laboratorio.py",
+          "tipo": "text/plain",
+          "tamanho": 12400
+        },
+        {
+          "nome": "tcc/educagame/tests/test-tempo-da-cadeia-no-log.py",
+          "arquivo": "anexos/p-003/tcc/educagame/tests/test-tempo-da-cadeia-no-log.py",
+          "tipo": "text/plain",
+          "tamanho": 4406
+        },
+        {
+          "nome": "tcc/educagame/tests/test-termo-estrangeiro-traduzido.py",
+          "arquivo": "anexos/p-003/tcc/educagame/tests/test-termo-estrangeiro-traduzido.py",
+          "tipo": "text/plain",
+          "tamanho": 2424
+        },
+        {
+          "nome": "tcc/educagame/tests/test-testes-isolados-da-producao.py",
+          "arquivo": "anexos/p-003/tcc/educagame/tests/test-testes-isolados-da-producao.py",
+          "tipo": "text/plain",
+          "tamanho": 5269
+        },
+        {
+          "nome": "tcc/educagame/tests/test-textos-das-telas-escuras.py",
+          "arquivo": "anexos/p-003/tcc/educagame/tests/test-textos-das-telas-escuras.py",
+          "tipo": "text/plain",
+          "tamanho": 9948
+        },
+        {
+          "nome": "tcc/educagame/tests/test-textos-do-rpg-na-tela.py",
+          "arquivo": "anexos/p-003/tcc/educagame/tests/test-textos-do-rpg-na-tela.py",
+          "tipo": "text/plain",
+          "tamanho": 16273
+        },
+        {
+          "nome": "tcc/educagame/tests/test-trigonometria-e-log-no-passo-final.py",
+          "arquivo": "anexos/p-003/tcc/educagame/tests/test-trigonometria-e-log-no-passo-final.py",
+          "tipo": "text/plain",
+          "tamanho": 15438
+        },
+        {
+          "nome": "tcc/educagame/tests/test-unidade-completada-nas-alternativas.py",
+          "arquivo": "anexos/p-003/tcc/educagame/tests/test-unidade-completada-nas-alternativas.py",
+          "tipo": "text/plain",
+          "tamanho": 8139
+        },
+        {
+          "nome": "tcc/educagame/tests/test-unidades-laboratorio.py",
+          "arquivo": "anexos/p-003/tcc/educagame/tests/test-unidades-laboratorio.py",
+          "tipo": "text/plain",
+          "tamanho": 7222
+        },
+        {
+          "nome": "tcc/educagame/tests/test-usos-do-laboratorio.py",
+          "arquivo": "anexos/p-003/tcc/educagame/tests/test-usos-do-laboratorio.py",
+          "tipo": "text/plain",
+          "tamanho": 8388
+        },
+        {
+          "nome": "tcc/educagame/tests/test-validacao-ia.py",
+          "arquivo": "anexos/p-003/tcc/educagame/tests/test-validacao-ia.py",
+          "tipo": "text/plain",
+          "tamanho": 27715
+        },
+        {
+          "nome": "tcc/educagame/tests/test-varios-alunos-ao-mesmo-tempo.py",
+          "arquivo": "anexos/p-003/tcc/educagame/tests/test-varios-alunos-ao-mesmo-tempo.py",
+          "tipo": "text/plain",
+          "tamanho": 4166
+        },
+        {
+          "nome": "tcc/educagame/tests/test-voltar-para-lista-de-escolas.py",
+          "arquivo": "anexos/p-003/tcc/educagame/tests/test-voltar-para-lista-de-escolas.py",
+          "tipo": "text/plain",
+          "tamanho": 1334
+        },
+        {
+          "nome": "tcc/educagame/tests/test-voltar-pelo-historico.py",
+          "arquivo": "anexos/p-003/tcc/educagame/tests/test-voltar-pelo-historico.py",
+          "tipo": "text/plain",
+          "tamanho": 5037
+        },
+        {
+          "nome": "tcc/educagame/web/init.py",
+          "arquivo": "anexos/p-003/tcc/educagame/web/init.py",
+          "tipo": "text/plain",
+          "tamanho": 33
+        },
+        {
+          "nome": "tcc/educagame/web/routes/ajuda-fla.py",
+          "arquivo": "anexos/p-003/tcc/educagame/web/routes/ajuda-fla.py",
+          "tipo": "text/plain",
+          "tamanho": 1535
+        },
+        {
+          "nome": "tcc/educagame/web/routes/auth-fla.py",
+          "arquivo": "anexos/p-003/tcc/educagame/web/routes/auth-fla.py",
+          "tipo": "text/plain",
+          "tamanho": 8939
+        },
+        {
+          "nome": "tcc/educagame/web/routes/boss-rush-fla.py",
+          "arquivo": "anexos/p-003/tcc/educagame/web/routes/boss-rush-fla.py",
+          "tipo": "text/plain",
+          "tamanho": 9534
+        },
+        {
+          "nome": "tcc/educagame/web/routes/enem-fla.py",
+          "arquivo": "anexos/p-003/tcc/educagame/web/routes/enem-fla.py",
+          "tipo": "text/plain",
+          "tamanho": 10511
+        },
+        {
+          "nome": "tcc/educagame/web/routes/escape-room-fla.py",
+          "arquivo": "anexos/p-003/tcc/educagame/web/routes/escape-room-fla.py",
+          "tipo": "text/plain",
+          "tamanho": 12841
+        },
+        {
+          "nome": "tcc/educagame/web/routes/flask-helpers-fla.py",
+          "arquivo": "anexos/p-003/tcc/educagame/web/routes/flask-helpers-fla.py",
+          "tipo": "text/plain",
+          "tamanho": 22711
+        },
+        {
+          "nome": "tcc/educagame/web/routes/guildas-fla.py",
+          "arquivo": "anexos/p-003/tcc/educagame/web/routes/guildas-fla.py",
+          "tipo": "text/plain",
+          "tamanho": 2602
+        },
+        {
+          "nome": "tcc/educagame/web/routes/home-fla.py",
+          "arquivo": "anexos/p-003/tcc/educagame/web/routes/home-fla.py",
+          "tipo": "text/plain",
+          "tamanho": 9502
+        },
+        {
+          "nome": "tcc/educagame/web/routes/init.py",
+          "arquivo": "anexos/p-003/tcc/educagame/web/routes/init.py",
+          "tipo": "text/plain",
+          "tamanho": 56
+        },
+        {
+          "nome": "tcc/educagame/web/routes/laboratorio-fla.py",
+          "arquivo": "anexos/p-003/tcc/educagame/web/routes/laboratorio-fla.py",
+          "tipo": "text/plain",
+          "tamanho": 12524
+        },
+        {
+          "nome": "tcc/educagame/web/routes/oraculo-fla.py",
+          "arquivo": "anexos/p-003/tcc/educagame/web/routes/oraculo-fla.py",
+          "tipo": "text/plain",
+          "tamanho": 7472
+        },
+        {
+          "nome": "tcc/educagame/web/routes/perfil-fla.py",
+          "arquivo": "anexos/p-003/tcc/educagame/web/routes/perfil-fla.py",
+          "tipo": "text/plain",
+          "tamanho": 3571
+        },
+        {
+          "nome": "tcc/educagame/web/routes/privacidade-fla.py",
+          "arquivo": "anexos/p-003/tcc/educagame/web/routes/privacidade-fla.py",
+          "tipo": "text/plain",
+          "tamanho": 816
+        },
+        {
+          "nome": "tcc/educagame/web/routes/professor-fla.py",
+          "arquivo": "anexos/p-003/tcc/educagame/web/routes/professor-fla.py",
+          "tipo": "text/plain",
+          "tamanho": 26940
+        },
+        {
+          "nome": "tcc/educagame/web/routes/progresso-fla.py",
+          "arquivo": "anexos/p-003/tcc/educagame/web/routes/progresso-fla.py",
+          "tipo": "text/plain",
+          "tamanho": 3916
+        },
+        {
+          "nome": "tcc/educagame/web/routes/rpg-fla.py",
+          "arquivo": "anexos/p-003/tcc/educagame/web/routes/rpg-fla.py",
+          "tipo": "text/plain",
+          "tamanho": 18675
+        },
+        {
+          "nome": "tcc/educagame/web/routes/treino-fla.py",
+          "arquivo": "anexos/p-003/tcc/educagame/web/routes/treino-fla.py",
+          "tipo": "text/plain",
+          "tamanho": 9324
+        },
+        {
+          "nome": "tcc/educagame/web/static/audio/despertar-do-dragao.mp3",
+          "arquivo": "anexos/p-003/tcc/educagame/web/static/audio/despertar-do-dragao.mp3",
+          "tipo": "application/octet-stream",
+          "tamanho": 7700296
+        },
+        {
+          "nome": "tcc/educagame/web/static/audio/dragonstone-overture-1.mp3",
+          "arquivo": "anexos/p-003/tcc/educagame/web/static/audio/dragonstone-overture-1.mp3",
+          "tipo": "application/octet-stream",
+          "tamanho": 4825423
+        },
+        {
+          "nome": "tcc/educagame/web/static/audio/dragonstone-overture-2.mp3",
+          "arquivo": "anexos/p-003/tcc/educagame/web/static/audio/dragonstone-overture-2.mp3",
+          "tipo": "application/octet-stream",
+          "tamanho": 5895504
+        },
+        {
+          "nome": "tcc/educagame/web/static/css/flask.css",
+          "arquivo": "anexos/p-003/tcc/educagame/web/static/css/flask.css",
+          "tipo": "text/plain",
+          "tamanho": 45876
+        },
+        {
+          "nome": "tcc/educagame/web/static/img/educagames-ia-logo.jpeg",
+          "arquivo": "anexos/p-003/tcc/educagame/web/static/img/educagames-ia-logo.jpeg",
+          "tipo": "image/jpeg",
+          "tamanho": 39808
+        },
+        {
+          "nome": "tcc/educagame/web/templates/ajuda.html",
+          "arquivo": "anexos/p-003/tcc/educagame/web/templates/ajuda.html",
+          "tipo": "text/plain",
+          "tamanho": 3232
+        },
+        {
+          "nome": "tcc/educagame/web/templates/base.html",
+          "arquivo": "anexos/p-003/tcc/educagame/web/templates/base.html",
+          "tipo": "text/plain",
+          "tamanho": 8394
+        },
+        {
+          "nome": "tcc/educagame/web/templates/boss-rush.html",
+          "arquivo": "anexos/p-003/tcc/educagame/web/templates/boss-rush.html",
+          "tipo": "text/plain",
+          "tamanho": 5562
+        },
+        {
+          "nome": "tcc/educagame/web/templates/cadastro.html",
+          "arquivo": "anexos/p-003/tcc/educagame/web/templates/cadastro.html",
+          "tipo": "text/plain",
+          "tamanho": 2710
+        },
+        {
+          "nome": "tcc/educagame/web/templates/codigo-escola.html",
+          "arquivo": "anexos/p-003/tcc/educagame/web/templates/codigo-escola.html",
+          "tipo": "text/plain",
+          "tamanho": 1727
+        },
+        {
+          "nome": "tcc/educagame/web/templates/enem.html",
+          "arquivo": "anexos/p-003/tcc/educagame/web/templates/enem.html",
+          "tipo": "text/plain",
+          "tamanho": 6751
+        },
+        {
+          "nome": "tcc/educagame/web/templates/escape-room.html",
+          "arquivo": "anexos/p-003/tcc/educagame/web/templates/escape-room.html",
+          "tipo": "text/plain",
+          "tamanho": 8201
+        },
+        {
+          "nome": "tcc/educagame/web/templates/guildas.html",
+          "arquivo": "anexos/p-003/tcc/educagame/web/templates/guildas.html",
+          "tipo": "text/plain",
+          "tamanho": 3836
+        },
+        {
+          "nome": "tcc/educagame/web/templates/home.html",
+          "arquivo": "anexos/p-003/tcc/educagame/web/templates/home.html",
+          "tipo": "text/plain",
+          "tamanho": 4976
+        },
+        {
+          "nome": "tcc/educagame/web/templates/laboratorio.html",
+          "arquivo": "anexos/p-003/tcc/educagame/web/templates/laboratorio.html",
+          "tipo": "text/plain",
+          "tamanho": 7696
+        },
+        {
+          "nome": "tcc/educagame/web/templates/login.html",
+          "arquivo": "anexos/p-003/tcc/educagame/web/templates/login.html",
+          "tipo": "text/plain",
+          "tamanho": 2619
+        },
+        {
+          "nome": "tcc/educagame/web/templates/oraculo.html",
+          "arquivo": "anexos/p-003/tcc/educagame/web/templates/oraculo.html",
+          "tipo": "text/plain",
+          "tamanho": 4011
+        },
+        {
+          "nome": "tcc/educagame/web/templates/partials/admin-panel.html",
+          "arquivo": "anexos/p-003/tcc/educagame/web/templates/partials/admin-panel.html",
+          "tipo": "text/plain",
+          "tamanho": 10709
+        },
+        {
+          "nome": "tcc/educagame/web/templates/partials/ia-notice.html",
+          "arquivo": "anexos/p-003/tcc/educagame/web/templates/partials/ia-notice.html",
+          "tipo": "text/plain",
+          "tamanho": 77
+        },
+        {
+          "nome": "tcc/educagame/web/templates/partials/icones.html",
+          "arquivo": "anexos/p-003/tcc/educagame/web/templates/partials/icones.html",
+          "tipo": "text/plain",
+          "tamanho": 2585
+        },
+        {
+          "nome": "tcc/educagame/web/templates/partials/options-form.html",
+          "arquivo": "anexos/p-003/tcc/educagame/web/templates/partials/options-form.html",
+          "tipo": "text/plain",
+          "tamanho": 723
+        },
+        {
+          "nome": "tcc/educagame/web/templates/partials/result-card.html",
+          "arquivo": "anexos/p-003/tcc/educagame/web/templates/partials/result-card.html",
+          "tipo": "text/plain",
+          "tamanho": 2665
+        },
+        {
+          "nome": "tcc/educagame/web/templates/partials/student-context.html",
+          "arquivo": "anexos/p-003/tcc/educagame/web/templates/partials/student-context.html",
+          "tipo": "text/plain",
+          "tamanho": 235
+        },
+        {
+          "nome": "tcc/educagame/web/templates/partials/student-selector.html",
+          "arquivo": "anexos/p-003/tcc/educagame/web/templates/partials/student-selector.html",
+          "tipo": "text/plain",
+          "tamanho": 4167
+        },
+        {
+          "nome": "tcc/educagame/web/templates/partials/suporte-questao.html",
+          "arquivo": "anexos/p-003/tcc/educagame/web/templates/partials/suporte-questao.html",
+          "tipo": "text/plain",
+          "tamanho": 1357
+        },
+        {
+          "nome": "tcc/educagame/web/templates/partials/trocar-escola-link.html",
+          "arquivo": "anexos/p-003/tcc/educagame/web/templates/partials/trocar-escola-link.html",
+          "tipo": "text/plain",
+          "tamanho": 718
+        },
+        {
+          "nome": "tcc/educagame/web/templates/perfil.html",
+          "arquivo": "anexos/p-003/tcc/educagame/web/templates/perfil.html",
+          "tipo": "text/plain",
+          "tamanho": 4993
+        },
+        {
+          "nome": "tcc/educagame/web/templates/privacidade.html",
+          "arquivo": "anexos/p-003/tcc/educagame/web/templates/privacidade.html",
+          "tipo": "text/plain",
+          "tamanho": 602
+        },
+        {
+          "nome": "tcc/educagame/web/templates/professor.html",
+          "arquivo": "anexos/p-003/tcc/educagame/web/templates/professor.html",
+          "tipo": "text/plain",
+          "tamanho": 24110
+        },
+        {
+          "nome": "tcc/educagame/web/templates/progresso.html",
+          "arquivo": "anexos/p-003/tcc/educagame/web/templates/progresso.html",
+          "tipo": "text/plain",
+          "tamanho": 8206
+        },
+        {
+          "nome": "tcc/educagame/web/templates/redefinir-senha.html",
+          "arquivo": "anexos/p-003/tcc/educagame/web/templates/redefinir-senha.html",
+          "tipo": "text/plain",
+          "tamanho": 1171
+        },
+        {
+          "nome": "tcc/educagame/web/templates/rpg.html",
+          "arquivo": "anexos/p-003/tcc/educagame/web/templates/rpg.html",
+          "tipo": "text/plain",
+          "tamanho": 16164
+        },
+        {
+          "nome": "tcc/educagame/web/templates/selecionar-escola.html",
+          "arquivo": "anexos/p-003/tcc/educagame/web/templates/selecionar-escola.html",
+          "tipo": "text/plain",
+          "tamanho": 7396
+        },
+        {
+          "nome": "tcc/educagame/web/templates/treino.html",
+          "arquivo": "anexos/p-003/tcc/educagame/web/templates/treino.html",
+          "tipo": "text/plain",
+          "tamanho": 7420
         }
       ]
     }
@@ -207,6 +2581,99 @@
       "comentario": "",
       "anexos": [
         "anexos/p-002/image.png"
+      ]
+    },
+    {
+      "id": "m-008",
+      "projeto": "tcc",
+      "area": "diretor",
+      "agente": "diretor",
+      "titulo": "Plano: analisar o EducaGame, propor melhorias e arquitetura e resumir antes do GitHub",
+      "resumo": "Pedido p-003. Sem sala de engenharia: Revisão faz a auditoria técnica (arquitetura, qualidade, segurança/LGPD, checklist pré-push, m-009) em paralelo com Marca & Design na UI/UX (m-010); Estratégia propõe o que adicionar, prioriza e escreve o resumo final (m-011); Revisão confere no fim (m-012). Hipótese: repositório tratado como público, tudo vira proposta em .md, push feito pelo dono da pasta original (a cópia em anexos tem nomes trocados e não serve para subir). 7 perguntas no plano. Entrega: diretor/m-008-tcc-plano.md | depende de: -",
+      "arquivo": "diretor/m-008-tcc-plano.md",
+      "status": "aguardando",
+      "xp": 20,
+      "data": "2026-10-09 14:10",
+      "comentario": "",
+      "anexos": [
+        "anexos/p-003/tcc/educagame/"
+      ]
+    },
+    {
+      "id": "m-009",
+      "projeto": "tcc",
+      "area": "revisor",
+      "agente": "revisor",
+      "titulo": "Auditoria técnica do EducaGame: arquitetura, qualidade, segurança/LGPD e checklist pré-push",
+      "resumo": "Critério de aceite: mapa da arquitetura atual; avaliação com propostas (arquivo, problema, mudança, esforço P/M/G, risco, como testar) e resposta direta sobre melhorar a arquitetura antes da banca; testes e CI; segurança e LGPD (varredura de segredos sem copiar valores, senhas padrão do seed, RLS/service_role, histórico do git); documentação desatualizada; checklist pré-push marcável para o dono. Separa verificado de suposição; lembra que a cópia tem nomes simplificados e nada foi executado. Só proposta, não altera o código. Entrega: revisor/m-009-tcc-auditoria-tecnica.md | depende de: m-008",
+      "arquivo": "",
+      "status": "backlog",
+      "xp": 50,
+      "data": "2026-10-09 14:10",
+      "comentario": "",
+      "anexos": [
+        "anexos/p-003/tcc/educagame/"
+      ]
+    },
+    {
+      "id": "m-010",
+      "projeto": "tcc",
+      "area": "design",
+      "agente": "designer",
+      "titulo": "Análise de UI/UX das telas (Flask e Streamlit) com propostas de melhoria",
+      "resumo": "Critério de aceite: analisa as telas do Flask (principal) e compara com as do Streamlit; avalia clareza para alunos, fluxo escola/código/login, carregamento e erro, acessibilidade, celular, consistência entre modos e frontends e a logo antiga; até 15 propostas priorizadas (problema, tela/arquivo, proposta, esforço, impacto) e 3 a 5 ganhos rápidos para a banca. Só proposta: não altera arquivos nem gera imagem. Entrega: design/m-010-tcc-ui-ux.md | depende de: m-008",
+      "arquivo": "",
+      "status": "backlog",
+      "xp": 30,
+      "data": "2026-10-09 14:10",
+      "comentario": "",
+      "anexos": [
+        "anexos/p-003/tcc/educagame/readme.md",
+        "anexos/p-003/tcc/educagame/web/",
+        "anexos/p-003/tcc/educagame/st/",
+        "anexos/p-003/tcc/educagame/core/estilos/",
+        "anexos/p-003/tcc/educagame/core/design-system.py",
+        "anexos/p-003/tcc/educagame/core/design-system-base.py",
+        "anexos/p-003/tcc/educagame/core/design-system-global.py",
+        "anexos/p-003/tcc/educagame/core/design-system-rpg.py",
+        "anexos/p-003/tcc/educagame/assets/"
+      ]
+    },
+    {
+      "id": "m-011",
+      "projeto": "tcc",
+      "area": "estrategia",
+      "agente": "estrategista",
+      "titulo": "Propostas do que adicionar, plano priorizado de melhorias e resumo final antes do GitHub",
+      "resumo": "Critério de aceite: resumo do projeto em 1 página com a fonte de cada número; 5 a 10 propostas do que adicionar (aluno, professor, escola, banca) com valor, esforço e risco, sem repetir o que o proximos-passos registra como feito ou recusado; plano único juntando m-009 e m-010 em 'antes do push', 'antes da banca' e 'depois da banca'; 3 a 5 pontos fortes da arquitetura para defender na banca; checklist pré-push resumido e perguntas abertas. Entrega: estrategia/m-011-tcc-plano-e-resumo.md | depende de: m-009, m-010",
+      "arquivo": "",
+      "status": "backlog",
+      "xp": 40,
+      "data": "2026-10-09 14:10",
+      "comentario": "",
+      "anexos": [
+        "anexos/p-003/tcc/educagame/readme.md",
+        "anexos/p-003/tcc/educagame/proximos-passos.md",
+        "anexos/p-003/tcc/educagame/readme-flask.md",
+        "anexos/p-003/tcc/educagame/env.example",
+        "anexos/p-003/tcc/educagame/services/",
+        "anexos/p-003/tcc/educagame/supabase/migrations/"
+      ]
+    },
+    {
+      "id": "m-012",
+      "projeto": "tcc",
+      "area": "revisor",
+      "agente": "revisor",
+      "titulo": "Revisão final do resumo e do checklist pré-push",
+      "resumo": "Critério de aceite: confere cada número e afirmação do resumo da m-011 contra o código e os documentos do anexo (questões offline, testes, variáveis, migrations, modos); confere que o plano não contradiz m-009 e m-010 e que nenhuma ação externa aparece como feita; confere que m-009 a m-011 não trazem chave, senha, e-mail, nome real ou código de escola; nota por critério e lista de problemas, inclusive da própria m-009. Entrega: revisor/m-012-tcc-revisao-final.md | depende de: m-011",
+      "arquivo": "",
+      "status": "backlog",
+      "xp": 20,
+      "data": "2026-10-09 14:10",
+      "comentario": "",
+      "anexos": [
+        "anexos/p-003/tcc/educagame/"
       ]
     }
   ]

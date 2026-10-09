@@ -1,0 +1,28 @@
+{# O texto ou a tabela que o enunciado referencia ("veja a tabela abaixo").
+   services/ia/normalizacao.py garante que "suporte" chega aqui sempre com
+   os quatro campos, mesmo quando a questao nao tem nenhum suporte (tipo
+   "nenhum") -- por isso o "if" so olha o tipo, nunca a chave inteira. #}
+{% if suporte and suporte.get("tipo") in ("texto", "tabela") %}
+    <div class="suporte-questao">
+        {% if suporte.get("titulo") %}<p class="suporte-titulo">{{ suporte.get("titulo") }}</p>{% endif %}
+        {% if suporte.get("tipo") == "texto" %}
+            <p class="suporte-texto">{{ suporte.get("texto") }}</p>
+        {% elif suporte.get("tipo") == "tabela" %}
+            {% set tabela = suporte.get("tabela", {}) %}
+            <table class="suporte-tabela">
+                <thead>
+                    <tr>
+                        {% for coluna in tabela.get("colunas", []) %}<th>{{ coluna }}</th>{% endfor %}
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for linha in tabela.get("linhas", []) %}
+                        <tr>
+                            {% for celula in linha %}<td>{{ celula }}</td>{% endfor %}
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% endif %}
+    </div>
+{% endif %}

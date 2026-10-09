@@ -1,0 +1,42 @@
+name: Auditoria de dependencias
+
+# MELHORIA: o Dependabot (.github/dependabot.yml) avisa quando uma
+# dependencia JA instalada ganha um CVE novo, mas depende de estar ligado
+# nas configuracoes do repositorio (Settings > Security). Este workflow
+# roda sozinho, sem depender de nenhum toggle: pip-audit cruza
+# requirements_base.txt + requirements_flask.txt com o banco de
+# vulnerabilidades do Python (PyPA Advisory Database) a cada push/PR que
+# mexer em dependencia, e toda semana (pega CVE publicado depois do
+# ultimo push).
+on:
+  push:
+    branches: [main]
+    paths:
+      - "requirements*.txt"
+      - ".github/workflows/dependency-audit.yml"
+  pull_request:
+    paths:
+      - "requirements*.txt"
+  schedule:
+    - cron: "0 6 * * 1" # toda segunda, 06:00 UTC
+  workflow_dispatch: {}
+
+jobs:
+  pip-audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: pip-audit
+        # -r le o arquivo de requisitos direto (resolve os "-r" internos
+        # sozinho); nao precisa instalar nada no ambiente do runner antes.
+        # Sem isso, um pacote de sistema do runner sem correspondente no
+        # PyPI (ja visto com "python-apt" num ambiente Debian) derrubava a
+        # auditoria por um motivo que nao tem nada a ver com o projeto.
+        run: |
+          pip install pip-audit
+          pip-audit -r requirements_base.txt -r requirements_flask.txt --strict

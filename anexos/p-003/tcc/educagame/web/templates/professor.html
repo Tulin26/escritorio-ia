@@ -1,0 +1,490 @@
+{% extends "base.html" %}
+{% import "partials/icones.html" as ic %}
+{% block title %}EducaGame IA - Painel do Professor{% endblock %}
+{% block topnav %}
+<header class="topbar">
+    <div class="topbar-left">
+        <a class="brand" href="{{ url_for('professor.tela_professor') }}">
+            <span class="brand-mark" aria-hidden="true">E</span>
+            EducaGame
+        </a>
+    </div>
+    <div class="topbar-meta">
+        <button class="theme-toggle" type="button" data-alternar-tema aria-label="Alternar tema claro e escuro" title="Alternar tema claro e escuro">
+            <span class="theme-toggle-claro">{{ ic.icone("lua") }}</span>
+            <span class="theme-toggle-escuro">{{ ic.icone("sol") }}</span>
+        </button>
+    </div>
+</header>
+{% endblock %}
+{% block content %}
+<section class="section-head professor-panel-head">
+    <div>
+        {% if mostrar_hub_desenvolvedor %}
+            {# Esta tela nao e o painel do professor: e a escolha entre as
+               duas areas. Chama-la de "Painel do Professor" era dizer ao
+               desenvolvedor que ele esta no lugar de outro papel. #}
+            <p class="eyebrow">Desenvolvedor</p>
+            <h1>🏗 Painel global</h1>
+            <p class="muted">Esta conta enxerga todas as escolas. Escolha por onde entrar.</p>
+        {% else %}
+            <p class="eyebrow">Painel do Professor</p>
+            <h1>👨‍🏫 Painel de Gestão</h1>
+            <p class="muted">{{ escola_nome }}</p>
+        {% endif %}
+    </div>
+</section>
+
+{% set cartoes = {
+    "analises": {"icone": "📊", "titulo": "Análises", "descricao": "Desempenho por aluno, matéria e modo de jogo."},
+    "rpg": {"icone": "⚔", "titulo": "RPG", "descricao": "Configure o cenário que a IA usa pra narrar a aventura."},
+    "matricula": {"icone": "📝", "titulo": "Matrícula", "descricao": "Cadastre um novo aluno na escola."},
+    "ranking": {"icone": "🏆", "titulo": "Ranking", "descricao": "Pontuação dos alunos, com filtro por série."},
+    "resumo": {"icone": "📋", "titulo": "Resumo da Turma", "descricao": "Aproveitamento e tempo médio por aluno."},
+    "metas": {"icone": "🎯", "titulo": "Metas e foco", "descricao": "Quanto cada aluno já fez nesta semana e o tema que ele precisa desenvolver."},
+    "professores": {"icone": "👥", "titulo": "Professores", "descricao": "Quem está cadastrado e em que escola cada um entra."},
+    "configuracoes": {"icone": "⚙", "titulo": "Configurações", "descricao": "Ranking individual e Batalha de Guildas da escola."},
+    "adm": {"icone": "🏛", "titulo": "ADM", "descricao": "Cadastrar, editar e excluir escolas cadastradas."},
+} %}
+
+{% if mostrar_hub_desenvolvedor %}
+{# As DUAS areas do desenvolvedor. Ele caia direto no painel de professor,
+   com o ADM escondido no fim da tira de abas -- area de um papel dentro da
+   area de outro. #}
+<section class="mode-grid">
+    {# Sem escola aberta o painel nao tem turma para mostrar: o card leva
+       primeiro a escolha da unidade. Com escola, entra direto. #}
+    <a class="mode-card" href="{{ url_for('home.abrir_escola') if not escola_aberta else url_for('professor.tela_professor', area='gestao') }}">
+        <span class="mode-icon">👨‍🏫</span>
+        <strong>Professor</strong>
+        <span>
+            {% if escola_aberta %}
+                Acompanhe os alunos de {{ escola_nome }} e veja os professores cadastrados.
+            {% else %}
+                Escolha uma escola para acompanhar os alunos e ver os professores cadastrados.
+            {% endif %}
+        </span>
+    </a>
+    <a class="mode-card" href="{{ url_for('professor.tela_professor', aba='adm') }}">
+        <span class="mode-icon">🏛</span>
+        <strong>ADM</strong>
+        <span>Escolas, contas de login, senhas de aluno e diagnóstico.</span>
+    </a>
+</section>
+{% elif mostrar_hub %}
+<section class="mode-grid">
+    {% for item in abas %}
+        {% set info = cartoes[item.valor] %}
+        <a class="mode-card" href="{{ url_for('professor.tela_professor', aba=item.valor) }}">
+            <span class="mode-icon">{{ info.icone }}</span>
+            <strong>{{ info.titulo }}</strong>
+            <span>{{ info.descricao }}</span>
+        </a>
+    {% endfor %}
+</section>
+{% else %}
+<nav class="teacher-tabs">
+    <a href="{{ url_for('professor.tela_professor') }}">🏠 Painel</a>
+    {# O ADM e outra AREA: mostrar ali as abas de dar aula convidava a sair
+       dele sem querer. La a tira tem so a volta. #}
+    {% if aba != "adm" %}
+        {% for item in abas %}
+            <a class="{{ 'active' if item.valor == aba else '' }}" href="{{ url_for('professor.tela_professor', aba=item.valor) }}">{{ item.label }}</a>
+        {% endfor %}
+    {% endif %}
+</nav>
+
+{% if mensagem %}
+    <p class="notice ok">{{ mensagem }}</p>
+{% endif %}
+{% if erro %}
+    <p class="notice warn" role="alert">{{ erro }}</p>
+{% endif %}
+
+{% if aba == "analises" %}
+<section class="professor-head">
+    <h1>📊 Desempenho dos Alunos</h1>
+</section>
+
+<form method="get" action="{{ url_for('professor.tela_professor') }}" class="professor-filters">
+    <input type="hidden" name="aba" value="analises">
+    <label for="aluno_id">Selecione o aluno</label>
+    <select id="aluno_id" name="aluno_id">
+        {% for item in alunos %}
+            <option value="{{ item.id }}" {% if item.id|string == aluno_id|string %}selected{% endif %}>{{ item.nome }}</option>
+        {% endfor %}
+    </select>
+
+    <label for="modo">Filtrar por tipo</label>
+    <select id="modo" name="modo">
+        {% for item in modos %}
+            <option value="{{ item.valor }}" {% if item.valor == modo %}selected{% endif %}>{{ item.label }}</option>
+        {% endfor %}
+    </select>
+
+    <label for="materia">Filtrar por matéria</label>
+    <select id="materia" name="materia">
+        <option value="todas" {% if materia == "todas" %}selected{% endif %}>Todas as matérias</option>
+        {% for item in materias %}
+            <option value="{{ item }}" {% if item == materia %}selected{% endif %}>{{ item|materia_label }}</option>
+        {% endfor %}
+    </select>
+
+    <button type="submit">Aplicar filtros</button>
+</form>
+
+<section class="metric-row">
+    <article class="metric-box"><span>Registros</span><strong>{{ metricas.total }}</strong></article>
+    <article class="metric-box"><span>Erros no PDF</span><strong>{{ metricas.erros }}</strong></article>
+    <article class="metric-box"><span>Aproveitamento</span><strong>{{ metricas.percentual }}%</strong></article>
+</section>
+
+<section class="professor-chart">
+    <div>
+        <h2>Desempenho: {{ aluno.nome or "Aluno" }} - {{ materia_label }}</h2>
+        <p class="muted">{{ modo_label }}</p>
+    </div>
+    {% if metricas.total %}
+        <div class="donut-wrap">
+            <div class="donut" data-pct="{{ metricas.percentual }}"></div>
+            <div class="chart-legend">
+                <span><i class="ok-dot"></i> Acertou: {{ acertos }}</span>
+                <span><i class="bad-dot"></i> Errou: {{ erros }}</span>
+            </div>
+        </div>
+    {% else %}
+        <p class="muted">Nenhum registro encontrado para este recorte.</p>
+    {% endif %}
+</section>
+
+<a class="button download-wide" href="{{ url_for('professor.baixar_pdf_professor', aluno_id=aluno_id, modo=modo, materia=materia) }}">Baixar PDF ({{ metricas.erros }} erros)</a>
+{% endif %}
+
+{% if aba == "rpg" %}
+<section class="panel">
+    <h2>⚔ Configurar Aventura RPG</h2>
+    <p class="muted">Configure o cenário que a IA usará para narrar a aventura dos alunos.</p>
+
+    <form method="get" action="{{ url_for('professor.tela_professor') }}" class="form">
+        <input type="hidden" name="aba" value="rpg">
+        <label for="rpg_id">Selecionar aventura para editar</label>
+        <select id="rpg_id" name="rpg_id" onchange="this.form.submit()">
+            <option value="">+ Criar nova aventura</option>
+            {% for cfg in configs_rpg %}
+                <option value="{{ cfg.id }}" {% if cfg.id|string == rpg_id|string %}selected{% endif %}>{{ cfg.titulo or "Sem título" }}</option>
+            {% endfor %}
+        </select>
+    </form>
+
+    <form method="post" action="{{ url_for('professor.salvar_rpg_config_route') }}" class="form teacher-form"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <input type="hidden" name="config_id" value="{{ cfg_rpg.id or '' }}">
+        <div class="grid two">
+            <div>
+                <label for="titulo">Título da Aventura</label>
+                <input id="titulo" name="titulo" value="{{ cfg_rpg.titulo or '' }}" placeholder="Ex: O Cristal do Conhecimento" required>
+            </div>
+            <div>
+                <label for="materia">Matéria Integrada</label>
+                <select id="materia" name="materia">
+                    {% for item in materias_rpg %}
+                        <option value="{{ item }}" {% if (cfg_rpg.materia or "Matemática") == item %}selected{% endif %}>{{ item }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div>
+                <label for="heroi_nome">Nome do Herói/Classe</label>
+                <input id="heroi_nome" name="heroi_nome" value="{{ cfg_rpg.heroi_nome or '' }}" placeholder="Ex: Mago Sábio">
+            </div>
+            <div>
+                <label for="serie">Série Alvo</label>
+                <select id="serie" name="serie">
+                    {% for item in series_gerais %}
+                        <option value="{{ item }}" {% if (cfg_rpg.serie or "9º Ano") == item %}selected{% endif %}>{{ item }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+        <label for="poderes">Poderes do Herói</label>
+        <input id="poderes" name="poderes" value="{{ cfg_rpg.poderes or '' }}" placeholder="Ex: Feitiços matemáticos, Escudo de fórmulas">
+
+        <label for="cenario">Cenário da Aventura</label>
+        <textarea id="cenario" name="cenario" rows="4" required>{{ cfg_rpg.cenario or '' }}</textarea>
+
+        <label for="objetivo_final">Objetivo Final da Missão</label>
+        <textarea id="objetivo_final" name="objetivo_final" rows="3">{{ cfg_rpg.objetivo_final or '' }}</textarea>
+
+        <label for="descricao">Descrição curta (para aluno)</label>
+        <textarea id="descricao" name="descricao" rows="3">{{ cfg_rpg.descricao or '' }}</textarea>
+
+        <div class="actions">
+            <button type="submit">Salvar Aventura</button>
+            {% if cfg_rpg.id %}
+                <button class="secondary" type="submit" formaction="{{ url_for('professor.excluir_rpg_config_route') }}">Excluir Aventura</button>
+            {% endif %}
+        </div>
+    </form>
+</section>
+{% endif %}
+
+{% if aba == "matricula" %}
+<section class="panel">
+    <h2>📝 Matrícula de Novo Aluno</h2>
+    <form method="post" action="{{ url_for('professor.matricular_aluno') }}" class="form teacher-form"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <label for="serie">Série/Ano</label>
+        <select id="serie" name="serie">
+            {% for item in series_gerais %}
+                <option value="{{ item }}">{{ item }}</option>
+            {% endfor %}
+        </select>
+        <label for="periodo">Período</label>
+        <select id="periodo" name="periodo">
+            <option>Manhã</option>
+            <option>Tarde</option>
+            <option>Noite</option>
+        </select>
+        <label for="nome">Nome Completo *</label>
+        <input id="nome" name="nome" required>
+        <label for="ra_identificacao">RA / Identificação *</label>
+        <input id="ra_identificacao" name="ra_identificacao" required>
+        <label class="check-option"><input type="checkbox" name="ensino_religioso"> Optar por cursar Ensino Religioso (facultativo)</label>
+        <button type="submit">Finalizar Matrícula</button>
+    </form>
+</section>
+{% endif %}
+
+{% if aba == "ranking" %}
+<section class="panel">
+    <h2>🏆 Ranking dos Alunos</h2>
+    <form method="get" action="{{ url_for('professor.tela_professor') }}" class="form">
+        <input type="hidden" name="aba" value="ranking">
+        <label for="serie_ranking">Filtrar por Série/Ano</label>
+        <select id="serie_ranking" name="serie_ranking" onchange="this.form.submit()">
+            <option>Todas as séries</option>
+            {% for serie in series_alunos %}
+                <option value="{{ serie }}" {% if serie == serie_ranking %}selected{% endif %}>{{ serie }}</option>
+            {% endfor %}
+        </select>
+    </form>
+    <div class="ranking-list">
+        {% for item in ranking %}
+            <article class="ranking-row">
+                <strong>{{ loop.index }}º</strong>
+                <span><b>{{ item.nome }}</b><small>{{ item.serie }}</small></span>
+                <div class="stat-card"><span>Questões</span><strong>{{ item.total }}</strong></div>
+                <div class="stat-card"><span>Acertos</span><strong>{{ item.acertos }}</strong><small>{{ item.percentual }}%</small></div>
+                <div class="stat-card"><span>Pontos</span><strong>{{ item.pontos }}</strong></div>
+            </article>
+        {% else %}
+            <p class="muted">Nenhum aluno encontrado para exibir no ranking.</p>
+        {% endfor %}
+    </div>
+</section>
+{% endif %}
+
+{% if aba == "resumo" %}
+<section class="panel">
+    <h2>📋 Resumo da Turma</h2>
+    <form method="get" action="{{ url_for('professor.tela_professor') }}" class="grid two">
+        <input type="hidden" name="aba" value="resumo">
+        <div>
+            <label for="serie_resumo">Filtrar por Série</label>
+            <select id="serie_resumo" name="serie_resumo" onchange="this.form.submit()">
+                <option>Todas</option>
+                {% for serie in series_resumo %}
+                    <option value="{{ serie }}" {% if serie == serie_resumo %}selected{% endif %}>{{ serie }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div>
+            <label for="periodo_resumo">Filtrar por Período</label>
+            <select id="periodo_resumo" name="periodo_resumo" onchange="this.form.submit()">
+                <option>Todos</option>
+                {% for periodo in periodos_resumo %}
+                    <option value="{{ periodo }}" {% if periodo == periodo_resumo %}selected{% endif %}>{{ periodo }}</option>
+                {% endfor %}
+            </select>
+        </div>
+    </form>
+    <section class="metric-row">
+        <article class="metric-box"><span>Alunos</span><strong>{{ turma.alunos }}</strong></article>
+        <article class="metric-box"><span>Questões</span><strong>{{ turma.questoes }}</strong></article>
+        <article class="metric-box"><span>Média da Turma</span><strong>{{ turma.media }}%</strong></article>
+        <article class="metric-box"><span>Tempo Médio</span><strong>{{ turma.tempo }} seg</strong></article>
+    </section>
+    <div class="table-list">
+        <div class="table-row table-head"><span>Aluno</span><span>Série</span><span>Total</span><span>Acertos</span><span>%</span></div>
+        {% for item in resumo %}
+            <div class="table-row">
+                <span>{{ item.nome }}</span>
+                <span>{{ item.ano_escolar }} - {{ item.periodo }}</span>
+                <strong>{{ item.total_questoes }}</strong>
+                <strong class="ok-text">{{ item.acertos }}</strong>
+                <strong>{{ item.percentual }}%</strong>
+            </div>
+        {% endfor %}
+    </div>
+</section>
+{% endif %}
+
+{% if aba == "metas" %}
+{# Pedido da coordenacao (28/09/2026): meta semanal por modo, com o professor
+   vendo quanto cada aluno ja fez. Zera toda segunda-feira -- a semana nao
+   acumula o que faltou, de proposito (ver core/metas.py). #}
+<section class="panel">
+    <h2>🎯 Metas da semana</h2>
+    <p class="muted">
+        Conta desde segunda-feira. Quem está mais longe da meta aparece primeiro.
+        Resposta em menos de 5 segundos não conta.
+    </p>
+    <section class="metric-row">
+        <article class="metric-box"><span>Alunos</span><strong>{{ metas_resumo.alunos or 0 }}</strong></article>
+        <article class="metric-box"><span>Bateram tudo</span><strong>{{ metas_resumo.completos or 0 }}</strong></article>
+        <article class="metric-box"><span>Não começaram</span><strong>{{ metas_resumo.sem_nada or 0 }}</strong></article>
+        <article class="metric-box"><span>Turma</span><strong>{{ metas_resumo.percentual or 0 }}%</strong></article>
+    </section>
+    {% if metas %}
+        <div class="table-list metas-table">
+            <div class="table-row table-head">
+                <span>Aluno</span>
+                {% for item in metas[0].itens %}<span>{{ item.label }}</span>{% endfor %}
+                <span>Foco</span>
+            </div>
+            {% for linha in metas %}
+                <div class="table-row">
+                    <span>{{ linha.nome }}<br><span class="muted">{{ linha.ano_escolar }} - {{ linha.periodo }}</span></span>
+                    {% for item in linha.itens %}
+                        <strong {% if item.cumprida %}class="ok-text"{% endif %}>{{ item.feito }}/{{ item.alvo }}</strong>
+                    {% endfor %}
+                    <span>
+                        {% for foco in linha.focos %}
+                            <span class="pill">{{ foco.materia|materia_label }}: {{ foco.tema|tema_label }}</span>
+                        {% else %}
+                            <span class="muted">-</span>
+                        {% endfor %}
+                    </span>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p class="muted">Nenhum aluno nesta escola ainda.</p>
+    {% endif %}
+</section>
+
+<section class="panel">
+    <h2>📌 Foco de estudo do aluno</h2>
+    <p class="muted">
+        O tema que este aluno precisa desenvolver. Ele aparece na tela de progresso do aluno,
+        com um botão para treinar o tema no Oráculo — o app continua sorteando os outros
+        assuntos normalmente.
+    </p>
+    <form method="get" action="{{ url_for('professor.tela_professor') }}">
+        <input type="hidden" name="aba" value="metas">
+        <label for="aluno_foco_id">Aluno</label>
+        <select id="aluno_foco_id" name="aluno_id" onchange="this.form.submit()">
+            {% for item in alunos %}
+                <option value="{{ item.id }}" {% if aluno_foco and item.id|string == aluno_foco.id|string %}selected{% endif %}>
+                    {{ item.nome }} - {{ item.ano_escolar }}
+                </option>
+            {% endfor %}
+        </select>
+    </form>
+    {% if aluno_foco %}
+        <form method="post" action="{{ url_for('professor.salvar_foco_route') }}">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <input type="hidden" name="aluno_id" value="{{ aluno_foco.id }}">
+            <label for="materia_tema">Matéria e tema</label>
+            {# Materia e tema num campo so: o tema pertence a uma materia, e dois
+               selects separados deixariam gravar um par que nao existe. #}
+            <select id="materia_tema" name="materia_tema" required>
+                {% for opcao in opcoes_foco %}
+                    <optgroup label="{{ opcao.materia|materia_label }}">
+                        {% for tema in opcao.temas %}
+                            <option value="{{ opcao.materia }}|{{ tema }}">{{ tema|tema_label }}</option>
+                        {% endfor %}
+                    </optgroup>
+                {% endfor %}
+            </select>
+            <label for="observacao">Observação (opcional)</label>
+            <input type="text" id="observacao" name="observacao" maxlength="200" placeholder="Ex.: revisar antes da prova de sexta">
+            <button type="submit">Anotar foco</button>
+        </form>
+
+        {% set focos_do_aluno = (metas | selectattr("aluno_id", "equalto", aluno_foco.id|string) | list | first) %}
+        {% if focos_do_aluno and focos_do_aluno.focos %}
+            <h3>Já anotados</h3>
+            {% for foco in focos_do_aluno.focos %}
+                <form method="post" action="{{ url_for('professor.remover_foco_route') }}" class="summary-list">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <input type="hidden" name="aluno_id" value="{{ aluno_foco.id }}">
+                    <input type="hidden" name="materia" value="{{ foco.materia }}">
+                    <p>
+                        <strong>{{ foco.materia|materia_label }}:</strong> {{ foco.tema|tema_label }}
+                        {% if foco.observacao %}<br><span class="muted">{{ foco.observacao }}</span>{% endif %}
+                        <button type="submit">Remover</button>
+                    </p>
+                </form>
+            {% endfor %}
+        {% endif %}
+    {% endif %}
+</section>
+{% endif %}
+
+{% if aba == "professores" %}
+<section class="panel">
+    <h2>👥 Professores cadastrados</h2>
+    {% if professores_sem_escola %}
+        {# Nao e detalhe de cadastro: professor sem escola NAO ENTRA em lugar
+           nenhum (services/auth_service.py::conta_pode_entrar). #}
+        <p class="notice warn">
+            {{ professores_sem_escola }} conta(s) de professor sem escola — elas não conseguem entrar.
+            {% if eh_desenvolvedor %}Vincule no ADM, em Contas de login.{% else %}Peça ao desenvolvedor para vincular.{% endif %}
+        </p>
+    {% endif %}
+    {% if grupos_professores %}
+        {% for nome_escola, contas in grupos_professores %}
+            <h3 class="professores-grupo">{{ nome_escola }} <span class="muted">— {{ contas|length }} professor(es)</span></h3>
+            <div class="table-list professores-table">
+                <div class="table-row table-head"><span>Usuário</span><span>Situação</span></div>
+                {% for conta in contas %}
+                    <div class="table-row">
+                        <span>{{ conta.username }}</span>
+                        <span>
+                            {% if conta.sem_vinculo %}não entra: sem escola
+                            {% elif conta.ativo %}ativa
+                            {% else %}desativada{% endif %}
+                        </span>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endfor %}
+    {% else %}
+        <p class="muted">Nenhum professor cadastrado ainda.</p>
+        <p class="muted">Contas de login são criadas no ADM, pelo desenvolvedor.</p>
+    {% endif %}
+</section>
+{% endif %}
+
+{% if aba == "configuracoes" %}
+<section class="panel">
+    <h2>⚙ Configurações</h2>
+    <form method="post" action="{{ url_for('professor.salvar_configuracoes') }}" class="form"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <label class="check-option"><input type="checkbox" name="mostrar_ranking" {% if escola.mostrar_ranking %}checked{% endif %}> Habilitar Ranking Individual (Top 5 Heróis)</label>
+        <label class="check-option"><input type="checkbox" name="modo_guilda" {% if escola.modo_guilda %}checked{% endif %}> Habilitar Batalha de Guildas</label>
+        <button type="submit">Salvar Preferências</button>
+    </form>
+</section>
+{% endif %}
+
+{% if aba == "adm" %}
+    {% include "partials/admin_panel.html" %}
+{% endif %}
+{% endif %}
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.querySelectorAll(".donut[data-pct]").forEach((el) => {
+    el.style.setProperty("--pct", el.dataset.pct || "0");
+});
+</script>
+{% endblock %}

@@ -1,0 +1,176 @@
+{% import "partials/icones.html" as ic %}
+<!doctype html>
+<html lang="pt-br" data-tema="claro">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}EducaGame IA{% endblock %}</title>
+    <script>
+        // aplica o tema salvo antes da pintura, para nao piscar
+        (function () {
+            try {
+                var salvo = localStorage.getItem("educagame-tema");
+                if (!salvo) {
+                    salvo = window.matchMedia("(prefers-color-scheme: dark)").matches ? "escuro" : "claro";
+                }
+                document.documentElement.setAttribute("data-tema", salvo);
+            } catch (e) {}
+        })();
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700&family=Bitter:wght@500;600&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/flask.css') }}">
+</head>
+<body>
+    {% block route_refs %}
+        {% set _route_refs = (
+            url_for('oraculo.tela_oraculo'),
+            url_for('treino.tela_treino'),
+            url_for('enem.tela_enem'),
+            url_for('boss_rush.tela_boss_rush'),
+            url_for('escape_room.tela_escape_room'),
+            url_for('rpg.tela_rpg'),
+            url_for('guildas.tela_guildas'),
+            url_for('laboratorio.tela_laboratorio'),
+            url_for('progresso.tela_progresso'),
+            url_for('perfil.tela_perfil'),
+            url_for('professor.tela_professor')
+        ) %}
+    {% endblock %}
+
+    {% block topnav %}
+    <header class="topbar">
+        <div class="topbar-left">
+            <a class="brand" href="{{ url_for('home.index') }}">
+                <span class="brand-mark" aria-hidden="true">E</span>
+                EducaGame
+            </a>
+            <nav class="nav">
+                <a class="{% if request.blueprint == 'home' %}active{% endif %}" href="{{ url_for('home.index') }}">Estudar</a>
+                <a class="{% if request.blueprint == 'progresso' %}active{% endif %}" href="{{ url_for('progresso.tela_progresso') }}">Progresso</a>
+                <a class="{% if request.blueprint == 'perfil' %}active{% endif %}" href="{{ url_for('perfil.tela_perfil') }}">Perfil</a>
+                {# Décima heurística: a ajuda tem de estar alcançável de
+                   QUALQUER tela. Uma página de ajuda que só existe na home é
+                   ajuda para quem já não precisa dela. #}
+                <a class="{% if request.blueprint == 'ajuda' %}active{% endif %}" href="{{ url_for('ajuda.tela_ajuda') }}">Ajuda</a>
+            </nav>
+        </div>
+        <div class="topbar-meta">
+            <button class="theme-toggle" type="button" data-alternar-tema aria-label="Alternar tema claro e escuro" title="Alternar tema claro e escuro">
+                <span class="theme-toggle-claro">{{ ic.icone("lua") }}</span>
+                <span class="theme-toggle-escuro">{{ ic.icone("sol") }}</span>
+            </button>
+        </div>
+    </header>
+    {% endblock %}
+
+    {% block header %}
+    <header class="mode-header">
+        <a class="button ghost back-home" href="{{ url_for('home.index') }}">Voltar para o início</a>
+        {% if session.usuario_role %}
+            <form method="post" action="{{ url_for('auth.logout') }}" class="logout-form"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <button class="button ghost" type="submit">Sair</button>
+            </form>
+        {% endif %}
+    </header>
+    {% endblock %}
+
+    <main class="page">
+        {% block content %}{% endblock %}
+    </main>
+
+    {# A ajuda precisa alcançar TODA tela, e a barra de cima não serve para
+       isso: login, escolher escola e digitar o código zeram o bloco `topnav`
+       -- e são justamente as telas onde se pergunta "o que é o código da
+       escola?". No rodapé de base.html, nenhuma tela pode nascer sem ela. #}
+    <footer class="rodape">
+        <a href="{{ url_for('ajuda.tela_ajuda') }}">Ajuda</a>
+        <a href="{{ url_for('privacidade.tela_privacidade') }}">Privacidade</a>
+    </footer>
+
+    <script>
+        document.addEventListener("click", function (evento) {
+            var botao = evento.target.closest("[data-alternar-tema]");
+            if (!botao) {
+                return;
+            }
+            var raiz = document.documentElement;
+            var novo = raiz.getAttribute("data-tema") === "escuro" ? "claro" : "escuro";
+            raiz.setAttribute("data-tema", novo);
+            try {
+                localStorage.setItem("educagame-tema", novo);
+            } catch (e) {}
+        });
+    </script>
+
+    <script>
+        document.querySelectorAll("[data-stat-select]").forEach((select) => {
+            const grupo = select.getAttribute("data-stat-select");
+            const detalhes = document.querySelectorAll(`[data-stat-detalhe="${grupo}"]`);
+            function atualizar() {
+                detalhes.forEach((detalhe) => {
+                    detalhe.hidden = detalhe.dataset.indice !== select.value;
+                });
+            }
+            select.addEventListener("change", atualizar);
+            atualizar();
+        });
+    </script>
+
+    <script>
+        // MELHORIA: nenhuma das 20 telas avisava que estava carregando, e
+        // gerar uma questao pela IA leva ate 22 segundos (o orcamento da
+        // cascata). O aluno clicava e olhava uma tela parada, sem saber se
+        // funcionou -- e, sem nada travando o botao, clicava de novo,
+        // disparando outra cascata e gastando cota da IA.
+        //
+        // Fica no base.html porque vale para as 15 telas com formulario, e
+        // um arquivo por tela envelheceria em silencio.
+        (function () {
+            // "submit" e disparado DEPOIS de o navegador montar o envio, mas
+            // desabilitar aqui ainda descartaria o botao caso ele tivesse
+            // name/value. Nenhum tem hoje (conferido), e o setTimeout(0)
+            // garante que continue verdade se um dia tiver.
+            document.addEventListener("submit", function (evento) {
+                var form = evento.target;
+                if (!(form instanceof HTMLFormElement) || form.dataset.semAviso) return;
+                // Formulario invalido nao chega a enviar: travar o botao aqui
+                // deixaria a tela presa sem nada ter acontecido.
+                if (typeof form.checkValidity === "function" && !form.checkValidity()) return;
+
+                var botao = form.querySelector('[type="submit"]');
+                if (!botao || botao.dataset.aguardando) return;
+
+                setTimeout(function () {
+                    botao.dataset.aguardando = "1";
+                    botao.setAttribute("aria-busy", "true");
+
+                    var texto = form.dataset.avisoTexto || "Preparando...";
+                    var aviso = document.createElement("p");
+                    aviso.className = "aguardando-aviso";
+                    aviso.setAttribute("role", "status");
+                    aviso.textContent = texto + " Isso pode levar alguns segundos.";
+                    form.appendChild(aviso);
+                }, 0);
+            });
+
+            // Voltar pelo historico devolve a pagina do cache com o botao
+            // ainda travado -- e ele ficaria assim para sempre. Este e o
+            // mesmo caminho de "voltar" que ja tinha dado problema antes.
+            window.addEventListener("pageshow", function (evento) {
+                if (!evento.persisted) return;
+                document.querySelectorAll("[data-aguardando]").forEach(function (botao) {
+                    delete botao.dataset.aguardando;
+                    botao.removeAttribute("aria-busy");
+                });
+                document.querySelectorAll(".aguardando-aviso").forEach(function (aviso) {
+                    aviso.remove();
+                });
+            });
+        })();
+    </script>
+
+    {% block scripts %}{% endblock %}
+</body>
+</html>

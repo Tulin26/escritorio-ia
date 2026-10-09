@@ -1,0 +1,321 @@
+{% extends "base.html" %}
+{% block title %}EducaGame IA - RPG{% endblock %}
+{% block content %}
+{% if aviso_resposta %}
+    <p class="notice warn">{{ aviso_resposta }}</p>
+{% endif %}
+
+<section class="section-head">
+    <div>
+        <p class="eyebrow">RPG</p>
+        <h1>Aventura RPG</h1>
+        {% include "partials/student_context.html" %}
+    </div>
+</section>
+
+{% include "partials/ia_notice.html" %}
+
+{% if not configs %}
+<section class="panel">
+    <h2>Nenhuma campanha configurada</h2>
+    <p class="muted">Crie uma aventura no painel do professor para liberar o RPG no Flask.</p>
+</section>
+{% elif not estado %}
+<section>
+    <div class="panel">
+        <h2>Campanha</h2>
+        <form method="post" action="{{ url_for('rpg.iniciar_rpg') }}" data-aviso-texto="Abrindo a aventura..." class="form"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <label for="aventura_id">Aventura</label>
+            <select id="aventura_id" name="aventura_id" required>
+                {% for cfg in configs %}
+                    <option value="{{ cfg.id }}" {% if cfg.id|string == config_id|string %}selected{% endif %}>
+                        {{ cfg.titulo or "Aventura RPG" }} - {{ cfg.materia or "Geral" }}
+                    </option>
+                {% endfor %}
+            </select>
+            {% include "partials/student_selector.html" %}
+            <button type="submit">Iniciar nova aventura</button>
+        </form>
+        {% if salvo %}
+            <form method="post" action="{{ url_for('rpg.continuar_rpg') }}" data-aviso-texto="O Mestre narra o próximo capítulo..." class="form compact-form"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <input type="hidden" name="aventura_id" value="{{ config_id }}">
+                <button class="secondary" type="submit">Continuar progresso salvo</button>
+            </form>
+            <p class="muted">Salvo em {{ salvo.salvo_em or "--" }}.</p>
+        {% endif %}
+    </div>
+</section>
+{% endif %}
+
+{% if estado %}
+<section class="panel challenge">
+    <div class="challenge-head">
+        <div>
+            <p class="eyebrow">{{ estado.titulo }}</p>
+            <h2>{{ estado.cena.local_atual or "Local desconhecido" }}</h2>
+            <p class="muted">{{ estado.cena.narracao }}</p>
+        </div>
+        <span class="pill">{{ {"em_andamento": "Em andamento", "vitoria": "Vitória", "derrota": "Derrota"}.get(estado.status, estado.status) }}</span>
+    </div>
+
+    <div class="stats-grid">
+        <div class="stat-card"><span>HP</span><strong>{{ estado.hp }}/100</strong></div>
+        <div class="stat-card"><span>XP</span><strong>{{ estado.xp }}</strong></div>
+        <div class="stat-card"><span>Fase</span><strong>{{ estado.fase }}/{{ fases_totais }}</strong></div>
+    </div>
+    {% set progresso = (estado.fase / fases_totais * 100)|round(0, "floor")|int %}
+    <div class="progress-row">
+        <strong>Destino: {{ resumo.titulo }}</strong>
+        <span>{{ progresso }}% concluído</span>
+    </div>
+    <progress class="progress-bar" value="{{ progresso }}" max="100">{{ progresso }}%</progress>
+
+    {% if estado.resultado %}
+        <div class="notice {{ 'ok' if estado.resultado.acertou else 'warn' }}">
+            <strong>{{ "Desafio superado" if estado.resultado.acertou else "Desafio perdido" }}</strong>
+            {# O filtro "unidades" so vale para texto puro: dentro de $$ ... $$ o "^"
+               e LaTeX legitimo e converte-lo quebraria a formula. #}
+            <p><strong>Sua resposta:</strong> {{ estado.resultado.resposta_aluno|unidades|formula_html }}</p>
+            <p><strong>Resposta correta:</strong> {{ estado.resultado.resposta_correta|unidades|formula_html }}</p>
+            <p>XP: +{{ estado.resultado.xp_ganho }} | HP: -{{ estado.resultado.hp_perda }}{% if estado.resultado.pontos %} | Pontos: {{ "+" if estado.resultado.pontos > 0 else "" }}{{ estado.resultado.pontos }}{% endif %}</p>
+            {% if estado.resultado.explicacao_texto %}<div class="result-explanation">{{ estado.resultado.explicacao_texto|unidades|formula_html }}</div>{% endif %}
+            {% if estado.resultado.formula_latex %}
+                <div class="formula-box">
+                    <h3>Fórmula principal</h3>
+                    <div class="latex">$$ {{ estado.resultado.formula_latex }} $$</div>
+                    {% for subformula in estado.resultado.subformulas_latex %}
+                        <div class="latex">$$ {{ subformula }} $$</div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+            {% if estado.resultado.passos_template %}
+                <div class="steps">
+                    <h3>Etapas da resolução</h3>
+                    {% for passo in estado.resultado.passos_template %}
+                        <div class="step">
+                            <strong>{{ passo.titulo }}</strong>
+                            {% if passo.conteudo_texto %}
+                                <p>{{ passo.conteudo_texto|formula_html }}</p>
+                            {% endif %}
+                            {% if passo.conteudo_latex %}
+                                <div class="latex">$$ {{ passo.conteudo_latex }} $$</div>
+                            {% elif not passo.conteudo_texto %}
+                                <p>{{ passo.conteudo|formula_html }}</p>
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+            {% if estado.resultado.feedback %}
+                <div class="feedback-box">
+                    <h3>Feedback pedagógico</h3>
+                    <p><strong>O que pode ter confundido:</strong> {{ estado.resultado.feedback.confundiu|unidades|formula_html }}</p>
+                    <p><strong>Como evitar:</strong> {{ estado.resultado.feedback.evitar|unidades|formula_html }}</p>
+                    <p><strong>Próximo treino:</strong> {{ estado.resultado.feedback.treino|unidades|formula_html }}</p>
+                </div>
+            {% endif %}
+        </div>
+    {% endif %}
+
+    {% if estado.status == "vitoria" %}
+        <div class="notice ok">
+            <strong>Vitória!</strong>
+            <p>Você concluiu a campanha com {{ estado.hp }} HP e {{ estado.xp }} XP.</p>
+        </div>
+        <div class="actions">
+            <a class="button" href="{{ url_for('rpg.baixar_pdf_rpg') }}">Baixar relatório RPG</a>
+            <form method="post" action="{{ url_for('rpg.reiniciar_rpg') }}"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><button class="secondary" type="submit">Nova jornada</button></form>
+        </div>
+    {% elif estado.status == "derrota" %}
+        <div class="notice warn">
+            <strong>Fim da jornada</strong>
+            <p>O HP chegou a zero. Recomece para tentar outra rota.</p>
+        </div>
+        <form method="post" action="{{ url_for('rpg.reiniciar_rpg') }}"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><button type="submit">Recomeçar RPG</button></form>
+    {% elif desafio %}
+        <div class="formula-box">
+            <h3>{{ desafio.ambientacao or "Desafio acadêmico" }}</h3>
+            {% if desafio.tema_usado %}<p class="muted">Tema: {{ desafio.tema_usado }}</p>{% endif %}
+            <p class="muted">
+                Matéria: {{ desafio.materia_label or desafio.materia or "Geral" }}
+                {% if desafio.habilidade_bncc %} | Habilidade: {{ desafio.habilidade_bncc }}{% endif %}
+            </p>
+            {% set suporte = desafio.suporte %}
+            {% include "partials/suporte_questao.html" %}
+            {% set pergunta = desafio.pergunta_formatada %}
+            <div class="question">
+                {% if pergunta.texto %}<p>{{ pergunta.texto }}{{ pergunta.sufixo if not pergunta.latex else "" }}</p>{% endif %}
+                {% if pergunta.latex %}<div class="latex">$$ {{ pergunta.latex }} $$</div>{% endif %}
+                {% if pergunta.latex and pergunta.sufixo %}<p>{{ pergunta.sufixo }}</p>{% endif %}
+            </div>
+            {% if desafio.formula_latex %}
+                <h3>Fórmula principal</h3>
+                <div class="latex">$$ {{ desafio.formula_latex }} $$</div>
+                {% for subformula in desafio.subformulas_latex %}
+                    <div class="latex">$$ {{ subformula }} $$</div>
+                {% endfor %}
+            {% endif %}
+        </div>
+        {% if not estado.resultado %}
+            {% set action = url_for('rpg.responder_desafio') %}
+            {% set opcoes = desafio.opcoes %}
+            {% include "partials/options_form.html" %}
+        {% endif %}
+    {% else %}
+        <h2>Próxima decisão</h2>
+        <div class="choice-grid">
+            {% for opcao in estado.cena.opcoes %}
+                {% set efeitos = opcao.efeitos if opcao.efeitos else none %}
+                <details class="choice-card">
+                    <summary class="choice-summary">
+                        <span class="eyebrow">{{ opcao.rota }} | risco {{ {"medio": "médio"}.get(opcao.risco, opcao.risco) }}</span>
+                        <strong>{{ opcao.gancho or opcao.texto }}</strong>
+                        <span class="muted">{{ opcao.destino_titulo }} com {{ opcao.recurso }}</span>
+                    </summary>
+                    <div class="choice-story">
+                        <p>{{ opcao.cena or opcao.texto }}</p>
+                        <div class="choice-story-block">
+                            <span>Plano</span>
+                            <p>{{ opcao.plano or opcao.texto }}</p>
+                        </div>
+                        <div class="choice-story-block">
+                            <span>Risco</span>
+                            <p>{{ opcao.risco_narrativo or opcao.consequencia_imediata }}</p>
+                        </div>
+                        <div class="choice-story-block">
+                            <span>Recompensa</span>
+                            <p>{{ opcao.recompensa_narrativa or opcao.consequencia_imediata }}</p>
+                        </div>
+                        <p class="muted">{{ opcao.consequencia_completa or opcao.consequencia_imediata }}</p>
+                        <div class="chip-row">
+                            <span class="pill">{{ opcao.destino_titulo }}</span>
+                            <span class="pill">{{ opcao.foco_aprendizado }}</span>
+                        </div>
+                        <form method="post" action="{{ url_for('rpg.escolher_rota') }}"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                            <input type="hidden" name="opcao_id" value="{{ opcao.id }}">
+                            <button type="submit">Entrar nesta rota</button>
+                        </form>
+                    </div>
+                </details>
+            {% endfor %}
+        </div>
+    {% endif %}
+</section>
+
+<section class="grid two">
+    <div class="panel">
+        <h2>Destino do herói</h2>
+        <p>{{ resumo.descricao }}</p>
+        <div class="stats-grid">
+            {% for nome, valor in resumo.placar.items() %}
+                <div class="stat-card"><span>{{ resumo.rotulos_placar.get(nome, nome) }}</span><strong>{{ valor }}</strong></div>
+            {% endfor %}
+        </div>
+    </div>
+    <div class="panel">
+        <h2>Crônica recente</h2>
+        {% if estado.historico %}
+            <div class="summary-list">
+                {% for passo in estado.historico[-6:]|reverse %}
+                    <p><strong>Fase {{ passo.fase }} - {{ passo.status }}:</strong> {{ passo.acao }}</p>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p class="muted">As escolhas da jornada aparecem aqui.</p>
+        {% endif %}
+        <div class="actions">
+            <form method="post" action="{{ url_for('rpg.salvar_rpg') }}"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><button type="submit">Salvar progresso</button></form>
+            <form method="post" action="{{ url_for('rpg.reiniciar_rpg') }}"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><button class="secondary" type="submit">Reiniciar</button></form>
+        </div>
+    </div>
+</section>
+{% endif %}
+{% endblock %}
+
+{% block scripts %}
+<script>
+window.MathJax = {
+    // MELHORIA: "$" era delimitador de formula inline, entao qualquer
+    // enunciado com dinheiro ("Um produto de R$ 200 ... o desconto em R$?")
+    // tinha TODO o texto entre os dois cifroes engolido pelo MathJax e
+    // renderizado como matematica italica ilegivel (verificado ao vivo).
+    // As formulas do app usam $$...$$ (displayMath), que segue funcionando.
+    tex: { inlineMath: [["\\(", "\\)"]] },
+    svg: { fontCache: "global" }
+};
+</script>
+<script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+
+<script>
+(function () {
+    // MELHORIA: musica de fundo da sessao de RPG. Como cada acao do aluno
+    // (responder desafio, escolher rota etc.) recarrega a pagina inteira
+    // (server-rendered, sem SPA), a faixa e o tempo atual sao salvos no
+    // localStorage a cada poucos segundos e restaurados no proximo load,
+    // pra tocar como se fosse continuo em vez de reiniciar do zero a cada
+    // recarregamento. Navegador bloqueia autoplay com som antes de qualquer
+    // interacao do usuario nesta pagina; como nao ha botao dedicado, o
+    // primeiro clique/tecla em qualquer lugar da tela (iniciar aventura,
+    // responder, escolher rota...) e usado pra desbloquear e iniciar o play.
+    var PLAYLIST = [
+        "{{ url_for('static', filename='audio/dragonstone-overture-1.mp3') }}",
+        "{{ url_for('static', filename='audio/dragonstone-overture-2.mp3') }}",
+        "{{ url_for('static', filename='audio/despertar-do-dragao.mp3') }}"
+    ];
+    var CHAVE_FAIXA = "rpg_musica_faixa";
+    var CHAVE_TEMPO = "rpg_musica_tempo";
+
+    var faixaAtual = parseInt(localStorage.getItem(CHAVE_FAIXA), 10);
+    if (isNaN(faixaAtual) || faixaAtual < 0 || faixaAtual >= PLAYLIST.length) {
+        faixaAtual = 0;
+    }
+    var tempoSalvo = parseFloat(localStorage.getItem(CHAVE_TEMPO)) || 0;
+
+    var audio = new Audio(PLAYLIST[faixaAtual]);
+    audio.volume = 0.35;
+    if (tempoSalvo > 0) {
+        audio.currentTime = tempoSalvo;
+    }
+
+    function salvarProgresso() {
+        localStorage.setItem(CHAVE_FAIXA, String(faixaAtual));
+        localStorage.setItem(CHAVE_TEMPO, String(audio.currentTime || 0));
+    }
+
+    audio.addEventListener("timeupdate", function () {
+        // grava a cada ~5s de reproducao, sem sobrecarregar o localStorage
+        if (Math.floor(audio.currentTime) % 5 === 0) {
+            salvarProgresso();
+        }
+    });
+
+    audio.addEventListener("ended", function () {
+        faixaAtual = (faixaAtual + 1) % PLAYLIST.length;
+        audio.src = PLAYLIST[faixaAtual];
+        audio.currentTime = 0;
+        salvarProgresso();
+        audio.play().catch(function () {});
+    });
+
+    window.addEventListener("beforeunload", salvarProgresso);
+
+    function tentarTocar() {
+        var promessa = audio.play();
+        if (promessa && typeof promessa.catch === "function") {
+            promessa.catch(function () {
+                // autoplay bloqueado: espera a primeira interacao do usuario
+                var desbloquear = function () {
+                    audio.play().catch(function () {});
+                    document.removeEventListener("click", desbloquear);
+                    document.removeEventListener("keydown", desbloquear);
+                };
+                document.addEventListener("click", desbloquear, { once: true });
+                document.addEventListener("keydown", desbloquear, { once: true });
+            });
+        }
+    }
+
+    tentarTocar();
+})();
+</script>
+{% endblock %}

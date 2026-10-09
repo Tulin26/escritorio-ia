@@ -1,0 +1,200 @@
+<section class="panel admin-panel">
+    <div class="admin-panel-head">
+        <div>
+            <p class="eyebrow">ADM</p>
+            <h2>Painel do Desenvolvedor</h2>
+            <p class="muted">Gerencie as escolas cadastradas sem acessar uma unidade especifica.</p>
+        </div>
+    </div>
+
+    <details>
+        <summary>+ Cadastrar Nova Escola</summary>
+        <form method="post" action="{{ url_for('professor.admin_criar_escola') }}" class="form teacher-form"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <input name="nome" placeholder="Nome da instituicao" required>
+            <input name="slug" placeholder="Slug">
+            <input name="cor_tema" type="color" value="#003366">
+            <label class="check-option"><input type="checkbox" name="mostrar_ranking" checked> Mostrar ranking</label>
+            <label class="check-option"><input type="checkbox" name="modo_guilda" checked> Modo guilda</label>
+            <button type="submit">Confirmar Cadastro</button>
+        </form>
+    </details>
+
+    <h2>Unidades Ativas</h2>
+    <div class="table-list admin-school-table">
+        <div class="table-row table-head"><span>Nome</span><span>Slug</span><span>Ranking</span><span>Guilda</span><span>Criada em</span></div>
+        {% for item in escolas %}
+            <div class="table-row">
+                <span>{{ item.nome }}</span>
+                <span>{{ item.slug }}</span>
+                <span>{{ "sim" if item.mostrar_ranking else "nao" }}</span>
+                <span>{{ "sim" if item.modo_guilda else "nao" }}</span>
+                <span>{{ item.created_at|data_local }}</span>
+            </div>
+        {% else %}
+            <p class="muted">Nenhuma escola cadastrada.</p>
+        {% endfor %}
+    </div>
+
+    {% if escola_admin %}
+        <h2>Editar Escola</h2>
+        <form method="get" action="{{ url_for('professor.tela_professor') }}" class="form">
+            <input type="hidden" name="aba" value="adm">
+            <select name="escola_admin_id" onchange="this.form.submit()">
+                {% for item in escolas %}
+                    <option value="{{ item.id }}" {% if item.id == escola_admin.id %}selected{% endif %}>{{ item.nome }} ({{ item.slug }})</option>
+                {% endfor %}
+            </select>
+        </form>
+
+        <form method="post" action="{{ url_for('professor.admin_editar_escola') }}" class="form teacher-form"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <input type="hidden" name="escola_id" value="{{ escola_admin.id }}">
+            <label>Nome</label><input name="nome" value="{{ escola_admin.nome }}">
+            <label>Slug</label><input name="slug" value="{{ escola_admin.slug }}">
+            <label>Cor do tema</label><input name="cor_tema" type="color" value="{{ escola_admin.cor_tema or '#003366' }}">
+            <label class="check-option"><input type="checkbox" name="mostrar_ranking" {% if escola_admin.mostrar_ranking %}checked{% endif %}> Mostrar ranking</label>
+            <label class="check-option"><input type="checkbox" name="modo_guilda" {% if escola_admin.modo_guilda %}checked{% endif %}> Modo guilda</label>
+            <button type="submit">Salvar alterações</button>
+        </form>
+
+        <details class="danger-zone">
+            <summary>Área de exclusão</summary>
+            {# O Flask nao avisava nada aqui -- dois campos de confirmacao e um
+               botao. Com usuarios.escola_id em ON DELETE CASCADE, a exclusao
+               passou a levar a conta de professor junto, e isso precisa estar
+               escrito onde a pessoa clica. #}
+            <p class="notice warn">
+                Apaga também alunos, logs, RPGs e <strong>a conta de professor
+                desta escola</strong>. Não há como desfazer.
+            </p>
+            <form method="post" action="{{ url_for('professor.admin_excluir_escola') }}" class="form"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <input type="hidden" name="escola_id" value="{{ escola_admin.id }}">
+                <input type="hidden" name="slug" value="{{ escola_admin.slug }}">
+                <input name="confirmar_slug" placeholder="Digite o slug: {{ escola_admin.slug }}">
+                <input name="confirmar_texto" placeholder="Digite APAGAR">
+                <button class="secondary" type="submit">Excluir definitivamente</button>
+            </form>
+        </details>
+
+        <h2>Senha de aluno</h2>
+        <p class="muted">
+            A recuperação por e-mail não serve para quem não tem e-mail cadastrado.
+            A nova senha aparece uma única vez aqui — o banco guarda só o hash.
+        </p>
+        <form method="post" action="{{ url_for('professor.admin_redefinir_senha_aluno') }}" class="form teacher-form"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <input type="hidden" name="escola_admin_id" value="{{ escola_admin.id }}">
+            <select name="aluno_id" required>
+                <option value="">Selecione o aluno</option>
+                {% for item in alunos_admin %}
+                    <option value="{{ item.id }}">{{ item.nome }}{% if item.ano_escolar %} — {{ item.ano_escolar }}{% endif %}</option>
+                {% endfor %}
+            </select>
+            <button class="secondary" type="submit">Gerar nova senha</button>
+        </form>
+    {% endif %}
+
+    <h2>Contas de login</h2>
+    <p class="muted">
+        Conta de professor só entra na escola a que está vinculada. <strong>Sem
+        vínculo, ela não entra em lugar nenhum</strong> — o desenvolvedor é
+        global de propósito e não precisa de escola.
+    </p>
+
+    <div class="table-list">
+        <div class="table-row table-head"><span>Usuário</span><span>Papel</span><span>Escola</span><span>Situação</span><span>Ações</span></div>
+        {% for conta in contas_admin %}
+            <div class="table-row">
+                <span>{{ conta.username }}</span>
+                <span>{{ conta.role }}</span>
+                <span>
+                    <form method="post" action="{{ url_for('professor.admin_vincular_conta_escola') }}"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        <input type="hidden" name="usuario_id" value="{{ conta.id }}">
+                        <select name="escola_id" onchange="this.form.submit()">
+                            <option value="">— sem escola —</option>
+                            {% for item in escolas %}
+                                <option value="{{ item.id }}" {% if item.id|string == conta.escola_id %}selected{% endif %}>{{ item.nome }}</option>
+                            {% endfor %}
+                        </select>
+                    </form>
+                </span>
+                <span>
+                    {% if conta.sem_vinculo %}
+                        <strong class="erro">não entra: sem escola</strong>
+                    {% elif conta.ativo %}
+                        ativa
+                    {% else %}
+                        desativada
+                    {% endif %}
+                </span>
+                <span class="admin-conta-acoes">
+                    <form method="post" action="{{ url_for('professor.admin_ativar_conta') }}"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        <input type="hidden" name="usuario_id" value="{{ conta.id }}">
+                        <input type="hidden" name="ativo" value="{{ '0' if conta.ativo else '1' }}">
+                        <button class="secondary" type="submit">{{ "Desativar" if conta.ativo else "Ativar" }}</button>
+                    </form>
+                    <form method="post" action="{{ url_for('professor.admin_redefinir_senha_conta') }}"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        <input type="hidden" name="usuario_id" value="{{ conta.id }}">
+                        <button class="secondary" type="submit">Nova senha</button>
+                    </form>
+                </span>
+            </div>
+        {% else %}
+            <p class="muted">Nenhuma conta cadastrada.</p>
+        {% endfor %}
+    </div>
+
+    <details>
+        <summary>+ Criar conta</summary>
+        <form method="post" action="{{ url_for('professor.admin_criar_conta') }}" class="form teacher-form"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <label>Usuário</label>
+            <input name="username" placeholder="sem espaço, tudo minúsculo" required>
+
+            <label>Papel</label>
+            <select name="papel">
+                {% for papel in papeis %}
+                    <option value="{{ papel }}" {% if papel == "professor" %}selected{% endif %}>{{ papel }}</option>
+                {% endfor %}
+            </select>
+
+            <label>Escola (obrigatória para professor)</label>
+            <select name="escola_id">
+                <option value="">— sem escola —</option>
+                {% for item in escolas %}
+                    <option value="{{ item.id }}">{{ item.nome }}</option>
+                {% endfor %}
+            </select>
+
+            <label>Senha (em branco = gerada e mostrada uma vez)</label>
+            <input name="senha" placeholder="deixe em branco para gerar">
+
+            <button type="submit">Criar conta</button>
+        </form>
+    </details>
+
+    <h2>Diagnóstico do sistema</h2>
+    <div class="table-list">
+        <div class="table-row">
+            <span>Último provedor de IA</span>
+            <span>{{ diagnostico.ultimo_provedor_ia or "nenhuma questão gerada ainda" }}</span>
+        </div>
+        <div class="table-row">
+            <span>Projeto Supabase</span>
+            <span>{{ diagnostico.supabase.projeto_ref or "ausente" }}</span>
+        </div>
+        <div class="table-row">
+            <span>Papel da chave</span>
+            <span>{{ diagnostico.supabase.jwt_role or "—" }}</span>
+        </div>
+    </div>
+
+    {% if diagnostico.ultimo_erro_ia %}
+        <p class="muted">Último aviso da IA: {{ diagnostico.ultimo_erro_ia }}</p>
+    {% endif %}
+
+    {% if diagnostico.config %}
+        {% for nivel, mensagem in diagnostico.config %}
+            <p class="{{ 'erro' if nivel == 'erro' else 'muted' }}">{{ nivel|upper }}: {{ mensagem }}</p>
+        {% endfor %}
+    {% else %}
+        <p class="muted">Configuração OK: banco e IA configurados.</p>
+    {% endif %}
+</section>

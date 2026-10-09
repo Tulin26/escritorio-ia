@@ -1,0 +1,6 @@
+# Frontend Streamlit — o Streamlit Cloud le ESTE arquivo, por nome fixo.
+-r requirements_base.txt
+
+streamlit==1.56.0
+streamlit-javascript==0.1.5
+plotly==6.7.0

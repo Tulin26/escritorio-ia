@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+{% block title %}Ajuda · EducaGame{% endblock %}
+
+{% block content %}
+<section class="panel">
+    <p class="eyebrow">Ajuda</p>
+    <h1>Como usar o EducaGame</h1>
+    <p class="muted">
+        Procure pelo que você quer fazer. Se não achar, pergunte ao seu professor.
+    </p>
+
+    {# A décima heurística pede ajuda PESQUISÁVEL: uma página com quatro
+       seções e vinte itens vira parede de texto, e parede de texto ninguém
+       lê duas vezes. O filtro é client-side de propósito -- não vale uma
+       ida ao servidor, e continua funcionando com o servidor em repouso,
+       que é justamente uma das dúvidas respondidas aqui. #}
+    <label class="ajuda-busca">
+        <span class="sr-only">Buscar na ajuda</span>
+        <input type="search" id="ajuda-busca" placeholder="Buscar na ajuda (ex.: senha, demora, RPG)"
+               autocomplete="off" data-ajuda-busca>
+    </label>
+
+    <p class="notice" id="ajuda-sem-resultado" hidden>
+        Nada encontrado. Tente outra palavra, ou peça ajuda ao seu professor.
+    </p>
+
+    {% for secao in secoes %}
+        <section class="ajuda-secao" data-ajuda-secao id="ajuda-{{ secao.id }}">
+            <h2>{{ secao.titulo }}</h2>
+            <dl class="ajuda-lista">
+                {% for titulo, texto in secao.itens %}
+                    <div class="ajuda-item" data-ajuda-item>
+                        <dt>{{ titulo }}</dt>
+                        <dd>{{ texto }}</dd>
+                    </div>
+                {% endfor %}
+            </dl>
+        </section>
+    {% endfor %}
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script>
+(function () {
+    var campo = document.querySelector("[data-ajuda-busca]");
+    if (!campo) { return; }
+
+    var itens = Array.prototype.slice.call(document.querySelectorAll("[data-ajuda-item]"));
+    var secoes = Array.prototype.slice.call(document.querySelectorAll("[data-ajuda-secao]"));
+    var semResultado = document.getElementById("ajuda-sem-resultado");
+
+    // Sem acento dos dois lados: quem digita "duvida" tem de achar "dúvida".
+    // Em celular de aluno o teclado costuma nem sugerir o acento.
+    function normalizar(texto) {
+        return texto.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "");
+    }
+
+    itens.forEach(function (item) {
+        item.dataset.busca = normalizar(item.textContent || "");
+    });
+
+    function filtrar() {
+        var termo = normalizar(campo.value.trim());
+        var achou = 0;
+
+        itens.forEach(function (item) {
+            var bate = !termo || item.dataset.busca.indexOf(termo) !== -1;
+            item.hidden = !bate;
+            if (bate) { achou += 1; }
+        });
+
+        // Seção sem nenhum item visível some junto com o próprio título --
+        // senão sobram cabeçalhos soltos sobre o vazio.
+        secoes.forEach(function (secao) {
+            var visiveis = secao.querySelectorAll("[data-ajuda-item]:not([hidden])").length;
+            secao.hidden = visiveis === 0;
+        });
+
+        semResultado.hidden = achou !== 0;
+    }
+
+    campo.addEventListener("input", filtrar);
+    filtrar();
+})();
+</script>
+{% endblock %}

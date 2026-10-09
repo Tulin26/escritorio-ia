@@ -1,0 +1,13 @@
+<form method="post" action="{{ action }}" class="options"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    {# A assinatura diz a QUE questao este indice pertence: sem ela, uma
+       pagina velha reenviada era pontuada contra a questao seguinte
+       (relatorio de QA de 23/09/2026, achado 3.4). #}
+    <input type="hidden" name="assinatura_questao" value="{{ assinatura_questao|default('') }}">
+    {% for opcao in opcoes %}
+        <label class="option">
+            <input type="radio" name="resposta" value="{{ loop.index0 }}" required>
+            <span>{{ opcao|unidades|formula_html }}</span>
+        </label>
+    {% endfor %}
+    <button type="submit">Responder</button>
+</form>

@@ -578,7 +578,7 @@ textarea {
 .form-missao .marcar input { width: 18px; height: 18px; accent-color: var(--amarelo); }
 .botoes-fim { gap: 8px; }
 .area-anexos {
-  display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; padding: 10px;
+  position: relative; display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; padding: 10px;
   background: var(--fundo); border: 3px dashed #4a4560;
   transition: border-color 150ms ease, background-color 150ms ease;
 }
@@ -594,7 +594,7 @@ textarea {
   font: 12px/1.8 var(--pixel); color: #2a1604; background: var(--laranja);
   border: 4px solid var(--contorno); box-shadow: 0 0 0 4px #ffd9b0, 0 12px 0 4px rgba(0, 0, 0, .45);
 }
-.entrada-anexos { position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
+.entrada-anexos { position: absolute; top: 0; left: 0; width: 1px; height: 1px; overflow: hidden; opacity: 0; pointer-events: none; }
 .anexos-escolhidos { display: grid; gap: 6px; margin: 8px 0 0; padding: 0; list-style: none; }
 .anexos-escolhidos li {
   display: grid; grid-template-columns: 40px minmax(0, 1fr) auto; align-items: center; gap: 10px;

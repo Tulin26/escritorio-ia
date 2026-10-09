@@ -1,12 +1,18 @@
 import { useEffect, useRef, useState } from 'react';
 import Dialogo from './Dialogo.jsx';
 import { Miniatura } from './Anexos.jsx';
-import { EXTENSOES_ANEXO, LIMITES_ANEXOS, ehImagem, extensaoDe, tamanhoLegivel } from '../dados.js';
+import { api } from '../api.js';
+import { arquivosDoArraste, comCaminho, ignorar } from '../arquivos.js';
+import { LIMITES_ANEXOS, ehImagem, extensaoDe, tamanhoLegivel } from '../dados.js';
 
 // Online, foto acima disso é reduzida no navegador antes de subir (lado maior com até LADO_MAXIMO px, em JPEG).
-// No PC a foto vai como está; só é reduzida se passar do limite por arquivo.
+// No PC a foto vai como está.
 const REDUZIR_ACIMA = 900 * 1024;
 const LADO_MAXIMO = 1920;
+// No PC os anexos sobem um a um, alguns ao mesmo tempo.
+const ENVIOS_JUNTOS = 4;
+// Com uma pasta grande, a lista mostra só os primeiros (o resto vira "e mais N arquivos").
+const MOSTRAR_ATE = 40;
 
 // "soltos" são arquivos que você soltou em qualquer lugar do painel ({ chave, arquivos }): entram como anexos.
 export default function NovaMissao({ aberto, estado, nuvem, soltos, onUsarSoltos, onFechar, onEnviar }) {
@@ -30,10 +36,10 @@ async function reduzirImagem(arquivo) {
     ctx.drawImage(bitmap, 0, 0, canvas.width, canvas.height);
     if (bitmap.close) bitmap.close();
     const blob = await new Promise((ok) => canvas.toBlob(ok, 'image/jpeg', 0.85));
-    if (!blob || blob.size >= arquivo.size) return { blob: arquivo, nome: arquivo.name };
-    return { blob, nome: `${arquivo.name.replace(/\.[^.]+$/, '')}.jpg`, reduzida: true };
+    if (!blob || blob.size >= arquivo.size) return { blob: arquivo };
+    return { blob, trocarExtensao: 'jpg', reduzida: true };
   } catch {
-    return { blob: arquivo, nome: arquivo.name };
+    return { blob: arquivo };
   }
 }
 
@@ -44,6 +50,21 @@ const paraBase64 = (blob) => new Promise((ok, erro) => {
   leitor.readAsDataURL(blob);
 });
 
+// Prévia de uma imagem escolhida: o endereço temporário só existe enquanto ela aparece na lista.
+function MiniaturaLocal({ anexo }) {
+  const [src, setSrc] = useState('');
+  useEffect(() => {
+    if (!ehImagem(anexo.nome)) return undefined;
+    const url = URL.createObjectURL(anexo.blob);
+    setSrc(url);
+    return () => URL.revokeObjectURL(url);
+  }, [anexo]);
+  if (ehImagem(anexo.nome) && !src) return <span className="miniatura arquivo" aria-hidden="true" />;
+  return <Miniatura anexo={anexo} src={src} />;
+}
+
+const novoLote = () => (crypto.randomUUID ? crypto.randomUUID() : `${Date.now()}-${Math.random().toString(36).slice(2)}`);
+
 function Formulario({ estado, nuvem, soltos, onUsarSoltos, onFechar, onEnviar }) {
   const limites = nuvem ? LIMITES_ANEXOS.nuvem : LIMITES_ANEXOS.pc;
   const [projeto, setProjeto] = useState('');
@@ -51,15 +72,19 @@ function Formulario({ estado, nuvem, soltos, onUsarSoltos, onFechar, onEnviar })
   const [anexos, setAnexos] = useState([]);
   const [arrastando, setArrastando] = useState(false);
   const [preparando, setPreparando] = useState(false);
+  const [progresso, setProgresso] = useState(null);
   const [chamar, setChamar] = useState(true);
   const [aviso, setAviso] = useState('');
   const [ocupado, setOcupado] = useState(false);
   const entrada = useRef(null);
+  const entradaPasta = useRef(null);
   const lista = useRef(anexos);
   lista.current = anexos;
 
-  // As prévias das imagens são endereços temporários do navegador: libera tudo ao fechar.
-  useEffect(() => () => lista.current.forEach((a) => a.previa && URL.revokeObjectURL(a.previa)), []);
+  // "Escolher pasta": o atributo não é padrão, então entra direto no elemento.
+  useEffect(() => {
+    if (entradaPasta.current) entradaPasta.current.setAttribute('webkitdirectory', '');
+  }, []);
 
   // Arquivos soltos no painel (fora deste formulário) viram anexos; a chave evita usar a mesma leva duas vezes.
   const levasUsadas = useRef(new Set());
@@ -75,43 +100,40 @@ function Formulario({ estado, nuvem, soltos, onUsarSoltos, onFechar, onEnviar })
   (estado.pedidos || []).forEach((p) => nomes.add(p.projetoNome || p.projeto));
   const total = anexos.reduce((t, a) => t + a.blob.size, 0);
 
-  async function adicionar(arquivos) {
-    const escolhidos = [...arquivos];
+  async function adicionar(itens) {
+    const escolhidos = [...itens].map(comCaminho).filter((i) => i && i.arquivo && !ignorar(i.caminho));
     if (!escolhidos.length) return;
     setAviso('');
     setPreparando(true);
     const problemas = [];
     const novos = [];
+    // A mesma pasta escolhida duas vezes não repete arquivo.
+    const ja = new Set(lista.current.map((a) => `${a.nome}|${a.original}`));
     let soma = lista.current.reduce((t, a) => t + a.blob.size, 0);
-    for (const arquivo of escolhidos) {
+    for (const { arquivo, caminho } of escolhidos) {
+      if (ja.has(`${caminho}|${arquivo.size}`)) continue;
+      ja.add(`${caminho}|${arquivo.size}`);
       if (lista.current.length + novos.length >= limites.quantidade) {
-        problemas.push(`no máximo ${limites.quantidade} anexos por pedido`);
+        problemas.push(`online, no máximo ${limites.quantidade} anexos por pedido (no PC não há limite)`);
         break;
       }
-      const ext = extensaoDe(arquivo.name);
-      if (!EXTENSOES_ANEXO.includes(ext)) {
-        problemas.push(`"${arquivo.name}" não é de um tipo aceito`);
-        continue;
-      }
-      if (!arquivo.size) {
-        problemas.push(`"${arquivo.name}" está vazio`);
-        continue;
-      }
-      const reduzir = ['jpg', 'jpeg', 'png', 'webp'].includes(ext) && arquivo.size > (nuvem ? REDUZIR_ACIMA : limites.porArquivo);
-      const pronto = reduzir ? await reduzirImagem(arquivo) : { blob: arquivo, nome: arquivo.name };
+      const reduzir = nuvem && ['jpg', 'jpeg', 'png', 'webp'].includes(extensaoDe(arquivo.name)) && arquivo.size > REDUZIR_ACIMA;
+      const pronto = reduzir ? await reduzirImagem(arquivo) : { blob: arquivo };
       if (pronto.blob.size > limites.porArquivo) {
-        problemas.push(`"${arquivo.name}" passa de ${tamanhoLegivel(limites.porArquivo)}`);
+        problemas.push(`"${caminho}" passa de ${tamanhoLegivel(limites.porArquivo)} (limite do painel online)`);
         continue;
       }
       if (soma + pronto.blob.size > limites.bytes) {
-        problemas.push(`"${arquivo.name}" passaria do limite de ${tamanhoLegivel(limites.bytes)} no total`);
+        problemas.push(`"${caminho}" passaria do limite de ${tamanhoLegivel(limites.bytes)} do painel online`);
         continue;
       }
       soma += pronto.blob.size;
       novos.push({
         id: `${Date.now()}-${Math.random()}`,
-        ...pronto,
-        previa: ehImagem(pronto.nome) ? URL.createObjectURL(pronto.blob) : '',
+        blob: pronto.blob,
+        nome: pronto.trocarExtensao ? caminho.replace(/(\.[^./]+)?$/, `.${pronto.trocarExtensao}`) : caminho,
+        original: arquivo.size,
+        reduzida: pronto.reduzida,
       });
     }
     setAnexos((atual) => [...atual, ...novos]);
@@ -119,12 +141,7 @@ function Formulario({ estado, nuvem, soltos, onUsarSoltos, onFechar, onEnviar })
     if (problemas.length) setAviso(`Não entrou: ${problemas.join('; ')}.`);
   }
 
-  function remover(id) {
-    setAnexos((atual) => atual.filter((a) => {
-      if (a.id === id && a.previa) URL.revokeObjectURL(a.previa);
-      return a.id !== id;
-    }));
-  }
+  const remover = (id) => setAnexos((atual) => atual.filter((a) => a.id !== id));
 
   // Colar uma imagem (Ctrl+V) em qualquer campo do formulário também anexa.
   function colar(e) {
@@ -134,6 +151,28 @@ function Formulario({ estado, nuvem, soltos, onUsarSoltos, onFechar, onEnviar })
     adicionar(arquivos);
   }
 
+  // No PC: cada arquivo sobe sozinho (sem limite de quantidade nem tamanho) e o pedido leva só o número do lote.
+  async function subirLote() {
+    const lote = novoLote();
+    let feitos = 0;
+    let proximo = 0;
+    setProgresso({ feitos, total: anexos.length });
+    const trabalhar = async () => {
+      while (proximo < anexos.length) {
+        const a = anexos[proximo++];
+        try {
+          await api.enviarAnexo(lote, a.nome, a.blob);
+        } catch (e) {
+          throw new Error(`Não consegui enviar "${a.nome}": ${e.message}`);
+        }
+        feitos += 1;
+        setProgresso({ feitos, total: anexos.length });
+      }
+    };
+    await Promise.all(Array.from({ length: Math.min(ENVIOS_JUNTOS, anexos.length) }, trabalhar));
+    return lote;
+  }
+
   async function enviar(e) {
     e.preventDefault();
     if (!projeto.trim()) return setAviso('Diga para qual projeto é a missão.');
@@ -141,16 +180,22 @@ function Formulario({ estado, nuvem, soltos, onUsarSoltos, onFechar, onEnviar })
     setOcupado(true);
     setAviso('');
     try {
-      const prontos = await Promise.all(anexos.map(async (a) => ({ nome: a.nome, dados: await paraBase64(a.blob) })));
-      await onEnviar(projeto.trim(), texto.trim(), prontos, nuvem && chamar);
+      let envio = {};
+      if (anexos.length && nuvem) {
+        envio = { anexos: await Promise.all(anexos.map(async (a) => ({ caminho: a.nome, dados: await paraBase64(a.blob) }))) };
+      } else if (anexos.length) {
+        envio = { lote: await subirLote() };
+      }
+      await onEnviar(projeto.trim(), texto.trim(), envio, nuvem && chamar);
       onFechar();
     } catch (err) {
       setAviso(err.message);
       setOcupado(false);
+      setProgresso(null);
     }
   }
 
-  // O formulário inteiro aceita arquivos arrastados (e segura o evento, para o painel não abrir outra missão).
+  // O formulário inteiro aceita arquivos e pastas arrastados (e segura o evento, para o painel não abrir outra missão).
   const arrastar = (e) => {
     if (!e.dataTransfer || ![...e.dataTransfer.types].includes('Files')) return;
     e.preventDefault();
@@ -165,8 +210,10 @@ function Formulario({ estado, nuvem, soltos, onUsarSoltos, onFechar, onEnviar })
     e.preventDefault();
     e.stopPropagation();
     setArrastando(false);
-    adicionar(e.dataTransfer.files);
+    arquivosDoArraste(e.dataTransfer).then(adicionar, (erro) => setAviso(`Não consegui ler o que foi solto: ${erro.message}`));
   };
+
+  const textoDoBotao = progresso ? `Enviando ${progresso.feitos} de ${progresso.total}…` : 'Enviando…';
 
   return (
     <form onSubmit={enviar} onPaste={colar} onDragEnter={arrastar} onDragOver={arrastar} onDragLeave={sair} onDrop={soltar} noValidate>
@@ -199,33 +246,53 @@ function Formulario({ estado, nuvem, soltos, onUsarSoltos, onFechar, onEnviar })
             tabIndex={-1}
             type="file"
             multiple
-            accept={EXTENSOES_ANEXO.map((x) => `.${x}`).join(',')}
             onChange={(e) => { adicionar(e.target.files); e.target.value = ''; }}
           />
-          <button type="button" className="btn neutro" disabled={preparando || anexos.length >= limites.quantidade} onClick={() => entrada.current && entrada.current.click()}>
+          <input
+            ref={entradaPasta}
+            className="entrada-anexos"
+            tabIndex={-1}
+            type="file"
+            multiple
+            aria-label="Escolher pasta"
+            onChange={(e) => { adicionar(e.target.files); e.target.value = ''; }}
+          />
+          <button type="button" className="btn neutro" disabled={preparando || ocupado} onClick={() => entrada.current && entrada.current.click()}>
             {preparando ? 'Preparando…' : 'Escolher arquivos'}
           </button>
-          <span className="comentario">{arrastando ? 'Pode soltar!' : 'ou arraste e solte aqui (ou cole uma imagem)'}</span>
+          <button type="button" className="btn neutro" disabled={preparando || ocupado} onClick={() => entradaPasta.current && entradaPasta.current.click()}>
+            Escolher pasta
+          </button>
+          <span className="comentario">{arrastando ? 'Pode soltar!' : 'ou arraste arquivos e pastas aqui (ou cole uma imagem)'}</span>
         </div>
         {anexos.length > 0 && (
-          <ul className="anexos-escolhidos">
-            {anexos.map((a) => (
-              <li key={a.id}>
-                <Miniatura anexo={a} src={a.previa} />
-                <span className="anexo-info">
-                  <b>{a.nome}</b>
-                  <span className="comentario">{tamanhoLegivel(a.blob.size)}{a.reduzida ? ' · foto reduzida' : ''}</span>
-                </span>
-                <button type="button" className="tirar" aria-label={`Tirar ${a.nome}`} onClick={() => remover(a.id)}>×</button>
-              </li>
-            ))}
-          </ul>
+          <>
+            <p className="dica">
+              {anexos.length} {anexos.length === 1 ? 'arquivo' : 'arquivos'} · {tamanhoLegivel(total)}{' '}
+              {anexos.length > 1 && !ocupado && (
+                <button type="button" className="btn neutro" onClick={() => setAnexos([])}>Tirar todos</button>
+              )}
+            </p>
+            <ul className="anexos-escolhidos">
+              {anexos.slice(0, MOSTRAR_ATE).map((a) => (
+                <li key={a.id}>
+                  <MiniaturaLocal anexo={a} />
+                  <span className="anexo-info">
+                    <b>{a.nome}</b>
+                    <span className="comentario">{tamanhoLegivel(a.blob.size)}{a.reduzida ? ' · foto reduzida' : ''}</span>
+                  </span>
+                  <button type="button" className="tirar" aria-label={`Tirar ${a.nome}`} disabled={ocupado} onClick={() => remover(a.id)}>×</button>
+                </li>
+              ))}
+            </ul>
+            {anexos.length > MOSTRAR_ATE && <p className="dica">… e mais {anexos.length - MOSTRAR_ATE} arquivos.</p>}
+          </>
         )}
         <p className="dica">
-          Fotos, prints, logo, PDF, TXT, MD, CSV ou JSON (planilha: salve como CSV). Até {limites.quantidade} arquivos,{' '}
-          {tamanhoLegivel(limites.porArquivo)} cada e {tamanhoLegivel(limites.bytes)} no total
-          {anexos.length ? ` (usando ${tamanhoLegivel(total)})` : ''}{nuvem ? '; fotos grandes são reduzidas' : ''}.
-          A equipe lê tudo, e os anexos ficam guardados na pasta anexos/ (e no GitHub).
+          {nuvem
+            ? <>Qualquer tipo de arquivo. No painel online: até {limites.quantidade} arquivos e {tamanhoLegivel(limites.bytes)} no total (limite do Vercel); fotos grandes são reduzidas. No PC não há limite.</>
+            : <>Qualquer tipo de arquivo, quantos quiser, ou uma pasta inteira (com as subpastas). Sem limite de tamanho.</>}
+          {' '}A equipe lê o que conseguir abrir (texto, PDF, imagens; Word: salve também em PDF). Os anexos ficam na pasta anexos/ (e no GitHub, menos arquivos acima de 95 MB).
         </p>
         {nuvem && (
           <label className="marcar">
@@ -236,8 +303,8 @@ function Formulario({ estado, nuvem, soltos, onUsarSoltos, onFechar, onEnviar })
         {aviso && <div className="aviso" role="status">{aviso}</div>}
       </div>
       <div className="ficha-rodape botoes-fim">
-        <button type="button" className="btn neutro" onClick={onFechar}>Cancelar</button>
-        <button type="submit" className="btn aprovar" disabled={ocupado || preparando}>{ocupado ? 'Enviando…' : 'Enviar ao Diretor'}</button>
+        <button type="button" className="btn neutro" onClick={onFechar} disabled={ocupado}>Cancelar</button>
+        <button type="submit" className="btn aprovar" disabled={ocupado || preparando}>{ocupado ? textoDoBotao : 'Enviar ao Diretor'}</button>
       </div>
     </form>
   );

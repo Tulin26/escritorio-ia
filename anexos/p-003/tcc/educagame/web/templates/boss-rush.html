@@ -1,0 +1,119 @@
+{% extends "base.html" %}
+{% block title %}EducaGame IA - Batalha contra Chefes{% endblock %}
+{% block content %}
+{% if aviso_resposta %}
+    <p class="notice warn">{{ aviso_resposta }}</p>
+{% endif %}
+
+<section class="section-head">
+    <div>
+        <p class="eyebrow">Batalha contra Chefes</p>
+        <h1>Batalha contra Chefes ENEM</h1>
+        {% include "partials/student_context.html" %}
+    </div>
+</section>
+
+{% include "partials/ia_notice.html" %}
+
+{% if not estado %}
+<section>
+    <div class="panel">
+        <h2>Preparar batalha</h2>
+        <form method="post" action="{{ url_for('boss_rush.iniciar_boss_rush') }}" data-aviso-texto="Convocando o primeiro chefão..." class="form"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <label for="dificuldade">Dificuldade</label>
+            <select id="dificuldade" name="dificuldade">
+                {% for dificuldade in dificuldades %}
+                    <option value="{{ dificuldade }}" {% if dificuldade == "Medio" %}selected{% endif %}>{{ dificuldade | dificuldade_label }}</option>
+                {% endfor %}
+            </select>
+
+            {% include "partials/student_selector.html" %}
+
+            <button type="submit">Iniciar batalha</button>
+        </form>
+    </div>
+</section>
+{% endif %}
+
+{% if estado.get("fase") == "battle" and questao %}
+<section class="panel challenge">
+    <div class="challenge-head">
+        <div>
+            <p class="eyebrow">{{ boss.get("nome", "Boss") }}</p>
+            <h2>{{ questao.get("area_label", "") }}</h2>
+        </div>
+        <span class="pill">{{ estado.get("vidas", 3) }} vidas</span>
+    </div>
+
+    {% set progresso = ((estado.get("idx", 0) + 1) / estado.get("bosses", [])|length * 100)|round(0, "floor")|int %}
+    <div class="progress-row">
+        <strong>Boss {{ estado.get("idx", 0) + 1 }} de {{ estado.get("bosses", [])|length }}</strong>
+        <span>{{ questao.get("dificuldade", "") | dificuldade_label }}{% if questao.get("matriz_enem") %} · {{ questao.get("matriz_enem") }}{% endif %}</span>
+    </div>
+    <progress class="progress-bar" value="{{ progresso }}" max="100">{{ progresso }}%</progress>
+
+    <p class="question">{{ questao.get("pergunta", "")|unidades|formula_html }}</p>
+
+    {% if not resultado %}
+            {# A assinatura diz a QUE questao este indice pertence (QA de 23/09/2026, achado 3.4). #}
+    <input type="hidden" name="assinatura_questao" value="{{ assinatura_questao|default('') }}">
+                    <form method="post" action="{{ url_for('boss_rush.responder_boss_rush') }}" class="options"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            {% for alternativa in questao.get("alternativas", []) %}
+                <label class="option">
+                    <input type="radio" name="resposta" value="{{ loop.index0 }}" required>
+                    <span><strong>{{ ["A", "B", "C", "D", "E"][loop.index0] }})</strong> {{ alternativa|unidades|formula_html }}</span>
+                </label>
+            {% endfor %}
+            <button type="submit">Atacar</button>
+        </form>
+    {% endif %}
+</section>
+{% endif %}
+
+{% if resultado and estado.get("fase") == "battle" and questao %}
+    {% set explicacao_texto = questao.get("explicacao_texto") %}
+    {% set passos_texto = questao.get("passos_texto") %}
+    {% include "partials/result_card.html" %}
+    <section class="panel">
+        <form method="post" action="{{ url_for('boss_rush.proximo_boss') }}" data-aviso-texto="Convocando o próximo chefão..."><input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <button type="submit">
+                {% if estado.get("idx", 0) + 1 >= estado.get("bosses", [])|length %}
+                    Ver resultado
+                {% else %}
+                    Próximo chefe
+                {% endif %}
+            </button>
+        </form>
+    </section>
+{% endif %}
+
+{% if estado.get("fase") == "resultado" %}
+<section class="panel result ok">
+    <h2>Resultado da batalha</h2>
+    <p><strong>{{ resumo.acertos }}/{{ resumo.total }}</strong> chefes vencidos, aproveitamento de <strong>{{ resumo.percentual }}%</strong>.</p>
+    <p><strong>Vidas restantes:</strong> {{ estado.get("vidas", 0) }}</p>
+</section>
+
+<section class="panel">
+    <h2>Resumo das batalhas</h2>
+    {% if estado.get("historico") %}
+        <div class="summary-list">
+            {% for item in estado.get("historico") %}
+                {# O resumo mostrava o enunciado sem filtro nenhum: "357 cm^2" e "x^2 - 6x + 8"
+                   crus, ao lado da MESMA questao ja formatada na tela de responder.
+                   Achado 4.4 do QA de 23/09/2026; medido em 28/09: 260 questoes dos
+                   bancos e 34 das 554 reais da IA. #}
+                <p>{{ "✓" if item.acertou else "×" }} {{ item.boss }} · {{ item.area_label }} · {{ item.pergunta|unidades|formula_html }}</p>
+            {% endfor %}
+        </div>
+    {% endif %}
+    <form method="post" action="{{ url_for('boss_rush.reiniciar_boss_rush') }}"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <button type="submit">Nova batalha</button>
+    </form>
+</section>
+{% endif %}
+{% endblock %}
+
+{# MELHORIA: a Batalha usa o mesmo gerador do ENEM (gerar_questao_enem) e
+   nunca mostra formula nem passo a passo -- ver a mesma nota em enem.html.
+   Sem "$$ ... $$" nenhum pra desenhar, o MathJax ficava sem uso. #}

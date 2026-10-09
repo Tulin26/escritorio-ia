@@ -241,7 +241,8 @@ test('pedido com anexos vira um commit só, com os arquivos em anexos/<id>/', as
 
 test('anexo recusado não grava nada no GitHub', async () => {
   const s = simularServicos();
-  for (const anexos of [[anexo('x.svg', Buffer.from('<svg/>'))], [anexo('falso.png', Buffer.from('<html>'))], Array(6).fill(anexo('a.png', PNG))]) {
+  // Qualquer tipo entra; recusado é só o que passa do limite do Vercel ou chega quebrado.
+  for (const anexos of [[{ nome: 'quebrado.png', dados: 'não é base64!' }], Array(6).fill(anexo('a.png', PNG)), 'não é lista']) {
     const r = await chamar('pedido', { metodo: 'POST', cookie: cookieValido(), corpo: { projeto: 'X', texto: 'pedido com anexo ruim', anexos } });
     assert.equal(r.statusCode, 400);
     assert.ok(r.corpo.erro);

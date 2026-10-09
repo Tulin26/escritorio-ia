@@ -14,3 +14,6 @@ logs/
 Thumbs.db
 desktop.ini
 node_modules/
+
+# Anexos de um pedido que ainda está chegando (o servidor leva para anexos/ quando o pedido é criado)
+.envio/

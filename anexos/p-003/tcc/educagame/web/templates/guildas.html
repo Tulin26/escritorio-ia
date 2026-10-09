@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+{% block title %}EducaGame IA - Batalha de Guildas{% endblock %}
+{% block content %}
+<section class="section-head">
+    <div>
+        <p class="eyebrow">Modo coletivo</p>
+        <h1>Batalha de Guildas</h1>
+        <p class="muted">Turmas competem por engajamento, acertos e participação semanal.</p>
+    </div>
+    {% if guildas %}
+        <a class="button ghost" href="{{ url_for('guildas.baixar_pdf_guildas') }}">Baixar PDF</a>
+    {% endif %}
+</section>
+
+{% if desligada %}
+{# MELHORIA: com modo_guilda desligado a rota nem monta o placar (ver
+   exigir_modo_guilda em guildas_fla.py); a tela so diz o que aconteceu. #}
+<section class="panel">
+    <h2>Batalha de Guildas desligada</h2>
+    <p class="muted">{{ aviso }}</p>
+    <a class="button ghost" href="{{ url_for('home.index') }}">Voltar para o início</a>
+</section>
+{% elif not guildas %}
+<section class="panel">
+    <h2>Ainda não há alunos para montar guildas</h2>
+    <p class="muted">Cada guilda é formada por série + período.</p>
+</section>
+{% else %}
+<section class="metric-row">
+    <div class="metric-box"><span>Guildas</span><strong>{{ guildas|length }}</strong></div>
+    <div class="metric-box"><span>Líder semanal</span><strong>{{ lider.guilda }}</strong></div>
+    <div class="metric-box"><span>Pontos do líder</span><strong>{{ lider.pontos_semana }}</strong></div>
+</section>
+
+<section class="panel">
+    <p class="eyebrow">Duelos ativos</p>
+    {% if duelos %}
+        <div class="duel-grid">
+            {% for duelo in duelos %}
+                <article class="duel-card">
+                    <h2>{{ duelo.a.guilda }} vs {{ duelo.b.guilda }}</h2>
+                    <div class="chip-row">
+                        <span class="pill">{{ duelo.a.pontos_semana }} pts</span>
+                        <span class="pill">{{ duelo.b.pontos_semana }} pts</span>
+                        <span class="pill">líder: {{ duelo.lider.guilda }}</span>
+                        <span class="pill">dif: {{ duelo.diferenca }}</span>
+                    </div>
+                </article>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p class="muted">Cadastre alunos em pelo menos duas turmas para formar duelos.</p>
+    {% endif %}
+</section>
+
+<section class="panel">
+    <p class="eyebrow">Batalha semanal</p>
+    <h2>Ranking por guilda</h2>
+    <div class="table-list">
+        <div class="table-row table-head">
+            <span>Pos.</span>
+            <span>Guilda</span>
+            <span>Pts</span>
+            <span>Acertos</span>
+            <span>%</span>
+        </div>
+        {% for guilda in guildas %}
+            <div class="table-row">
+                <strong>{{ loop.index }}º</strong>
+                <span>
+                    <strong>{{ guilda.guilda }}</strong>
+                    <small>{{ guilda.alunos }} {{ "aluno" if guilda.alunos == 1 else "alunos" }} | {{ guilda.participantes_semana }} {{ "participou" if guilda.participantes_semana == 1 else "participaram" }}</small>
+                </span>
+                <strong>{{ guilda.pontos_semana }}</strong>
+                <strong class="ok-text">{{ guilda.acertos_semana }}</strong>
+                <strong>{{ guilda.taxa_acerto }}%</strong>
+            </div>
+        {% endfor %}
+    </div>
+</section>
+
+<section class="panel subtle">
+    <h2>Regras da semana</h2>
+    <div class="summary-list">
+        <p>Cada turma vira uma guilda: série + período.</p>
+        <p>Acerto vale 10 pontos semanais.</p>
+        <p>Cada participante ativo adiciona +5 pontos de bônus.</p>
+        <p>Erro desconta 1 ponto para não desmotivar.</p>
+        <p>O placar semanal considera os logs desde segunda-feira.</p>
+    </div>
+</section>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,1 @@
+"""Camada Streamlit do EducaGame."""

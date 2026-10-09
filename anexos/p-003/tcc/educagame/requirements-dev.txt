@@ -1,0 +1,4 @@
+-r requirements_flask.txt
+
+# Testes
+pytest==9.0.3

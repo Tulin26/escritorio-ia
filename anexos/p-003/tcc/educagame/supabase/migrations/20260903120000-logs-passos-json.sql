@@ -1,0 +1,51 @@
+-- ==========================================================
+-- 13 logs_pedagogicos.passos_json -> guardar a resolucao para poder MEDIR
+--
+-- Por que existe: algumas validacoes da IA nao puderam ser ligadas porque
+-- nao havia como medir o risco delas contra dado real. O banco offline nao
+-- serve de amostra: sao 2.200 questoes do Laboratorio em apenas 81 FORMAS
+-- distintas de resolucao (o resto e o mesmo molde com outros numeros), e
+-- escrever moldes novos de proposito tornaria a medicao circular -- eu
+-- estaria testando a regra contra exemplos escolhidos por causa dela.
+--
+-- A distribuicao que importa e a das respostas reais da IA. Ela existe, so
+-- nao era guardada: o log registrava pergunta, alternativas e explicacao,
+-- mas NAO os passos de resolucao -- que sao justamente o que essas
+-- validacoes julgam.
+--
+-- Caso concreto que espera por isto: recusar resolucao que nao calcula nada
+-- (a IA escreve "x = (-b +- raiz(Delta))/2a" e nunca resolve o Delta, e o
+-- aluno nao tem como seguir os passos). Tres desenhos foram prototipados;
+-- o que funciona nos casos construidos precisa de dado real antes de valer
+-- em producao.
+--
+-- SO O LABORATORIO preenche esta coluna, e nao e limitacao: os outros modos
+-- passam por _normalizar_questao_oraculo, que APAGA passos_resolucao de
+-- exatas de proposito ("no Oraculo, exatas e conceitual"). Laboratorio e
+-- onde Bhaskara e o Delta aparecem.
+--
+-- jsonb, e nao text: permite consultar por dentro sem baixar tudo, por
+-- exemplo para achar as resolucoes que ficaram simbolicas.
+--
+-- Sem dado pessoal: e enunciado de matematica. O volume tambem e pequeno --
+-- so exatas do Laboratorio, e o payload e truncado em repositories/log_repo.py.
+-- ==========================================================
+
+alter table public.logs_pedagogicos
+  add column if not exists passos_json jsonb;
+
+
+-- ==========================================================
+-- COMO MEDIR, quando houver uso acumulado:
+--
+--   python scripts/medir_resolucao_simbolica.py
+--
+-- Ou direto no SQL, para ver quantas resolucoes ficaram simbolicas:
+--
+--   select count(*) filter (where passos_json::text ilike '%Delta%'
+--                             and passos_json::text !~ 'Delta[^"]*=[^"]*[0-9]')
+--          as delta_sem_resolver,
+--          count(*) as total
+--     from public.logs_pedagogicos
+--    where passos_json is not null;
+-- ==========================================================

@@ -1,0 +1,33 @@
+# Varredura automatica de dependencias vulneraveis.
+#
+# O Dependabot abre um PR sozinho quando uma dependencia ja instalada ganha
+# um CVE, com a versao corrigida minima. "pip" cobre requirements.txt,
+# requirements_base.txt, requirements_flask.txt e requirements-dev.txt (o
+# scanner segue os "-r" de dentro de requirements.txt/requirements_flask.txt
+# automaticamente, por isso um "directory" so, na raiz, basta). "npm" cobre
+# o package.json (so a CLI do Supabase, usada em dev).
+#
+# So isto: nao precisa de token nem de workflow. Os alertas de seguranca
+# aparecem na aba "Security" do repositorio; PRs de atualizacao, no normal.
+version: 2
+updates:
+  - package-ecosystem: "pip"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 10
+    labels:
+      - "dependencies"
+      - "security"
+
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    labels:
+      - "dependencies"
+
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"

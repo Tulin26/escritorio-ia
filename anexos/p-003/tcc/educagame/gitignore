@@ -1,0 +1,120 @@
+# ========================
+# CONFIGURAÇÕES DO PROJETO
+# ========================
+.env
+.env.*
+*.env
+!.env.example
+.data/
+
+# ========================
+# PYTHON
+# ========================
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+
+# ========================
+# AMBIENTE VIRTUAL
+# ========================
+venv/
+.venv/
+.venv-*/
+.uv-cache/
+.uv-python/
+env/
+__pypackages__/
+
+# ========================
+# STREAMLIT (SEGREDOS)
+# ========================
+.streamlit/secrets.toml
+
+# ========================
+# LOGS
+# ========================
+*.log
+
+# ========================
+# CACHE / TEMP
+# ========================
+.cache/
+*.tmp
+supabase/.temp/
+
+# ========================
+# BANCO LOCAL
+# ========================
+*.db
+*.sqlite3
+
+# ========================
+# IDE
+# ========================
+.vscode/
+.idea/
+
+# ========================
+# SISTEMA OPERACIONAL
+# ========================
+.DS_Store
+Thumbs.db
+
+# ========================
+# TESTES
+# ========================
+.pytest_cache/
+pytest-cache-files-*
+.coverage
+htmlcov/
+
+# ========================
+# BUILD
+# ========================
+build/
+dist/
+*.zip
+
+# ========================
+# PYTHON ENV VERSION
+# ========================
+.python-version
+node_modules/
+# ========================
+# SUPABASE LOCAL
+# ========================
+supabase/.branches/
+supabase/.temp/
+supabase/.env
+supabase/docker/
+
+# ========================
+# RELATÓRIOS / EXPORTS GERADOS
+# ========================
+exports/
+relatorios_gerados/
+*.pdf
+*.docx
+*.pptx
+*.xlsx
+
+# ========================
+# ARQUIVOS TEMPORÁRIOS DO WINDOWS / EDITORES
+# ========================
+*.swp
+*.swo
+~$*
+# capturas de tela: regeraveis, e tres delas serao refeitas com atividade real
+prints/
+
+# ========================
+# BACKUP DE PEDIDO DE LGPD
+# ========================
+# scripts/excluir_aluno.py grava o backup na pasta onde for rodado. Ele tem
+# nome, e-mail e todas as respostas de um aluno -- dado pessoal nunca entra no
+# repositorio, nem por engano.
+backup-aluno-*.json
+
+# Cache de modulos do PowerShell: caiu na raiz do repositorio em 22/04/2026.
+Microsoft/

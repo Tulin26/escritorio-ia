@@ -1,0 +1,68 @@
+-- ==========================================================
+-- 16 logs_pedagogicos.opcoes
+--
+-- Por que existe: pelo mesmo motivo da 20260903120000 (passos_json) e da
+-- 20260909120000 (formula/legenda) -- dar como medir uma validacao contra
+-- dado REAL, e nao so contra o banco autoral.
+--
+-- A regra em questao e `_explicacao_aponta_para_outra_alternativa`: ela
+-- recusa a questao quando a explicacao NOMEIA uma alternativa que nao e a
+-- marcada, ou seja, quando a IA marca uma coisa e explica outra. Hoje ela
+-- roda so para humanas e linguagens (`if not eh_exatas`), porque exatas tem
+-- a checagem numerica no lugar dela.
+--
+-- O buraco: uma questao CONCEITUAL de exatas -- "que tipo de ligacao...",
+-- "no MUV, a aceleracao e..." -- nao tem numero a conferir. Ela cai entre as
+-- duas regras e nao e conferida por nenhuma. Encontrado em 10/09/2026, ao
+-- gerar as telas do TG.
+--
+-- Medido antes de mexer, em 492 questoes de exatas dos bancos proprios:
+--
+--   estender a regra como esta ................ 6,50% de falso positivo
+--   (32 questoes BOAS recusadas)
+--
+-- Motivo dos 32: a explicacao boa cita as alternativas erradas justamente
+-- para descarta-las ou contrasta-las ("no crescimento linear somamos; no
+-- exponencial multiplicamos"). Nao ha contradicao nenhuma. Estender assim
+-- trocaria um buraco por outro pior.
+--
+-- A candidata estreita -- so recusar quando a explicacao AFIRMA qual e a
+-- correta ("X e a resposta correta") -- deu 0 de 492. So que 0 de 492
+-- porque NENHUMA explicacao do banco afirma nada: o numero e vazio, nao e
+-- prova de seguranca. E a mesma armadilha de corpus que a 20260909120000
+-- descreve, e desta vez ela apagou a medicao inteira.
+--
+-- Nas 5 explicacoes escritas pela IA que havia a mao, 2 afirmam. Ou seja: a
+-- regra teria alcance sobre o que a IA escreve, e nenhum sobre o que nos
+-- escrevemos. Cinco e pouco para ligar regra que RECUSA questao.
+--
+-- Por isso esta coluna, e nao a regra: sem a lista de alternativas do lado
+-- real nao ha como medir. O log guardava `resposta_correta` (o TEXTO da
+-- certa) e `resposta_aluno`, mas nunca a lista -- e sem a lista nao da para
+-- saber se a explicacao nomeia OUTRA alternativa.
+--
+-- jsonb porque e lista, e com a ordem preservada: o gabarito e um INDICE
+-- dessa lista. Truncada em repositories/log_repo.py (5 alternativas, 400
+-- caracteres cada) -- cabe o ENEM, que e o modo com mais opcoes.
+--
+-- Sem dado pessoal: sao alternativas de questao.
+-- ==========================================================
+
+alter table public.logs_pedagogicos
+  add column if not exists opcoes jsonb;
+
+
+-- ==========================================================
+-- COMO MEDIR, quando houver uso acumulado:
+--
+--   python scripts/medir_explicacao_em_exatas.py --logs
+--
+-- Ou direto no SQL, para ver o denominador -- quantas questoes de exatas ja
+-- tem alternativas E explicacao guardadas:
+--
+--   select count(*) as mediveis
+--     from public.logs_pedagogicos
+--    where opcoes is not null
+--      and explicacao_ia is not null
+--      and materia in ('Matematica', 'Fisica', 'Quimica');
+-- ==========================================================

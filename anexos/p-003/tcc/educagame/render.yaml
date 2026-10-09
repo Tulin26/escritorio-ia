@@ -1,0 +1,35 @@
+# ATENCAO: este arquivo NAO esta em uso hoje.
+#
+# O render.yaml (Blueprint) so vale para servicos criados A PARTIR dele. O
+# servico atual foi criado pelo painel do Render, entao a configuracao que
+# realmente vale e a de la -- este arquivo e ignorado por completo. Isso ja
+# causou confusao: o "--timeout 60" abaixo nunca chegou a ser aplicado, e o
+# gunicorn rodava com o padrao de 30s (visto no log de deploy, que mostrava
+# apenas "gunicorn flask_app:app --bind 0.0.0.0:$PORT").
+#
+# Mantido aqui como referencia da configuracao desejada, e para o caso de o
+# servico ser recriado por Blueprint no futuro. Ao mudar algo aqui, mude
+# tambem no painel -- ou o valor nao surte efeito nenhum.
+#
+# Equivalentes no painel (Settings):
+#   startCommand    -> "Start Command"
+#   healthCheckPath -> "Health Checks > Health Check Path"
+
+services:
+  - type: web
+    name: educagame
+    env: python
+    plan: free
+    # MELHORIA: era "requirements.txt", que agora e do Streamlit Cloud (ele
+    # exige esse nome). O Flask instala o seu proprio arquivo; os dois herdam
+    # requirements_base.txt.
+    buildCommand: pip install -r requirements_flask.txt
+    # --timeout 60: a cadeia de IA pode levar ate ~26s antes de cair no banco
+    # offline (ver IA_CHAIN_TIMEOUT_SECONDS em services/ia/providers.py). Com o
+    # padrao de 30s do gunicorn a margem fica curta demais e uma requisicao
+    # lenta corre o risco de ser morta no meio.
+    startCommand: gunicorn flask_app:app --timeout 60 --graceful-timeout 30
+    # /healthz devolve um JSON fixo, sem tocar banco nem IA (web/routes/home_fla.py).
+    # Com ele configurado, o Render so manda trafego para a versao nova depois
+    # que o app responde de verdade -- evita os 502 logo apos o deploy.
+    healthCheckPath: /healthz

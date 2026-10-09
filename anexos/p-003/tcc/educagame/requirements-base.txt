@@ -1,0 +1,27 @@
+# Dependencias comuns aos dois frontends (Flask e Streamlit).
+#
+# MELHORIA: esta lista vivia duplicada em requirements.txt (Streamlit) e
+# requirements_flask.txt (Render), e as duas saiam do lugar uma da outra --
+# foi assim que werkzeug e itsdangerous faltaram no Streamlit e o app subiu
+# em branco. Agora existe uma copia so, e cada frontend acrescenta o seu.
+
+# Autenticacao (login e token de e-mail) -- compartilhado por services/
+werkzeug==3.1.8
+itsdangerous==2.2.0
+
+# Dados
+pandas==3.0.2
+
+# IA
+groq==1.2.0
+openai>=1.0.0
+
+# Relatorios / Imagens
+reportlab==4.4.10
+# pip-audit (ver .github/workflows/dependency-audit.yml) acusou 12.2.0 com
+# varios CVEs abertos; 12.3.0 e o primeiro fix.
+pillow==12.3.0
+
+# Utilidades
+python-dotenv==1.2.2
+pytz==2026.1.post1

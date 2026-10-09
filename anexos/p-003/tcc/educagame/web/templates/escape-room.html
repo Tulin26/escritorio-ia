@@ -1,0 +1,194 @@
+{% extends "base.html" %}
+{% block title %}EducaGame IA - Escape Room{% endblock %}
+{% block content %}
+<section class="section-head">
+    <div>
+        <p class="eyebrow">Escape Room</p>
+        <h1>Escape Room</h1>
+        {% include "partials/student_context.html" %}
+    </div>
+</section>
+
+{% include "partials/ia_notice.html" %}
+
+{% if not estado %}
+<section>
+    <div class="panel">
+        <h2>Montar salas</h2>
+        <form method="post" action="{{ url_for('escape_room.iniciar_escape_room') }}" data-aviso-texto="Trancando a primeira sala..." class="form"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <label for="materia">Matéria</label>
+            <select id="materia" name="materia">
+                {% for materia in materias %}
+                    <option value="{{ materia.valor }}" data-ef="{{ 1 if materia.permitida_ef else 0 }}" data-em="{{ 1 if materia.permitida_em else 0 }}">{{ materia.label }}</option>
+                {% endfor %}
+            </select>
+
+            <label for="nivel">Dificuldade</label>
+            <select id="nivel" name="nivel">
+                <option>Fácil</option>
+                <option selected>Médio</option>
+                <option>Difícil</option>
+            </select>
+
+            <label for="total">Quantidade de salas</label>
+            <select id="total" name="total">
+                <option>3</option>
+                <option selected>4</option>
+                <option>5</option>
+                <option>6</option>
+            </select>
+
+            <div class="room-subform" data-room-subform>
+                {% for numero in range(1, 7) %}
+                    <div class="room-subform-item" data-room-index="{{ numero }}">
+                        <label for="materia_sala_{{ numero }}">Matéria da sala {{ numero }}</label>
+                        <select id="materia_sala_{{ numero }}" name="materia_sala_{{ numero }}">
+                            {% for materia in materias %}
+                                <option value="{{ materia.valor }}" data-ef="{{ 1 if materia.permitida_ef else 0 }}" data-em="{{ 1 if materia.permitida_em else 0 }}">{{ materia.label }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                {% endfor %}
+            </div>
+
+            {% include "partials/student_selector.html" %}
+
+            <label for="tema">Tema opcional</label>
+            <input id="tema" type="text" name="tema" placeholder="Vazio = tema sorteado pela IA">
+
+            <button type="submit">Iniciar Escape Room</button>
+        </form>
+    </div>
+</section>
+{% endif %}
+
+{% if not estado %}
+<script>
+(() => {
+    const total = document.querySelector("#total");
+    const materiaPadrao = document.querySelector("#materia");
+    const salas = Array.from(document.querySelectorAll("[data-room-index]"));
+    if (!total || !materiaPadrao || !salas.length) return;
+
+    const sincronizar = () => {
+        const limite = Number.parseInt(total.value, 10) || 4;
+        salas.forEach((sala) => {
+            const numero = Number.parseInt(sala.dataset.roomIndex || "0", 10);
+            const select = sala.querySelector("select");
+            const ativa = numero <= limite;
+            sala.hidden = !ativa;
+            if (select) {
+                select.disabled = !ativa;
+                if (ativa && !select.dataset.tocada) {
+                    select.value = materiaPadrao.value;
+                }
+            }
+        });
+    };
+
+    salas.forEach((sala) => {
+        const select = sala.querySelector("select");
+        if (select) {
+            select.addEventListener("change", () => {
+                select.dataset.tocada = "1";
+            });
+        }
+    });
+    total.addEventListener("change", sincronizar);
+    materiaPadrao.addEventListener("change", sincronizar);
+    sincronizar();
+})();
+</script>
+{% endif %}
+
+{% if aviso_resposta %}
+    <p class="notice warn">{{ aviso_resposta }}</p>
+{% endif %}
+
+{% if estado.get("fase") == "sala" and questao %}
+<section class="panel challenge">
+    <div class="challenge-head">
+        <div>
+            <p class="eyebrow">Sala {{ sala.get("numero", 1) }}</p>
+            <h2>{{ questao.get("enigma", "Resolva para abrir a porta") }}</h2>
+        </div>
+        <span class="pill">{{ estado.get("atual", 0) + 1 }} de {{ estado.get("salas", [])|length }}</span>
+    </div>
+
+    {% set progresso = ((estado.get("atual", 0) + 1) / estado.get("salas", [])|length * 100)|round(0, "floor")|int %}
+    <div class="progress-row">
+        <strong>{{ questao.get("materia_label", sala.get("materia", "")) }}</strong>
+        <span>{{ estado.get("nivel", "") }}</span>
+    </div>
+    <progress class="progress-bar" value="{{ progresso }}" max="100">{{ progresso }}%</progress>
+
+    {% set suporte = questao.get("suporte") %}
+    {% include "partials/suporte_questao.html" %}
+    {# Mesma cadeia do ENEM e da Batalha: "unidades" resolve m^2 e cm^3, e
+       formula_html desenha o expoente e o indice que sobram (x^2, x_1). #}
+    <p class="question">{{ questao.get("pergunta", "")|unidades|formula_html }}</p>
+
+    {% if not resultado %}
+        {% set action = url_for('escape_room.responder_escape_room') %}
+        {% set opcoes = questao.get("opcoes", []) %}
+        {% include "partials/options_form.html" %}
+    {% endif %}
+</section>
+{% endif %}
+
+{% if resultado and estado.get("fase") == "sala" and questao %}
+    {% set explicacao_texto = questao.get("explicacao_texto") %}
+    {% include "partials/result_card.html" %}
+
+    <section class="panel">
+        {# Errar nao abre a sala: ver proxima_sala em escape_room_fla.py. #}
+        <h2>{{ "Pista liberada" if resultado.acertou else "A porta continua fechada" }}</h2>
+        <p>{{ estado.get("pistas", [])[-1] }}</p>
+        <form method="post" action="{{ url_for('escape_room.proxima_sala') }}" data-aviso-texto="{{ 'Preparando a próxima sala...' if resultado.acertou else 'Buscando outra questão desta sala...' }}"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <button type="submit">
+                {% if not resultado.acertou %}
+                    Tentar outra questão desta sala
+                {% elif estado.get("atual", 0) + 1 >= estado.get("salas", [])|length %}
+                    Ver relatório final
+                {% else %}
+                    Abrir próxima sala
+                {% endif %}
+            </button>
+        </form>
+    </section>
+{% endif %}
+
+{% if estado.get("fase") == "resultado" %}
+<section class="panel result ok">
+    <h2>Escape Room concluído</h2>
+    {# Com nova tentativa a cada erro, o historico conta TENTATIVAS: todas as
+       salas foram abertas, e o aproveitamento e acertos por tentativa. #}
+    <p><strong>{{ resumo.acertos }}</strong> {{ "sala aberta" if resumo.acertos == 1 else "salas abertas" }} em <strong>{{ resumo.total }}</strong> {{ "tentativa" if resumo.total == 1 else "tentativas" }}, aproveitamento de <strong>{{ resumo.percentual }}%</strong>.</p>
+</section>
+
+<section class="grid two">
+    <div class="panel">
+        <h2>Pistas</h2>
+        <div class="summary-list">
+            {% for pista in estado.get("pistas", []) %}
+                <p>{{ pista }}</p>
+            {% endfor %}
+        </div>
+    </div>
+    <div class="panel">
+        <h2>Revisão</h2>
+        <div class="summary-list">
+            {% for item in estado.get("historico", []) %}
+                <p>{{ "✓" if item.acertou else "×" }} Sala {{ item.sala }}{% if item.tentativa and item.tentativa > 1 %} (tentativa {{ item.tentativa }}){% endif %} · {{ item.pergunta|unidades|formula_html }}</p>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<section class="panel">
+    <form method="post" action="{{ url_for('escape_room.reiniciar_escape_room') }}"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <button type="submit">Novo Escape Room</button>
+    </form>
+</section>
+{% endif %}
+{% endblock %}

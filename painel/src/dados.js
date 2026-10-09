@@ -116,11 +116,10 @@ export const COMO_TRABALHA = {
   ],
 };
 
-// Anexos: o que o painel aceita (o servidor confere de novo) e como mostrar o tamanho.
-export const EXTENSOES_ANEXO = ['png', 'jpg', 'jpeg', 'gif', 'webp', 'pdf', 'txt', 'md', 'csv', 'json'];
-// No PC cabe bem mais; online o Vercel aceita no máximo uns 4 MB por envio (mesmos números de lib/escritorio.js).
+// Anexos: qualquer tipo, arquivos soltos ou pastas inteiras. No PC não há limite (cada arquivo sobe sozinho);
+// online o Vercel aceita no máximo uns 4 MB por envio (mesmos números de lib/escritorio.js).
 export const LIMITES_ANEXOS = {
-  pc: { quantidade: 10, porArquivo: 25 * 1024 * 1024, bytes: 50 * 1024 * 1024 },
+  pc: { quantidade: Infinity, porArquivo: Infinity, bytes: Infinity },
   nuvem: { quantidade: 5, porArquivo: 3 * 1024 * 1024, bytes: 3 * 1024 * 1024 },
 };
 export const extensaoDe = (nome) => {

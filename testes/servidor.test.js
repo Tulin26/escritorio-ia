@@ -74,7 +74,7 @@ test('painel do PC: pedido com anexos, Enviar agora, botão de ligar e envio dep
   t.after(() => apagar(pasta));
   const g = criarGithubDeMentira(pasta, copiaDoEscritorio());
   const noGithub = (...args) => g.git(g.remoto, ...args);
-  const { pedir } = await subirServidor(t, g.escritorio, { ...g.env, ESCRITORIO_AUTOMACAO: '0' });
+  const { url, pedir } = await subirServidor(t, g.escritorio, { ...g.env, ESCRITORIO_AUTOMACAO: '0' });
 
   // Começo: Git disponível, desligado, nada para enviar.
   let r = await pedir('/api/estado');
@@ -103,13 +103,37 @@ test('painel do PC: pedido com anexos, Enviar agora, botão de ligar e envio dep
   assert.equal((await pedir('/api/anexo?caminho=estado.json')).status, 400);
   assert.equal((await pedir('/api/anexo?caminho=anexos%2Fp-001%2F..%2F..%2Fserver.js')).status, 400);
 
-  // Outro site não cria pedido; corpo gigante é recusado.
+  // Outro site não cria pedido nem manda anexo; JSON gigante é recusado (anexo grande vai arquivo por arquivo).
   assert.equal((await pedir('/api/pedido', { corpo: { projeto: 'x', texto: 'teste teste' }, origem: 'https://site-malicioso.com' })).status, 403);
-  const grande = Buffer.alloc(26 * 1024 * 1024, 'a');
-  r = await pedir('/api/pedido', { corpo: { projeto: 'x', texto: 'anexo grande demais', anexos: [anexo('grande.txt', grande)] } });
-  assert.equal(r.status, 413);
-  assert.match(r.dados.erro, /passa de 25 MB/);
+  assert.equal((await pedir('/api/anexo/enviar?lote=lote-malicioso&caminho=a.txt', { corpo: 'oi', origem: 'https://site-malicioso.com' })).status, 403);
   assert.equal((await pedir('/api/pedido', { corpo: JSON.stringify({ projeto: 'x', texto: 'x'.repeat(70 * 1024 * 1024) }) })).status, 413);
+
+  // Pasta inteira, arquivo por arquivo: qualquer tipo, subpastas mantidas, nome repetido ganha -2.
+  const lote = 'lote-de-teste-1';
+  const DOCX = Buffer.from([0x50, 0x4b, 0x03, 0x04, 0x14, 0x00]);
+  const subir = (caminho, conteudo) => fetch(`${url}/api/anexo/enviar?lote=${lote}&caminho=${encodeURIComponent(caminho)}`, {
+    method: 'POST', headers: { 'Content-Type': 'application/octet-stream' }, body: conteudo,
+  }).then((x) => x.json());
+  assert.deepEqual(await subir('TCC/Capítulo 1/Texto.docx', DOCX), { caminho: 'tcc/capitulo-1/texto.docx', tamanho: DOCX.length });
+  assert.equal((await subir('TCC/capitulo 1/texto.docx', DOCX)).caminho, 'tcc/capitulo-1/texto-2.docx');
+  assert.equal((await subir('TCC/../../../figuras/logo.png', PNG)).caminho, 'tcc/figuras/logo.png');
+  assert.equal((await pedir('/api/pedido', { corpo: { projeto: 'TCC', texto: 'revisar o tcc', lote: '../../server' } })).status, 400);
+  assert.equal((await pedir('/api/pedido', { corpo: { projeto: 'TCC', texto: 'revisar o tcc', lote: 'lote-que-nao-existe' } })).status, 400);
+  r = await pedir('/api/pedido', { corpo: { projeto: 'TCC', texto: 'revisar o tcc inteiro', lote } });
+  assert.equal(r.status, 200, JSON.stringify(r.dados));
+  const doTcc = r.dados.pedidos.find((p) => p.id === r.dados.pedido);
+  assert.deepEqual(doTcc.anexos.map((a) => [a.arquivo, a.tipo]).sort(), [
+    [`anexos/${doTcc.id}/tcc/capitulo-1/texto-2.docx`, 'application/octet-stream'],
+    [`anexos/${doTcc.id}/tcc/capitulo-1/texto.docx`, 'application/octet-stream'],
+    [`anexos/${doTcc.id}/tcc/figuras/logo.png`, 'image/png'],
+  ]);
+  assert.deepEqual(fs.readFileSync(path.join(g.escritorio, 'anexos', doTcc.id, 'tcc', 'capitulo-1', 'texto.docx')), DOCX);
+  assert.equal(fs.existsSync(path.join(g.escritorio, '.envio', lote)), false, 'o lote saiu de .envio/');
+  r = await pedir(`/api/anexo?caminho=${encodeURIComponent(`anexos/${doTcc.id}/tcc/capitulo-1/texto.docx`)}`);
+  assert.equal(r.status, 200);
+  assert.match(r.headers.get('content-disposition'), /^attachment; filename="texto.docx"$/);
+  r = await pedir(`/api/anexo?caminho=${encodeURIComponent(`anexos/${doTcc.id}/tcc/figuras/logo.png`)}`);
+  assert.equal(r.headers.get('content-type'), 'image/png');
 
   // Enviar agora (com o envio automático desligado).
   r = await pedir('/api/git/enviar', { corpo: {} });

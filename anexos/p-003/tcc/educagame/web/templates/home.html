@@ -1,0 +1,98 @@
+{% extends "base.html" %}
+{% import "partials/icones.html" as ic %}
+{% block title %}EducaGame IA - Início{% endblock %}
+{% block header %}{% endblock %}
+{% block content %}
+<section class="section-head">
+    <div>
+        <p class="eyebrow">Escola</p>
+        <h1>{{ escola.nome }}</h1>
+        <p class="muted">Escolha um modo para começar.</p>
+    </div>
+</section>
+
+<section class="mode-sections">
+    <section class="mode-section" aria-labelledby="area-aluno">
+        <h2 id="area-aluno">Estudar</h2>
+        <div class="mode-grid">
+            <a class="mode-card" href="{{ url_for('treino.tela_treino') }}">
+                <span class="mode-icon jogar" aria-hidden="true">{{ ic.icone("jogar") }}</span>
+                <strong>Treino Rápido</strong>
+                <span>Questões em sequência e controle de acertos.</span>
+            </a>
+            <a class="mode-card" href="{{ url_for('enem.tela_enem') }}">
+                <span class="mode-icon enem" aria-hidden="true">{{ ic.icone("enem") }}</span>
+                <strong>ENEM</strong>
+                <span>Simulados, revisão e desempenho por área.</span>
+            </a>
+            <a class="mode-card" href="{{ url_for('laboratorio.tela_laboratorio') }}">
+                <span class="mode-icon lab" aria-hidden="true">{{ ic.icone("lab") }}</span>
+                <strong>Laboratório de Exatas</strong>
+                <span>Fórmulas, resolução guiada e aplicação no dia a dia.</span>
+            </a>
+        </div>
+    </section>
+
+    <section class="mode-section" aria-labelledby="modos-jogo">
+        <h2 id="modos-jogo">Modos de jogo</h2>
+        <div class="mode-grid four">
+            <a class="mode-card" href="{{ url_for('oraculo.tela_oraculo') }}">
+                <span class="mode-icon oraculo" aria-hidden="true">{{ ic.icone("oraculo") }}</span>
+                <strong>Desafio do Oráculo</strong>
+                <span>Desafios por matéria, tema e dificuldade.</span>
+            </a>
+            <a class="mode-card" href="{{ url_for('rpg.tela_rpg') }}">
+                <span class="mode-icon rpg" aria-hidden="true">{{ ic.icone("rpg") }}</span>
+                <strong>RPG</strong>
+                <span>Campanha, chefes, XP, escolhas e recompensas.</span>
+            </a>
+            <a class="mode-card" href="{{ url_for('escape_room.tela_escape_room') }}">
+                <span class="mode-icon escape" aria-hidden="true">{{ ic.icone("escape") }}</span>
+                <strong>Escape Room</strong>
+                <span>Salas em sequência, pistas e relatório final de revisão.</span>
+            </a>
+            <a class="mode-card" href="{{ url_for('boss_rush.tela_boss_rush') }}">
+                <span class="mode-icon boss" aria-hidden="true">{{ ic.icone("boss") }}</span>
+                <strong>Batalha contra Chefes</strong>
+                <span>Chefes por área ENEM, vidas e pontuação por acerto.</span>
+            </a>
+        </div>
+    </section>
+
+    <section class="mode-section" aria-labelledby="progressao">
+        <h2 id="progressao">Turma e acompanhamento</h2>
+        <div class="mode-grid compact">
+            <a class="mode-card" href="{{ url_for('perfil.tela_perfil') }}">
+                <span class="mode-icon perfil" aria-hidden="true">{{ ic.icone("perfil") }}</span>
+                <strong>Perfil do Aluno</strong>
+                <span>Badges, pontos, sequência de acertos e desempenho.</span>
+            </a>
+            <a class="mode-card" href="{{ url_for('progresso.tela_progresso') }}">
+                <span class="mode-icon progresso" aria-hidden="true">{{ ic.icone("progresso") }}</span>
+                <strong>Meu Progresso</strong>
+                <span>Histórico recente e aproveitamento por matéria.</span>
+            </a>
+            {# Só com modo_guilda ligado na escola (RF14). A rota tem a própria
+               tranca: esconder o card sozinho deixaria a URL aberta. #}
+            {% if mostrar_guildas %}
+            <a class="mode-card" href="{{ url_for('guildas.tela_guildas') }}">
+                <span class="mode-icon guildas" aria-hidden="true">{{ ic.icone("guildas") }}</span>
+                <strong>Batalha de Guildas</strong>
+                <span>Duelo semanal entre turmas, participação e acertos.</span>
+            </a>
+            {% endif %}
+        </div>
+    </section>
+
+    <section class="mode-section" aria-labelledby="conta">
+        <h2 id="conta">Conta</h2>
+        <div class="mode-grid compact">
+            <a class="mode-card" href="{{ url_for('home.trocar_escola') }}">
+                <span class="mode-icon troca" aria-hidden="true">{{ ic.icone("troca") }}</span>
+                <strong>Trocar Escola</strong>
+                <span>Voltar para a tela inicial e acessar outra unidade.</span>
+            </a>
+        </div>
+    </section>
+</section>
+{% endblock %}

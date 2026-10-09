@@ -55,7 +55,10 @@ e a Pesquisa, fique com a sala e registre no plano a hipótese usada.
 ## Anexos do pedido
 
 O pedido pode vir com arquivos do dono em `pedidos[].anexos` (cada um com `nome`, `arquivo`, `tipo`, `tamanho`), salvos em
-`anexos/<id do pedido>/`. Leia cada um com Read (abre imagem, PDF e texto) antes de planejar.
+`anexos/<id do pedido>/`. Leia cada um com Read (abre imagem, PDF e texto) antes de planejar. Se vier uma pasta grande
+(muitos arquivos), use a lista como índice, leia o que importa para o pedido e diga no plano o que não leu; nas sub-missões,
+`anexos` pode citar a pasta inteira terminando em `/` (ex.: `anexos/p-004/tcc/capitulos/`). Arquivo que a Read não abre
+(Word, Excel, ZIP): diga no plano e peça ao dono em PDF, TXT ou CSV.
 
 - No plano, faça a seção **Anexos recebidos**: arquivo · o que é (1 linha) · para que serve · qual sala usa.
 - Copie para o campo `anexos` de cada sub-missão os caminhos que ela precisa (ex.: o logo para o Design, o CSV de anúncios

@@ -1,0 +1,13 @@
+{# MELHORIA: login e cadastro escondem o menu de cima e o cabeçalho, e eram
+   as únicas saídas. Escolhida a escola, "/" manda quem não logou de volta
+   para /login -- então quem errou de escola ficava preso num vaivém, sem
+   caminho para a lista. Visto em 11/09/2026. A rota /trocar-escola já
+   existia; só a grade de jogos (depois do login) apontava para ela. #}
+<p class="muted">
+    {% if session.get("escola_nome") %}
+        Escola: <strong>{{ session.get("escola_nome") }}</strong>.
+        Não é a sua? <a href="{{ url_for('home.trocar_escola') }}">Trocar de escola</a>.
+    {% else %}
+        <a href="{{ url_for('home.trocar_escola') }}">Escolher a escola</a>.
+    {% endif %}
+</p>

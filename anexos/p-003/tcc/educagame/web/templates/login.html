@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% block title %}EducaGame IA - Entrar{% endblock %}
+{% block topnav %}{% endblock %}
+{% block header %}{% endblock %}
+{% block content %}
+<section class="school-entry">
+    <div class="school-entry-copy">
+        <h1>Entrar</h1>
+        <p class="muted">Aluno: entre com seu e-mail cadastrado. Professor/diretor ou desenvolvedor: use seu usuário.</p>
+    </div>
+
+    {% if mensagem %}
+        <p class="notice {{ 'warn' if mensagem_alerta else 'ok' }}">{{ mensagem }}</p>
+    {% endif %}
+    {% if erro %}
+        <p class="notice warn">{{ erro }}</p>
+    {% endif %}
+
+    <form class="form" method="post" action="{{ url_for('auth.tela_login') }}"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <label for="username">Usuário ou e-mail</label>
+        <input id="username" name="username" type="text" autocomplete="username" autofocus required>
+
+        <label for="senha">Senha</label>
+        <div class="admin-login-row">
+            <input id="senha" name="senha" type="password" autocomplete="current-password" required>
+            <button type="submit">Entrar</button>
+        </div>
+    </form>
+
+    <p class="muted">
+        Aluno novo? <a href="{{ url_for('auth.tela_cadastro') }}">Cadastre-se com seu e-mail</a>.
+    </p>
+
+    {% include "partials/trocar_escola_link.html" %}
+
+    <details class="admin-card">
+        <summary class="admin-card-summary">Não recebeu o e-mail de confirmação?</summary>
+        <form method="post" action="{{ url_for('auth.reenviar_confirmacao_rota') }}" class="form admin-login-form"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <label for="email_reenvio">Seu e-mail</label>
+            <div class="admin-login-row">
+                <input id="email_reenvio" name="email" type="email" required>
+                <button type="submit">Reenviar link</button>
+            </div>
+        </form>
+    </details>
+
+    <details class="admin-card">
+        <summary class="admin-card-summary">Esqueceu a senha?</summary>
+        <form method="post" action="{{ url_for('auth.esqueci_senha_rota') }}" class="form admin-login-form"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <label for="email_redefinicao">Seu e-mail</label>
+            <div class="admin-login-row">
+                <input id="email_redefinicao" name="email" type="email" required>
+                <button type="submit">Enviar link de redefinição</button>
+            </div>
+        </form>
+    </details>
+</section>
+{% endblock %}

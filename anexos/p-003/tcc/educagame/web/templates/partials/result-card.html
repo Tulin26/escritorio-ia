@@ -1,0 +1,47 @@
+{% if resultado %}
+<section class="panel result {{ 'ok' if resultado.acertou else 'bad' }}">
+    <h2>{{ "Acertou" if resultado.acertou else "Errou" }}</h2>
+    {% if resultado.pontos %}
+        <p><strong>Pontuação:</strong> {{ "+" if resultado.pontos > 0 else "" }}{{ resultado.pontos }} pontos</p>
+    {% endif %}
+    {# O filtro "unidades" so vale para texto puro: dentro de $$ ... $$ o "^"
+       e LaTeX legitimo e converte-lo quebraria a formula. #}
+    {# formula_html: expoente e indice de verdade ("m_soluto", "x^2") no TEXTO
+       corrido. Onde a pagina carrega MathJax (ENEM e Batalha, para os passos;
+       Treino), ele so desenha o que esta entre $$ ou \( \) -- o <sup>/<sub>
+       daqui nao entra em conflito. #}
+    <p><strong>Sua resposta:</strong> {{ resultado.resposta_aluno|unidades|formula_html }}</p>
+    <p><strong>Resposta correta:</strong> {{ resultado.resposta_correta|unidades|formula_html }}</p>
+    {% if explicacao_texto %}
+        <h3>Explicação</h3>
+        <div class="result-explanation">{{ explicacao_texto|unidades|formula_html }}</div>
+    {% endif %}
+    {% if passos_texto %}
+        {# ENEM e Batalha: a questao que vem do banco do Laboratorio traz os
+           passos, e antes so a frase generica chegava aqui. Mesmo preparo e
+           mesmo desenho do Laboratorio (.steps/.step): prosa por formula_html,
+           formula entre $$ -- as duas paginas carregam o MathJax.
+           FORA de .result-explanation: ela tem white-space: pre-line, e a
+           quebra de linha do proprio template virava buraco em branco na tela
+           (visto em producao em 14/09/2026). #}
+        <div class="steps">
+            <h3>Resolução</h3>
+            {% for passo in passos_texto %}
+                <div class="step">
+                    <strong>{{ passo.titulo }}</strong>
+                    {% if passo.conteudo_texto %}<p>{{ passo.conteudo_texto|formula_html }}</p>{% endif %}
+                    {% if passo.conteudo_latex %}<div class="latex">$$ {{ passo.conteudo_latex }} $$</div>{% endif %}
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+    {% if resultado.feedback %}
+        <div class="feedback-box">
+            <h3>Feedback pedagógico</h3>
+            <p><strong>O que pode ter confundido:</strong> {{ resultado.feedback.confundiu|unidades|formula_html }}</p>
+            <p><strong>Como evitar:</strong> {{ resultado.feedback.evitar|unidades|formula_html }}</p>
+            <p><strong>Próximo treino:</strong> {{ resultado.feedback.treino|unidades|formula_html }}</p>
+        </div>
+    {% endif %}
+</section>
+{% endif %}

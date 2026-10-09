@@ -1,0 +1,121 @@
+{% extends "base.html" %}
+{% block title %}Perfil do Aluno - EducaGame IA{% endblock %}
+{% block content %}
+<section class="section-head">
+    <div>
+        <p class="eyebrow">Aluno</p>
+        <h1>Perfil do Aluno</h1>
+        <p class="muted">Badges, pontos, sequência de acertos e desempenho por matéria.</p>
+    </div>
+</section>
+
+{% if not perfil %}
+    <section class="panel">
+        <h2>Escolha um aluno</h2>
+        {% if alunos %}
+            <form method="get" class="form">
+                <label for="aluno_id">Aluno</label>
+                <select id="aluno_id" name="aluno_id" required>
+                    {% for aluno in alunos %}
+                        <option value="{{ aluno.id }}">{{ aluno.nome }} - {{ aluno.ano_escolar }}</option>
+                    {% endfor %}
+                </select>
+                <button type="submit">Abrir perfil</button>
+            </form>
+        {% else %}
+            <p class="muted">Selecione um aluno no painel inicial para abrir o perfil.</p>
+        {% endif %}
+    </section>
+{% else %}
+    <section class="panel profile-hero">
+        <div>
+            <p class="eyebrow">{{ perfil.aluno.ano_escolar or "Turma" }}</p>
+            <h2>{{ perfil.aluno.nome }}</h2>
+            <p class="muted">{{ perfil.aluno.periodo or "Periodo nao informado" }}</p>
+            {% if not aluno_travado %}
+                <a class="button ghost" href="{{ url_for('perfil.tela_perfil', trocar=1) }}">Trocar aluno</a>
+            {% endif %}
+        </div>
+        <div class="profile-score">
+            <span>Pontos</span>
+            <strong>{{ perfil.pontos }}</strong>
+        </div>
+    </section>
+
+    <section class="stats-grid">
+        <article class="stat-card">
+            <span>Questões</span>
+            <strong>{{ perfil.total }}</strong>
+        </article>
+        <article class="stat-card">
+            <span>Acertos</span>
+            <strong>{{ perfil.acertos }}</strong>
+        </article>
+        <article class="stat-card">
+            <span>Aproveitamento</span>
+            <strong>{{ perfil.percentual }}%</strong>
+        </article>
+        <article class="stat-card">
+            <span>Maior sequência</span>
+            <strong>{{ perfil.streak }}</strong>
+        </article>
+    </section>
+
+    <section class="panel">
+        <div class="challenge-head">
+            <div>
+                <h2>Conquistas</h2>
+                <p class="muted">{{ perfil.badges_total }} de {{ perfil.badges|length }} badges desbloqueados.</p>
+            </div>
+        </div>
+        <div class="badge-grid">
+            {% for badge in perfil.badges %}
+                <article class="badge-card {{ 'unlocked' if badge.id in perfil.badges_ids else 'locked' }}">
+                    <span>{{ badge.emoji }}</span>
+                    <strong>{{ badge.nome }}</strong>
+                    <small>{{ badge.desc }}</small>
+                </article>
+            {% endfor %}
+        </div>
+    </section>
+
+    <section class="grid two">
+        <div class="panel">
+            <h2>Desempenho por matéria</h2>
+            {% if perfil.materias %}
+                <select data-stat-select="materia-perfil">
+                    {% for materia in perfil.materias %}
+                        <option value="{{ loop.index0 }}">{{ materia.nome|materia_label }}</option>
+                    {% endfor %}
+                </select>
+                {% for materia in perfil.materias %}
+                    <div class="table-row profile-table" data-stat-detalhe="materia-perfil" data-indice="{{ loop.index0 }}" {% if not loop.first %}hidden{% endif %}>
+                        <strong>{{ materia.nome|materia_label }}</strong>
+                        <span>{{ materia.total }} questões</span>
+                        <span>{{ materia.acertos }} {{ "acerto" if materia.acertos == 1 else "acertos" }}</span>
+                        <strong>{{ materia.percentual }}%</strong>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <p class="muted">Ainda não há respostas registradas para este aluno.</p>
+            {% endif %}
+        </div>
+        <div class="panel">
+            <h2>Histórico recente</h2>
+            {% if perfil.recentes %}
+                <div class="summary-list">
+                    {% for log in perfil.recentes %}
+                        <p>
+                            <strong>{{ log.resultado }}</strong>
+                            em {{ (log.materia or "Geral")|materia_base|materia_label }}
+                            <small>{{ log.modo|modo_label }}</small>
+                        </p>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p class="muted">Quando o aluno responder questões, o histórico aparece aqui.</p>
+            {% endif %}
+        </div>
+    </section>
+{% endif %}
+{% endblock %}

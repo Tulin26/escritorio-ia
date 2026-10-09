@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { api } from './api.js';
+import { arquivosDoArraste } from './arquivos.js';
 import { faseDoDia, nivelDe, xpDe } from './dados.js';
 import { useMovimentoReduzido, useRelogio } from './ganchos.js';
 import Topo from './componentes/Topo.jsx';
@@ -138,8 +139,11 @@ export default function App() {
       clearTimeout(saida);
       setArrastandoArquivo(false);
       if (!e.dataTransfer.files.length) return;
-      setSoltos({ chave: Date.now(), arquivos: [...e.dataTransfer.files] });
-      setNovaAberta(true);
+      // Pastas soltas no painel: entra nelas e pega tudo o que tiver dentro.
+      arquivosDoArraste(e.dataTransfer).then((arquivos) => {
+        setSoltos({ chave: Date.now(), arquivos });
+        setNovaAberta(true);
+      }, (erro) => mostrarAviso(`Não consegui ler o que foi solto: ${erro.message}`));
     };
     window.addEventListener('dragenter', sobre);
     window.addEventListener('dragover', sobre);
@@ -167,8 +171,8 @@ export default function App() {
     aplicar(await api.rodada());
   }
 
-  async function novoPedido(projeto, texto, anexos, chamarAgora) {
-    aplicar(await api.pedido(projeto, texto, anexos));
+  async function novoPedido(projeto, texto, envio, chamarAgora) {
+    aplicar(await api.pedido(projeto, texto, envio));
     if (!chamarAgora) return;
     try {
       await chamarEquipe();

@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block title %}EducaGame IA - Código da escola{% endblock %}
+{% block topnav %}{% endblock %}
+{% block header %}{% endblock %}
+{% block content %}
+<section class="school-entry">
+    <div class="school-entry-copy">
+        <p class="eyebrow">EducaGame IA</p>
+        <h1>{{ escola.nome }}</h1>
+        <p class="muted">Digite o código da escola para continuar. Quem passa o código é o seu professor.</p>
+    </div>
+
+    {% if erro %}
+        <p class="notice warn">{{ erro }}</p>
+    {% endif %}
+
+    <form class="form" method="post" action="{{ url_for('home.entrar_escola', escola_id=escola.id) }}"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <input type="hidden" name="next" value="{{ next }}">
+
+        <label for="slug">Código da escola</label>
+        <div class="admin-login-row">
+            {# autocapitalize/autocorrect desligados: no celular a primeira letra
+               viria maiúscula e o corretor tentaria "consertar" o código. A
+               comparação já é insensível a maiúsculas, mas ver o campo trocar o
+               que foi digitado assusta sem motivo. #}
+            <input
+                id="slug"
+                name="slug"
+                type="text"
+                autocomplete="off"
+                autocapitalize="none"
+                autocorrect="off"
+                spellcheck="false"
+                autofocus
+                required
+            >
+            <button type="submit">Entrar</button>
+        </div>
+    </form>
+
+    <p class="muted">
+        Escola errada? <a href="{{ url_for('home.index') }}">Voltar para a lista</a>.
+    </p>
+</section>
+{% endblock %}

@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+{% block title %}EducaGame IA - Desafio do Oráculo{% endblock %}
+{% block content %}
+{% if aviso_resposta %}
+    <p class="notice warn">{{ aviso_resposta }}</p>
+{% endif %}
+
+<section class="section-head">
+    <div>
+        <p class="eyebrow">Desafio do Oráculo</p>
+        <h1>Gerador de desafios</h1>
+        {% include "partials/student_context.html" %}
+    </div>
+</section>
+
+{% include "partials/ia_notice.html" %}
+
+{% if not resultado %}
+    <section>
+        <div class="panel">
+            <h2>Nova questão</h2>
+            <form method="post" action="{{ url_for('oraculo.tela_oraculo') }}" data-aviso-texto="O Oráculo está formulando o enigma..." class="form"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <label for="materia">Matéria</label>
+                <select id="materia" name="materia">
+                    {% for materia in materias %}
+                        <option value="{{ materia.valor }}" data-ef="{{ 1 if materia.permitida_ef else 0 }}" data-em="{{ 1 if materia.permitida_em else 0 }}" {% if materia.valor == materia_selecionada %}selected{% endif %}>{{ materia.label }}</option>
+                    {% endfor %}
+                </select>
+
+                <label for="nivel">Dificuldade</label>
+                <select id="nivel" name="nivel">
+                    {% for nivel in ["Fácil", "Médio", "Difícil"] %}
+                        <option {% if nivel == nivel_selecionado %}selected{% endif %}>{{ nivel }}</option>
+                    {% endfor %}
+                </select>
+
+                {% include "partials/student_selector.html" %}
+
+                <label for="tema">Tema opcional</label>
+                <input id="tema" type="text" name="tema" placeholder="Ex: Bhaskara, fotossíntese, Revolução Industrial">
+
+                <button type="submit">Gerar desafio</button>
+            </form>
+        </div>
+    </section>
+{% endif %}
+
+{% if enigma and enigma.get("pergunta") %}
+<section class="panel challenge">
+    <div class="challenge-head">
+        <div>
+            <p class="eyebrow">{{ enigma.get("materia_label", enigma.get("materia", "")) }}</p>
+            <h2>{{ enigma.get("enigma", "Desafio") }}</h2>
+        </div>
+        <span class="pill">{{ enigma.get("_origem_geracao", "questão") }}</span>
+    </div>
+
+    {% set suporte = enigma.get("suporte") %}
+    {% include "partials/suporte_questao.html" %}
+    <p class="question">{{ enigma.get("pergunta")|unidades|expoentes_html }}</p>
+
+    {% if not resultado %}
+        {% set action = url_for('oraculo.responder_oraculo') %}
+        {% set opcoes = enigma.get("opcoes", []) %}
+        {% include "partials/options_form.html" %}
+    {% endif %}
+</section>
+{% endif %}
+
+{% if resultado and enigma %}
+    {% set explicacao_texto = enigma.get("explicacao_texto") %}
+    {% include "partials/result_card.html" %}
+
+    <section class="panel compact-form">
+        <div class="actions">
+            <form method="post" action="{{ url_for('oraculo.tela_oraculo') }}" data-aviso-texto="O Oráculo está formulando o enigma..."><input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <input type="hidden" name="materia" value="{{ enigma.get('materia', 'Matematica') }}">
+                <input type="hidden" name="nivel" value="{{ enigma.get('nivel', 'Médio') }}">
+                <input type="hidden" name="tema" value="{{ enigma.get('tema', '') }}">
+                <button type="submit">Gerar novo desafio</button>
+            </form>
+            <form method="post" action="{{ url_for('oraculo.nova_pergunta_oraculo') }}" data-aviso-texto="O Oráculo está formulando o enigma..."><input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <button class="button secondary" type="submit">Escolher outra matéria</button>
+            </form>
+        </div>
+    </section>
+{% endif %}
+{% endblock %}

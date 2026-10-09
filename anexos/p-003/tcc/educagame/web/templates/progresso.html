@@ -1,0 +1,184 @@
+{% extends "base.html" %}
+{% block title %}EducaGame IA - Meu Progresso{% endblock %}
+{% block content %}
+<section class="section-head">
+    <div>
+        <p class="eyebrow">Meu Progresso</p>
+        <h1>{% if mostrar_ranking %}Ranking e progresso{% else %}Progresso e histórico{% endif %}</h1>
+        {% if aluno_nome %}
+            <p class="muted">Aluno selecionado: <strong>{{ aluno_nome }}</strong> - {{ ano_escolar }}</p>
+        {% else %}
+            <p class="muted">Escolha um aluno para carregar o progresso individual.</p>
+        {% endif %}
+    </div>
+    {% if alunos and not aluno_travado %}
+        <form method="post" action="{{ url_for('progresso.tela_progresso') }}" class="student-picker"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <label for="aluno_id">Aluno</label>
+            <div class="student-picker-row">
+                <select id="aluno_id" name="aluno_id" required>
+                    {% for aluno in alunos %}
+                        <option value="{{ aluno.id }}" {% if aluno_id|string == aluno.id|string %}selected{% endif %}>
+                            {{ aluno.nome }} - {{ aluno.ano_escolar }}
+                        </option>
+                    {% endfor %}
+                </select>
+                <button type="submit">Ver progresso</button>
+            </div>
+        </form>
+    {% endif %}
+</section>
+
+{# Meta da semana: pedido da coordenacao (28/09/2026). Conta questoes no
+   Oraculo/Treino e no Laboratorio, e PARTIDA CONCLUIDA no Escape Room, na
+   Batalha e no RPG -- ver core/metas.py. Zera toda segunda-feira. #}
+{% if aluno_id and meta and meta.itens %}
+<section class="panel">
+    <h2>Meta da semana</h2>
+    <p class="muted">
+        {% if meta.tudo_feito %}
+            Tudo feito nesta semana. O contador zera na segunda-feira.
+        {% else %}
+            {{ meta.cumpridas }} de {{ meta.total }} concluídas. A semana zera na segunda-feira, sem acumular o que faltou.
+        {% endif %}
+    </p>
+    {% for item in meta.itens %}
+        <div class="progress-row">
+            <span>{{ item.label }}</span>
+            <strong>
+                {{ item.feito }}/{{ item.alvo }}
+                {% if item.cumprida %}&#10003;{% else %}&middot; faltam {{ item.faltam }}{% endif %}
+            </strong>
+        </div>
+        <progress class="progress-bar" value="{{ item.percentual }}" max="100">{{ item.percentual }}%</progress>
+        <p class="muted">{{ item.ajuda }}</p>
+    {% endfor %}
+
+    {% if meta.focos %}
+        <h3>Seu foco de estudo</h3>
+        <p class="muted">O que o professor anotou para você treinar.</p>
+        {% for foco in meta.focos %}
+            <div class="summary-list">
+                <p>
+                    <strong>{{ foco.materia|materia_label }}:</strong> {{ foco.tema|tema_label }}
+                    {% if foco.observacao %}<br><span class="muted">{{ foco.observacao }}</span>{% endif %}
+                </p>
+            </div>
+            <form method="post" action="{{ url_for('oraculo.nova_pergunta_oraculo') }}">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <input type="hidden" name="materia" value="{{ foco.materia }}">
+                <input type="hidden" name="tema" value="{{ foco.tema }}">
+                <button type="submit">Treinar este tema no Oráculo</button>
+            </form>
+        {% endfor %}
+    {% endif %}
+</section>
+{% endif %}
+
+{# MELHORIA: o ranking saia sempre, mesmo com mostrar_ranking desligado na
+   escola (RF14). Sem ele, o grid volta a uma coluna -- "two" deixaria meia
+   tela vazia ao lado do progresso. #}
+<section class="grid{% if mostrar_ranking %} two{% endif %}">
+    <div class="panel">
+        <h2>Progresso do aluno</h2>
+        {% if aluno_id %}
+            <div class="stats-grid">
+                <article class="stat-card">
+                    <strong>{{ progresso.total }}</strong>
+                    <span>questões respondidas</span>
+                </article>
+                <article class="stat-card">
+                    <strong>{{ progresso.acertos }}</strong>
+                    <span>acertos</span>
+                </article>
+                <article class="stat-card">
+                    <strong>{{ progresso.percentual }}%</strong>
+                    <span>aproveitamento</span>
+                </article>
+            </div>
+        {% else %}
+            <p class="notice warn">Selecione um aluno acima para ver o progresso individual.</p>
+        {% endif %}
+    </div>
+
+    {% if mostrar_ranking %}
+    <div class="panel">
+        <h2>Ranking da escola</h2>
+        {% if ranking %}
+            <ol class="ranking">
+                {% for item in ranking %}
+                    <li>
+                        <span>{{ item.nome }}</span>
+                        <strong>{{ item.pontos_totais or item.pontos or 0 }} pts</strong>
+                    </li>
+                {% endfor %}
+            </ol>
+        {% else %}
+            <p class="muted">Ainda não há ranking para mostrar.</p>
+        {% endif %}
+    </div>
+    {% endif %}
+</section>
+
+<section class="grid two">
+    <div class="panel">
+        <h2>Por matéria</h2>
+        {% if progresso.materias %}
+            <select data-stat-select="materia">
+                {% for item in progresso.materias %}
+                    <option value="{{ loop.index0 }}">{{ item.nome|materia_label }}</option>
+                {% endfor %}
+            </select>
+            {% for item in progresso.materias %}
+                <article data-stat-detalhe="materia" data-indice="{{ loop.index0 }}" {% if not loop.first %}hidden{% endif %}>
+                    <div class="progress-row">
+                        <strong>{{ item.nome|materia_label }}</strong>
+                        <span>{{ item.acertos }}/{{ item.total }} · {{ item.percentual }}%</span>
+                    </div>
+                    <progress class="progress-bar" value="{{ item.percentual }}" max="100">{{ item.percentual }}%</progress>
+                </article>
+            {% endfor %}
+        {% else %}
+            <p class="muted">Sem respostas registradas ainda.</p>
+        {% endif %}
+    </div>
+
+    <div class="panel">
+        <h2>Por modo</h2>
+        {% if progresso.modos %}
+            <select data-stat-select="modo">
+                {% for item in progresso.modos %}
+                    <option value="{{ loop.index0 }}">{{ item.nome }}</option>
+                {% endfor %}
+            </select>
+            {% for item in progresso.modos %}
+                <article data-stat-detalhe="modo" data-indice="{{ loop.index0 }}" {% if not loop.first %}hidden{% endif %}>
+                    <div class="progress-row">
+                        <strong>{{ item.nome }}</strong>
+                        <span>{{ item.acertos }}/{{ item.total }} · {{ item.percentual }}%</span>
+                    </div>
+                    <progress class="progress-bar" value="{{ item.percentual }}" max="100">{{ item.percentual }}%</progress>
+                </article>
+            {% endfor %}
+        {% else %}
+            <p class="muted">Sem modos registrados ainda.</p>
+        {% endif %}
+    </div>
+</section>
+
+<section class="panel">
+    <h2>Histórico recente</h2>
+    {% if progresso.recentes %}
+        <div class="summary-list">
+            {% for log in progresso.recentes %}
+                {# O resumo mostrava o enunciado sem filtro nenhum: "357 cm^2" e "x^2 - 6x + 8"
+                   crus, ao lado da MESMA questao ja formatada na tela de responder.
+                   Achado 4.4 do QA de 23/09/2026; medido em 28/09: 260 questoes dos
+                   bancos e 34 das 554 reais da IA. #}
+                <p>{{ log.resultado }} · {{ log.materia|materia_base|materia_label }} · {{ log.pergunta_texto|unidades|formula_html }}</p>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p class="muted">As respostas novas aparecerão aqui depois que o aluno jogar.</p>
+    {% endif %}
+</section>
+{% endblock %}

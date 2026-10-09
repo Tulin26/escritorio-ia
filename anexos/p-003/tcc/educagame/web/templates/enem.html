@@ -1,0 +1,154 @@
+{% extends "base.html" %}
+{% block title %}EducaGame IA - ENEM{% endblock %}
+{% block content %}
+{% if aviso_resposta %}
+    <p class="notice warn">{{ aviso_resposta }}</p>
+{% endif %}
+
+<section class="section-head">
+    <div>
+        <p class="eyebrow">ENEM</p>
+        <h1>Simulado ENEM</h1>
+        {% include "partials/student_context.html" %}
+    </div>
+</section>
+
+{% include "partials/ia_notice.html" %}
+
+{% if not simulado %}
+<section>
+    <div class="panel">
+        <h2>Configurar simulado</h2>
+        <form method="post" action="{{ url_for('enem.iniciar_enem') }}" data-aviso-texto="Montando o simulado..." class="form"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <label>Áreas do conhecimento</label>
+            <div class="check-list">
+                {% for area in areas %}
+                    <label class="check-option">
+                        <input type="checkbox" name="areas" value="{{ area.valor }}" checked>
+                        <span>{{ area.label }}</span>
+                    </label>
+                {% endfor %}
+            </div>
+
+            <label for="dificuldade">Dificuldade</label>
+            <select id="dificuldade" name="dificuldade">
+                {% for dificuldade in dificuldades %}
+                    <option value="{{ dificuldade }}" {% if dificuldade == "Medio" %}selected{% endif %}>{{ dificuldade | dificuldade_label }}</option>
+                {% endfor %}
+            </select>
+
+            <label for="total">Número de questões</label>
+            <select id="total" name="total">
+                <option>5</option>
+                <option selected>10</option>
+                <option>15</option>
+                <option>20</option>
+                <option>30</option>
+            </select>
+
+            {% include "partials/student_selector.html" %}
+
+            <button type="submit">Iniciar simulado</button>
+        </form>
+    </div>
+</section>
+{% endif %}
+
+{% if simulado.get("fase") == "quiz" and questao %}
+<section class="panel challenge">
+    <div class="challenge-head">
+        <div>
+            <p class="eyebrow">{{ questao.get("area_label", "") }}</p>
+            <h2>Questão {{ simulado.get("idx", 0) + 1 }} de {{ simulado.get("total", 1) }}</h2>
+        </div>
+        <span class="pill">{{ questao.get("origem_label", "IA") }}</span>
+    </div>
+
+    {% set progresso = ((simulado.get("idx", 0) + 1) / simulado.get("total", 1) * 100)|round(0, "floor")|int %}
+    <div class="progress-row">
+        <strong>{{ progresso }}% do simulado</strong>
+        <span>{{ questao.get("dificuldade", "") | dificuldade_label }}{% if questao.get("matriz_enem") %} · {{ questao.get("matriz_enem") }}{% endif %}</span>
+    </div>
+    <progress class="progress-bar" value="{{ progresso }}" max="100">{{ progresso }}%</progress>
+
+    <p class="question">{{ questao.get("pergunta", "")|unidades|formula_html }}</p>
+
+    {% if not resultado %}
+            {# A assinatura diz a QUE questao este indice pertence (QA de 23/09/2026, achado 3.4). #}
+    <input type="hidden" name="assinatura_questao" value="{{ assinatura_questao|default('') }}">
+                    <form method="post" action="{{ url_for('enem.responder_enem') }}" class="options"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            {% for alternativa in questao.get("alternativas", []) %}
+                <label class="option">
+                    <input type="radio" name="resposta" value="{{ loop.index0 }}" required>
+                    <span><strong>{{ ["A", "B", "C", "D", "E"][loop.index0] }})</strong> {{ alternativa|unidades|formula_html }}</span>
+                </label>
+            {% endfor %}
+            <button type="submit">Responder</button>
+        </form>
+    {% endif %}
+</section>
+{% endif %}
+
+{% if resultado and simulado.get("fase") == "quiz" and questao %}
+    {% set explicacao_texto = questao.get("explicacao_texto") %}
+    {% set passos_texto = questao.get("passos_texto") %}
+    {% include "partials/result_card.html" %}
+
+    <section class="panel">
+        <form method="post" action="{{ url_for('enem.proxima_enem') }}" data-aviso-texto="Preparando a próxima questão..."><input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <button type="submit">
+                {% if simulado.get("idx", 0) + 1 >= simulado.get("total", 1) %}
+                    Ver resultado
+                {% else %}
+                    Próxima questão
+                {% endif %}
+            </button>
+        </form>
+    </section>
+{% endif %}
+
+{% if simulado.get("fase") == "resultado" %}
+<section class="panel result ok">
+    <h2>Resultado do simulado</h2>
+    <p><strong>{{ resumo.get("acertos", 0) }}/{{ resumo.get("total", 0) }}</strong> acertos, aproveitamento de <strong>{{ resumo.get("percentual", 0) }}%</strong>.</p>
+
+    <div class="stats-grid">
+        {% for area in resumo.get("areas", []) %}
+            <article class="stat-card">
+                <strong>{{ area.area }}</strong>
+                <span>{{ area.acertos }}/{{ area.total }} acertos</span>
+                <progress class="progress-bar" value="{{ area.percentual }}" max="100">{{ area.percentual }}%</progress>
+            </article>
+        {% endfor %}
+    </div>
+</section>
+
+{% if resumo.get("erradas") %}
+<section class="panel">
+    <h2>Questões para revisar</h2>
+    <div class="summary-list">
+        {% for item in resumo.get("erradas") %}
+            {# O resumo mostrava o enunciado sem filtro nenhum: "357 cm^2" e "x^2 - 6x + 8"
+                   crus, ao lado da MESMA questao ja formatada na tela de responder.
+                   Achado 4.4 do QA de 23/09/2026; medido em 28/09: 260 questoes dos
+                   bancos e 34 das 554 reais da IA. #}
+            <p>Q{{ item.numero }} - {{ item.area_label }}: {{ item.pergunta|unidades|formula_html }}</p>
+        {% endfor %}
+    </div>
+</section>
+{% endif %}
+
+<section class="panel">
+    <form method="post" action="{{ url_for('enem.reiniciar_enem') }}"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <button type="submit">Novo simulado</button>
+    </form>
+</section>
+{% endif %}
+{% endblock %}
+
+{# MELHORIA: o ENEM nunca mostra formula nem passo a passo (imita a prova
+   de verdade -- nem a IA nem o fallback offline trazem mais esses campos,
+   ver services/enem_service.py::_converter_questao_para_enem), entao nao
+   ha "$$ ... $$" nenhum pra desenhar aqui. O MathJax so ficava, sem uso,
+   obrigando o navegador a carregar um script externo e o CSP a manter um
+   allowlist so por causa dele. #}

@@ -141,17 +141,24 @@ Git & GitHub traz o que chegar do online a cada envio).
 
 ## Anexos
 
-Arraste os arquivos do Explorer e solte **em qualquer lugar do painel**: abre uma nova missão com eles anexados. Dentro do
-**+ Nova missão** também dá para clicar em **Escolher arquivos**, soltar no formulário ou colar uma imagem (Ctrl+V).
+Arraste arquivos ou pastas do Explorer e solte **em qualquer lugar do painel**: abre uma nova missão com eles anexados.
+Dentro do **+ Nova missão** também dá para clicar em **Escolher arquivos** ou **Escolher pasta**, soltar no formulário ou
+colar uma imagem (Ctrl+V).
 
-- **Tipos:** fotos e prints (PNG, JPG, GIF, WebP), PDF, TXT, MD, CSV e JSON. Planilha do Excel: salve como CSV antes.
-- **Limite no PC:** até 10 arquivos por pedido, 25 MB cada e 50 MB no total. As fotos vão do jeito que estão.
-- **Limite no painel online:** até 5 arquivos e 3 MB no total (limite do Vercel); lá as fotos grandes são reduzidas antes de subir.
-- **Onde ficam:** em `anexos/<id do pedido>/` (ex.: `anexos/p-004/logo.png`), com nomes simples, e listados no pedido.
+- **Tipos:** qualquer um. Imagem, PDF e texto (inclusive código e LaTeX) abrem no navegador e a equipe lê; o resto (Word,
+  Excel, ZIP…) fica guardado e é baixado ao clicar. Para a equipe ler um Word ou planilha, mande também em PDF ou CSV.
+- **No PC:** sem limite de quantidade nem de tamanho, e pastas inteiras com subpastas. Cada arquivo sobe sozinho (o botão
+  mostra "Enviando 12 de 300…"). A pasta `.git` e o lixo do sistema (Thumbs.db, desktop.ini, .DS_Store) ficam de fora.
+- **No painel online:** até 5 arquivos e 3 MB no total (limite do Vercel); lá as fotos grandes são reduzidas antes de subir.
+- **Onde ficam:** em `anexos/<id do pedido>/` (ex.: `anexos/p-004/tcc/capitulo-1/texto.pdf`), com as subpastas e nomes
+  simples, e listados no pedido.
+- **GitHub:** arquivo acima de 95 MB fica só no PC (o GitHub recusa acima de 100 MB); o servidor põe um `.gitignore` na
+  pasta do pedido para o envio não travar.
 - **Quem usa:** o Diretor lê todos, descreve no plano o que é cada um e passa para cada sala os que ela precisa (o logo para
   o Design, o relatório de anúncios para o Tráfego, o cardápio para o Copy). As salas leem antes de começar e o Revisor
   confere a entrega contra eles.
-- **Segurança:** o painel confere se cada arquivo é mesmo do tipo que diz ser e só abre anexos citados em algum pedido.
+- **Segurança:** o painel só abre no navegador a imagem ou o PDF que é mesmo o que diz ser (o resto é baixado), sempre numa
+  página isolada, e só anexos citados em algum pedido.
   Texto dentro de um anexo é tratado como dado, nunca como ordem para a equipe.
 - **Privacidade:** anexos vão para o GitHub junto com o resto. Se houver dados de clientes, deixe o repositório **privado**.
 
@@ -289,7 +296,8 @@ Datas no formato `AAAA-MM-DD HH:MM`. Missões com `"exemplo": true` são só dem
 | `GET /api/estado` | estado atual e status da equipe |
 | `GET /api/arquivo?id=m-001` | conteúdo do `.md` de uma missão |
 | `GET /api/anexo?caminho=anexos/p-004/logo.png` | um anexo (só os citados em algum pedido ou missão) |
-| `POST /api/pedido` | nova missão (`{ projeto, texto, anexos }`, com `anexos` = `[{ nome, dados em base64 }]`) |
+| `POST /api/anexo/enviar?lote=…&caminho=…` | só no PC: um anexo cru (qualquer tipo e tamanho), guardado em `.envio/<lote>/` até o pedido |
+| `POST /api/pedido` | nova missão (`{ projeto, texto, lote }` no PC, ou `{ projeto, texto, anexos }` com `anexos` = `[{ nome ou caminho, dados em base64 }]`) |
 | `POST /api/decisao` | aprovar ou refazer (`{ id, acao, comentario }`) |
 | `POST /api/rodada` | chamar a equipe agora |
 | `POST /api/git` | ligar ou desligar o envio automático (`{ ligado }`, só no PC) |

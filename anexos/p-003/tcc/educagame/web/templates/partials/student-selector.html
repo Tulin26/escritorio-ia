@@ -1,0 +1,94 @@
+{% if aluno_travado %}
+    {# Quem entrou com a propria conta de aluno nao escolhe por quem jogar.
+       O campo vai escondido so para o formulario continuar completo -- o
+       servidor ignora este valor e usa sempre o aluno da sessao (ver
+       aluno_travado_id em web/routes/flask_helpers_fla.py). #}
+    <label>Aluno</label>
+    <p class="notice ok"><strong>{{ aluno_nome }}</strong> - {{ ano_escolar }}</p>
+    <input type="hidden" name="aluno_id" value="{{ aluno_id }}" data-ano="{{ ano_escolar }}">
+{% elif alunos %}
+    <label for="aluno_id">Aluno</label>
+    <select id="aluno_id" name="aluno_id" required>
+        {% for aluno in alunos %}
+            <option
+                value="{{ aluno.id }}"
+                data-ano="{{ aluno.ano_escolar }}"
+                {% if aluno_id|string == aluno.id|string %}selected{% endif %}
+            >
+                {{ aluno.nome }} - {{ aluno.ano_escolar }}
+            </option>
+        {% endfor %}
+    </select>
+    <p class="notice ok student-year-notice">
+        Ano escolar carregado do aluno: <strong class="student-year">{{ ano_escolar }}</strong>
+    </p>
+{% else %}
+    <p class="notice warn">Cadastre um aluno no painel do professor para registrar desempenho.</p>
+{% endif %}
+
+<script>
+(function () {
+    function etapaDoAno(ano) {
+        const texto = (ano || "")
+            .normalize("NFD")
+            .replace(/[\u0300-\u036f]/g, "")
+            .toUpperCase();
+        return texto.includes("EM") || texto.includes("MEDIO") ? "em" : "ef";
+    }
+
+    function filtrarMaterias(form, ano) {
+        if (!form) return;
+        const etapa = etapaDoAno(ano);
+        const selectsMateria = form.querySelectorAll('select[name="materia"], select[name="materias_salas"]');
+        selectsMateria.forEach((selectMateria) => {
+            const valorAnterior = selectMateria.value;
+            let primeiraPermitida = "";
+            Array.from(selectMateria.options).forEach((option) => {
+                const permitida = option.dataset[etapa] === "1";
+                option.hidden = !permitida;
+                option.disabled = !permitida;
+                if (permitida && !primeiraPermitida) {
+                    primeiraPermitida = option.value;
+                }
+            });
+            const selecionada = selectMateria.options[selectMateria.selectedIndex];
+            if ((!selecionada || selecionada.disabled) && primeiraPermitida) {
+                selectMateria.value = primeiraPermitida;
+            }
+            if (selectMateria.value !== valorAnterior) {
+                selectMateria.dispatchEvent(new Event("change", { bubbles: true }));
+            }
+        });
+    }
+
+    // Professor e desenvolvedor escolhem o aluno numa lista, e o filtro
+    // acompanha cada troca.
+    document.querySelectorAll('select[name="aluno_id"]').forEach((selectAluno) => {
+        const form = selectAluno.closest("form");
+        const yearText = form ? form.querySelector(".student-year") : null;
+
+        function atualizarAnoAluno() {
+            const option = selectAluno.options[selectAluno.selectedIndex];
+            if (yearText && option) {
+                yearText.textContent = option.dataset.ano || "";
+            }
+            if (option) {
+                filtrarMaterias(form, option.dataset.ano || "");
+            }
+        }
+
+        selectAluno.addEventListener("change", atualizarAnoAluno);
+        atualizarAnoAluno();
+    });
+
+    // MELHORIA: o filtro so existia no bloco acima, preso a lista de alunos.
+    // Quem entra com a propria conta nao tem lista -- o aluno vai num campo
+    // escondido --, entao o filtro nunca rodava, e um aluno do Ensino Medio
+    // via "Ciencias" (e um do Fundamental via Fisica e Quimica). Escolhida, a
+    // materia errada era trocada por Matematica no servidor, sem aviso. Visto
+    // em producao em 11/09/2026, no Laboratorio, conta de 3o Ano EM.
+    document.querySelectorAll('input[name="aluno_id"][data-ano]').forEach((campo) => {
+        filtrarMaterias(campo.closest("form"), campo.dataset.ano || "");
+    });
+})();
+</script>

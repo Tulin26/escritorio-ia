@@ -1,0 +1,1 @@
+"""Camada Flask do EducaGame."""

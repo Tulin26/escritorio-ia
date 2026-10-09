@@ -24,17 +24,40 @@ test('dois anexos com o mesmo nome ganham -2, -3', () => {
   assert.deepEqual(nomes, ['logo.png', 'logo-2.png', 'logo-3.png']);
 });
 
-test('tipo não aceito, conteúdo falso, vazio ou corrompido é recusado', () => {
+test('qualquer tipo entra; só imagem, PDF e texto de verdade abrem no navegador, o resto é baixado', () => {
+  const tipos = escritorio.prepararAnexos([
+    anexo('TCC.docx', Buffer.from([0x50, 0x4b, 0x03, 0x04, 0x00, 0x00])),
+    anexo('programa.exe', Buffer.from([0x4d, 0x5a, 0x00])),
+    anexo('desenho.svg', Buffer.from('<svg onload="alert(1)"/>')),
+    anexo('Makefile', Buffer.from('all:\n\techo oi\n')),
+    anexo('pagina.png', Buffer.from('<html><script>alert(1)</script></html>')),
+    anexo('falso.pdf', PNG),
+    { nome: 'vazio.txt', dados: '' },
+  ], escritorio.LIMITES_ANEXOS.pc).map((a) => [a.nome, a.tipo]);
+  assert.deepEqual(tipos, [
+    ['tcc.docx', 'application/octet-stream'],
+    ['programa.exe', 'application/octet-stream'],
+    ['desenho.svg', 'text/plain'],
+    ['makefile', 'text/plain'],
+    ['pagina.png', 'application/octet-stream'],
+    ['falso.pdf', 'application/octet-stream'],
+    ['vazio.txt', 'text/plain'],
+  ]);
   const recusa = (lista, regex) => assert.throws(() => escritorio.prepararAnexos(lista), regex);
-  recusa([anexo('desenho.svg', Buffer.from('<svg onload="alert(1)"/>'))], /não é de um tipo aceito/);
-  recusa([anexo('programa.exe', PNG)], /não é de um tipo aceito/);
-  recusa([anexo('sem-extensao', PNG)], /não é de um tipo aceito/);
-  recusa([anexo('pagina.png', Buffer.from('<html><script>alert(1)</script></html>'))], /não é o que a extensão diz/);
-  recusa([anexo('falso.pdf', PNG)], /não é o que a extensão diz/);
-  recusa([anexo('binario.txt', Buffer.from([0x41, 0x00, 0x42]))], /não é o que a extensão diz/);
-  recusa([{ nome: 'vazio.txt', dados: '' }], /corrompido/);
   recusa([{ nome: 'quebrado.png', dados: 'isto não é base64!' }], /corrompido/);
   recusa('não é lista', /anexos inválidos/);
+});
+
+test('arquivo de pasta mantém as subpastas, com nomes seguros e sem sair da pasta do pedido', () => {
+  const nomes = escritorio.prepararAnexos([
+    anexo('x', CSV),
+    { caminho: 'TCC Final/Capítulo 1/Introdução.txt', dados: CSV.toString('base64') },
+    { caminho: '../../TCC Final/capítulo 1/introducao.txt', dados: CSV.toString('base64') },
+    { caminho: 'C:\\Users\\joão\\TCC\\.gitignore', dados: CSV.toString('base64') },
+  ]).map((a) => a.nome);
+  assert.deepEqual(nomes, ['x', 'tcc-final/capitulo-1/introducao.txt', 'tcc-final/capitulo-1/introducao-2.txt', 'c/users/joao/tcc/gitignore']);
+  assert.equal(escritorio.caminhoDeAnexo('../..'), 'anexo');
+  assert.equal(escritorio.comNumero('a.b/makefile', 2), 'a.b/makefile-2');
 });
 
 test('limites do painel online (padrão): 5 anexos e 3 MB no total', () => {
@@ -46,16 +69,13 @@ test('limites do painel online (padrão): 5 anexos e 3 MB no total', () => {
   assert.deepEqual(escritorio.prepararAnexos(undefined), []);
 });
 
-test('limites do PC: 10 anexos, 25 MB cada e 50 MB no total', () => {
+test('no PC não há limite de quantidade nem de tamanho', () => {
   const pc = escritorio.LIMITES_ANEXOS.pc;
-  const dez = Array.from({ length: 10 }, (_, i) => anexo(`f${i}.png`, PNG));
-  assert.equal(escritorio.prepararAnexos(dez, pc).length, 10);
-  assert.throws(() => escritorio.prepararAnexos([...dez, anexo('onze.png', PNG)], pc), /no máximo 10/);
-  const vinte = Buffer.alloc(20 * 1024 * 1024, 'a');
-  assert.equal(escritorio.prepararAnexos([anexo('a.txt', vinte), anexo('b.txt', vinte)], pc).length, 2, '40 MB no PC passa');
-  assert.throws(() => escritorio.prepararAnexos([anexo('a.txt', vinte), anexo('b.txt', vinte), anexo('c.txt', vinte)], pc), /passam de 50 MB/);
-  assert.throws(() => escritorio.prepararAnexos([anexo('grande.txt', Buffer.alloc(26 * 1024 * 1024, 'a'))], pc), /passa de 25 MB/);
-  assert.throws(() => escritorio.prepararAnexos([anexo('a.txt', vinte)]), /passa de 3 MB/, 'online continua 3 MB');
+  const muitos = Array.from({ length: 300 }, (_, i) => anexo(`f${i}.png`, PNG));
+  assert.equal(escritorio.prepararAnexos(muitos, pc).length, 300);
+  const grande = Buffer.alloc(30 * 1024 * 1024, 'a');
+  assert.equal(escritorio.prepararAnexos([anexo('a.txt', grande), anexo('b.txt', grande)], pc).length, 2, '60 MB no PC passa');
+  assert.throws(() => escritorio.prepararAnexos([anexo('a.txt', grande)]), /passa de 3 MB/, 'online continua 3 MB');
 });
 
 test('pedido guarda os anexos em anexos/<id do pedido>/', () => {
@@ -75,11 +95,18 @@ test('placar zerado: o próximo pedido continua a numeração guardada, sem repe
 
 test('o painel só abre anexos citados por um pedido ou missão, dentro de anexos/', () => {
   const estado = {
-    pedidos: [{ id: 'p-001', anexos: [{ nome: 'logo.png', arquivo: 'anexos/p-001/logo.png' }] }],
-    missoes: [{ id: 'm-001', anexos: ['anexos/p-001/cardapio.pdf'] }],
+    pedidos: [{ id: 'p-001', anexos: [
+      { nome: 'logo.png', arquivo: 'anexos/p-001/logo.png', tipo: 'image/png' },
+      { nome: 'tcc/cap-1/texto.txt', arquivo: 'anexos/p-001/tcc/cap-1/texto.txt', tipo: 'text/plain' },
+    ] }],
+    missoes: [{ id: 'm-001', anexos: ['anexos/p-001/cardapio.pdf', 'anexos/p-001/tcc/cap-2/'] }],
   };
   assert.deepEqual(escritorio.anexoCitado(estado, 'anexos/p-001/logo.png'), { caminho: 'anexos/p-001/logo.png', tipo: 'image/png' });
-  assert.equal(escritorio.anexoCitado(estado, 'anexos\\p-001\\cardapio.pdf').tipo, 'application/pdf');
+  // Citado só pela missão: o tipo não foi conferido, então só baixa.
+  assert.equal(escritorio.anexoCitado(estado, 'anexos\\p-001\\cardapio.pdf').tipo, 'application/octet-stream');
+  assert.equal(escritorio.anexoCitado(estado, 'anexos/p-001/tcc/cap-1/texto.txt').tipo, 'text/plain', 'arquivo de subpasta citado pelo pedido');
+  assert.equal(escritorio.anexoCitado(estado, 'anexos/p-001/tcc/cap-2/fig.png').tipo, 'application/octet-stream', 'dentro de pasta citada pela missão');
+  assert.throws(() => escritorio.anexoCitado(estado, 'anexos/p-001/outra/fig.png'), /não encontrado/);
   for (const ruim of ['estado.json', '../estado.json', 'anexos/p-001/../../estado.json', '/etc/passwd', 'anexos/p-001/Logo.png', 'anexos/p-001/']) {
     assert.throws(() => escritorio.anexoCitado(estado, ruim), /não permitido/, ruim);
   }
@@ -96,4 +123,7 @@ test('cabeçalhos do anexo: tipo fixo, sem adivinhar e isolado (fora o PDF)', ()
   assert.equal(csv['Content-Type'], 'text/plain; charset=utf-8');
   const pdf = escritorio.cabecalhosDeAnexo({ caminho: 'anexos/p-001/c.pdf', tipo: 'application/pdf' });
   assert.equal(pdf['Content-Security-Policy'], undefined);
+  const docx = escritorio.cabecalhosDeAnexo({ caminho: 'anexos/p-001/tcc/tcc.docx', tipo: 'application/octet-stream' });
+  assert.match(docx['Content-Disposition'], /^attachment; filename="tcc.docx"$/);
+  assert.match(docx['Content-Security-Policy'], /sandbox/);
 });

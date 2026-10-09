@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block title %}Privacidade · EducaGame{% endblock %}
+
+{% block content %}
+<section class="panel">
+    <p class="eyebrow">Privacidade</p>
+    <h1>Política de privacidade</h1>
+    <p class="muted">Atualizada em {{ atualizado_em }}.</p>
+
+    {% for secao in secoes %}
+        <section class="ajuda-secao" id="privacidade-{{ secao.id }}">
+            <h2>{{ secao.titulo }}</h2>
+            {% for paragrafo in secao.paragrafos %}
+                <p>{{ paragrafo }}</p>
+            {% endfor %}
+        </section>
+    {% endfor %}
+</section>
+{% endblock %}

@@ -11,6 +11,7 @@ const http = require('http');
 const fs = require('fs');
 const path = require('path');
 const { spawn } = require('child_process');
+const { pipeline } = require('stream/promises');
 const escritorio = require('./lib/escritorio');
 const { criarGit } = require('./lib/git');
 const { criarRepos } = require('./lib/repos');
@@ -27,8 +28,12 @@ const MODELO = process.env.ESCRITORIO_MODELO || 'claude-opus-5-5';
 const ESFORCO = process.env.ESCRITORIO_ESFORCO || 'high';
 const LIMITE_RODADA_MS = 30 * 60 * 1000;
 const LIMITE_CORPO = 64 * 1024;
-// Pedido com anexos: os arquivos chegam em base64 (um terço maior), mais uma folga para o texto.
-const LIMITE_CORPO_PEDIDO = Math.ceil(escritorio.LIMITES_ANEXOS.pc.bytes * 4 / 3) + 1024 * 1024;
+// Pedido com anexos em base64 dentro do JSON (o jeito antigo, um envio só). O painel do PC não usa mais: manda cada
+// arquivo cru para /api/anexo/enviar, sem limite de quantidade nem de tamanho, e depois o pedido só com o "lote".
+const LIMITE_CORPO_PEDIDO = 64 * 1024 * 1024;
+// Arquivos de um pedido que ainda está chegando. Fora de anexos/ e fora do Git (.gitignore) até o pedido ser criado.
+const ENVIO = path.join(ROOT, '.envio');
+const ESPERA_LOTE_MS = 24 * 60 * 60 * 1000; // lote abandonado (pedido que não foi enviado) some depois de um dia
 const ESPERA_ENVIO_MS = 4000; // junta cliques seguidos num commit só
 const { agora } = escritorio;
 
@@ -287,24 +292,119 @@ async function decidir(req, res) {
   enviar(res, 200, await completar(estado));
 }
 
+// ---------- Anexos chegando arquivo por arquivo ----------
+const loteValido = (lote) => typeof lote === 'string' && /^[a-z0-9-]{8,64}$/.test(lote);
+
+// POST /api/anexo/enviar?lote=<id>&caminho=<pasta/arquivo.ext>, com o arquivo cru no corpo (qualquer tipo e tamanho).
+// Vai direto para o disco em .envio/<lote>/, sem passar pela memória. Devolve o caminho seguro em que ficou.
+async function receberAnexo(req, res, url) {
+  if (!origemValida(req)) return enviar(res, 403, { erro: 'origem não permitida' });
+  const lote = url.searchParams.get('lote');
+  if (!loteValido(lote)) return enviar(res, 400, { erro: 'lote inválido' });
+  const pasta = path.join(ENVIO, lote);
+  const sugerido = escritorio.caminhoDeAnexo(url.searchParams.get('caminho'));
+  // Dois arquivos que viram o mesmo nome simples ("Foto 1.png" e "foto-1.png") ganham -2, -3; o "wx" garante.
+  let caminho;
+  let saida;
+  for (let n = 1; !saida; n++) {
+    caminho = escritorio.comNumero(sugerido, n);
+    const alvo = path.join(pasta, ...caminho.split('/'));
+    try {
+      fs.mkdirSync(path.dirname(alvo), { recursive: true });
+      saida = fs.createWriteStream(alvo, { flags: 'wx' });
+      await new Promise((ok, erro) => saida.once('open', ok).once('error', erro));
+    } catch (e) {
+      saida = null;
+      if (!['EEXIST', 'ENOTDIR', 'EISDIR'].includes(e.code) || n > 1000) throw e;
+    }
+  }
+  await pipeline(req, saida);
+  enviar(res, 200, { caminho, tamanho: saida.bytesWritten });
+}
+
+// Os arquivos que chegaram num lote, prontos para o pedido ({ nome, tipo, tamanho }), em ordem de caminho.
+function anexosDoLote(lote) {
+  const pasta = path.join(ENVIO, lote);
+  if (!fs.existsSync(pasta)) throw new escritorio.ErroEscritorio(400, 'os anexos não chegaram; tente enviar de novo');
+  const lista = [];
+  (function visitar(dir, prefixo) {
+    for (const item of fs.readdirSync(dir, { withFileTypes: true })) {
+      const caminho = prefixo + item.name;
+      const alvo = path.join(dir, item.name);
+      if (item.isDirectory()) visitar(alvo, `${caminho}/`);
+      else if (item.isFile()) lista.push({ nome: caminho, alvo });
+    }
+  })(pasta, '');
+  return lista.sort((a, b) => a.nome.localeCompare(b.nome)).map(({ nome, alvo }) => {
+    const inicio = Buffer.alloc(8192);
+    const fd = fs.openSync(alvo, 'r');
+    let lidos;
+    try {
+      lidos = fs.readSync(fd, inicio, 0, inicio.length, 0);
+    } finally {
+      fs.closeSync(fd);
+    }
+    return { nome, tipo: escritorio.tipoDeAnexo(nome, inicio.subarray(0, lidos)), tamanho: fs.statSync(alvo).size };
+  });
+}
+
+// Leva o lote para anexos/<id do pedido>/. No Windows (OneDrive, antivírus) mover pasta pode falhar: aí copia.
+function moverLote(lote, destino) {
+  const origem = path.join(ENVIO, lote);
+  fs.mkdirSync(path.dirname(destino), { recursive: true });
+  try {
+    if (fs.existsSync(destino)) throw new Error('destino já existe');
+    fs.renameSync(origem, destino);
+  } catch {
+    fs.cpSync(origem, destino, { recursive: true });
+    fs.rmSync(origem, { recursive: true, force: true, maxRetries: 3 });
+  }
+}
+
+// Lotes de pedidos que nunca foram enviados (janela fechada no meio) somem depois de um dia.
+function limparLotesVelhos() {
+  if (!fs.existsSync(ENVIO)) return;
+  for (const nome of fs.readdirSync(ENVIO)) {
+    const alvo = path.join(ENVIO, nome);
+    try {
+      if (Date.now() - fs.statSync(alvo).mtimeMs > ESPERA_LOTE_MS) fs.rmSync(alvo, { recursive: true, force: true });
+    } catch {
+      // arquivo preso por outro programa: tenta de novo na próxima vez
+    }
+  }
+}
+
 async function novoPedido(req, res) {
   const corpo = await lerPedidoJson(req, res, LIMITE_CORPO_PEDIDO);
   if (!corpo) return;
   const estado = lerEstado();
+  const lote = corpo.lote || null;
   let pedido;
   let anexos;
   try {
-    anexos = escritorio.prepararAnexos(corpo.anexos, escritorio.LIMITES_ANEXOS.pc);
+    if (lote !== null && !loteValido(lote)) throw new escritorio.ErroEscritorio(400, 'lote inválido');
+    anexos = lote ? anexosDoLote(lote) : escritorio.prepararAnexos(corpo.anexos, escritorio.LIMITES_ANEXOS.pc);
     pedido = escritorio.novoPedido(estado, corpo, anexos);
   } catch (e) {
     return responderErro(res, e);
   }
   // Primeiro os anexos, depois o estado: a equipe nunca vê um pedido cujos arquivos ainda não existem.
-  pedido.anexos.forEach((a, i) => {
-    const alvo = path.join(ROOT, a.arquivo);
-    fs.mkdirSync(path.dirname(alvo), { recursive: true });
-    fs.writeFileSync(alvo, anexos[i].conteudo);
-  });
+  const pastaDoPedido = path.join(ROOT, 'anexos', pedido.id);
+  if (lote) {
+    moverLote(lote, pastaDoPedido);
+  } else {
+    pedido.anexos.forEach((a, i) => {
+      const alvo = path.join(ROOT, a.arquivo);
+      fs.mkdirSync(path.dirname(alvo), { recursive: true });
+      fs.writeFileSync(alvo, anexos[i].conteudo);
+    });
+  }
+  // O GitHub recusa arquivo acima de 100 MB: esses ficam só neste PC, fora do envio, para o push não travar.
+  const grandes = anexos.filter((a) => a.tamanho > escritorio.LIMITE_GITHUB);
+  if (grandes.length) {
+    const linhas = grandes.map((a) => `/${a.nome}`);
+    fs.writeFileSync(path.join(pastaDoPedido, '.gitignore'), `# Grandes demais para o GitHub (mais de 95 MB): ficam só no PC\n${linhas.join('\n')}\n`);
+  }
   salvarEstado(estado);
   git.invalidar();
   const motivo = `novo pedido ${pedido.id}${pedido.anexos.length ? ` com ${pedido.anexos.length} anexo(s)` : ''}`;
@@ -446,6 +546,7 @@ async function atender(req, res) {
     if (req.method === 'GET' && url.pathname === '/api/arquivo') return entregarArquivo(res, url.searchParams.get('id'));
     if (req.method === 'GET' && url.pathname === '/api/anexo') return entregarAnexo(res, url.searchParams.get('caminho'));
     if (req.method === 'POST' && url.pathname === '/api/decisao') return await decidir(req, res);
+    if (req.method === 'POST' && url.pathname === '/api/anexo/enviar') return await receberAnexo(req, res, url);
     if (req.method === 'POST' && url.pathname === '/api/pedido') return await novoPedido(req, res);
     if (req.method === 'POST' && url.pathname === '/api/rodada') return await rodarAgora(req, res);
     if (req.method === 'POST' && url.pathname === '/api/git') return await ligarGit(req, res);
@@ -462,11 +563,13 @@ async function atender(req, res) {
 
 // No Windows, "localhost" pode apontar para o IPv6 (::1); por isso escuta nos dois endereços locais.
 // Os dois são só da própria máquina: ninguém da rede acessa o painel.
-const servidor6 = http.createServer(atender);
+// Sem tempo máximo por chamada: um anexo muito grande pode levar mais que os 5 minutos padrão do Node para chegar.
+const semPrazo = { requestTimeout: 0 };
+const servidor6 = http.createServer(semPrazo, atender);
 servidor6.on('error', (e) => console.log(`[aviso] IPv6 (::1) indisponível: ${e.code}. Use http://127.0.0.1:${PORT}`));
 servidor6.listen(PORT, '::1');
 
-const servidor = http.createServer(atender);
+const servidor = http.createServer(semPrazo, atender);
 servidor.on('error', (e) => {
   console.log(e.code === 'EADDRINUSE'
     ? `[erro] A porta ${PORT} já está em uso. Feche o outro "node server.js" ou use outra porta: $env:PORT=4322; node server.js`
@@ -478,5 +581,6 @@ servidor.listen(PORT, HOST, () => {
   console.log(AUTOMACAO
     ? `Automação ligada: o Claude (${MODELO}, esforço ${ESFORCO}) é chamado sozinho quando há trabalho.`
     : 'Automação desligada.');
+  limparLotesVelhos();
   agendarRodada('trabalho pendente ao ligar o servidor');
 });

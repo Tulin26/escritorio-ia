@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block title %}EducaGame IA - Redefinir senha{% endblock %}
+{% block topnav %}{% endblock %}
+{% block header %}{% endblock %}
+{% block content %}
+<section class="school-entry">
+    <div class="school-entry-copy">
+        <h1>Redefinir senha</h1>
+        <p class="muted">Escolha uma senha nova pra sua conta.</p>
+    </div>
+
+    {% if erro %}
+        <p class="notice warn">{{ erro }}</p>
+    {% endif %}
+
+    <form class="form" method="post" action="{{ url_for('auth.redefinir_senha_rota', token=token) }}"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <label for="senha">Senha nova</label>
+        <input id="senha" name="senha" type="password" autocomplete="new-password" minlength="6" required>
+
+        <label for="confirmar_senha">Confirme a senha nova</label>
+        <input id="confirmar_senha" name="confirmar_senha" type="password" autocomplete="new-password" minlength="6" required>
+
+        <button type="submit">Redefinir senha</button>
+    </form>
+
+    <p class="muted">Lembrou a senha? <a href="{{ url_for('auth.tela_login') }}">Entrar</a>.</p>
+</section>
+{% endblock %}

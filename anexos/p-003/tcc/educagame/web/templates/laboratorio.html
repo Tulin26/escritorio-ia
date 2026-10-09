@@ -1,0 +1,148 @@
+{% extends "base.html" %}
+{% block title %}EducaGame IA - Laboratório de Exatas{% endblock %}
+{% block content %}
+{% if aviso_resposta %}
+    <p class="notice warn">{{ aviso_resposta }}</p>
+{% endif %}
+
+<section class="section-head">
+    <div>
+        <p class="eyebrow">Laboratório de Exatas</p>
+        <h1>Laboratório de Exatas</h1>
+        {% include "partials/student_context.html" %}
+    </div>
+</section>
+
+{% include "partials/ia_notice.html" %}
+
+<section class="mode-workspace{% if not desafio or resultado %} single{% endif %}">
+    {% if not resultado %}
+        <div class="panel mode-config">
+            <h2>Novo experimento</h2>
+            <form method="post" action="{{ url_for('laboratorio.tela_laboratorio') }}" data-aviso-texto="Montando o experimento..." class="form"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <label for="materia">Matéria</label>
+                <select id="materia" name="materia">
+                    {% for materia in materias %}
+                        <option value="{{ materia.valor }}" data-ef="{{ 1 if materia.permitida_ef else 0 }}" data-em="{{ 1 if materia.permitida_em else 0 }}" {% if materia.valor == materia_selecionada %}selected{% endif %}>{{ materia.label }}</option>
+                    {% endfor %}
+                </select>
+
+                <label for="nivel">Dificuldade</label>
+                <select id="nivel" name="nivel">
+                    <option value="Fácil" {% if nivel_selecionado == "Fácil" %}selected{% endif %}>Fácil</option>
+                    <option value="Médio" {% if nivel_selecionado == "Médio" %}selected{% endif %}>Médio</option>
+                    <option value="Difícil" {% if nivel_selecionado == "Difícil" %}selected{% endif %}>Difícil</option>
+                </select>
+
+                {% include "partials/student_selector.html" %}
+
+                <label for="tema">Tema opcional</label>
+                <input id="tema" type="text" name="tema" placeholder="Ex: Bhaskara, lei de Ohm, concentração comum">
+
+                <button type="submit">Gerar experimento</button>
+            </form>
+        </div>
+    {% endif %}
+
+    {% if desafio and desafio.get("pergunta") %}
+        <div class="mode-output">
+            <div class="panel challenge">
+                <div class="challenge-head">
+                    <div>
+                        <p class="eyebrow">{{ desafio.get("materia_label", desafio.get("materia", "")) }}</p>
+                        <h2>{{ desafio.get("enigma", "Experimento") }}</h2>
+                    </div>
+                    <span class="pill">{{ desafio.get("_origem_geracao", "questão") }}</span>
+                </div>
+
+                {% if desafio.get("formula_latex") %}
+                    <div class="formula-box">
+                        <h3>Fórmula principal</h3>
+                        <div class="latex">$$ {{ desafio.get("formula_latex") }} $$</div>
+                        {% if desafio.get("legenda_variaveis") %}
+                            <p class="muted">{{ desafio.get("legenda_variaveis")|formula_html }}</p>
+                        {% endif %}
+                        {% if desafio.get("subformulas_latex") %}
+                            <h3>Subfórmulas auxiliares</h3>
+                            {% for subformula in desafio.get("subformulas_latex") %}
+                                <div class="latex">$$ {{ subformula }} $$</div>
+                            {% endfor %}
+                        {% endif %}
+                    </div>
+                {% endif %}
+
+                {% if resultado and desafio.get("passos_template") %}
+                    <div class="steps">
+                        <h3>Etapas da resolução</h3>
+                        {% for passo in desafio.get("passos_template") %}
+                            <div class="step">
+                                <strong>{{ passo.titulo }}</strong>
+                                {% if passo.conteudo_texto %}
+                                    <p>{{ passo.conteudo_texto|formula_html }}</p>
+                                {% endif %}
+                                {% if passo.conteudo_latex %}
+                                    <div class="latex">$$ {{ passo.conteudo_latex }} $$</div>
+                                {% elif not passo.conteudo_texto %}
+                                    <p>{{ passo.conteudo|formula_html }}</p>
+                                {% endif %}
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+
+                {% set pergunta = desafio.get("pergunta_formatada", {}) %}
+                <div class="question">
+                    {% if pergunta.get("texto") %}
+                        <p>{{ pergunta.get("texto") }}{% if not pergunta.get("latex") %}{{ pergunta.get("sufixo") }}{% endif %}</p>
+                    {% endif %}
+                    {% if pergunta.get("latex") %}
+                        <div class="latex">$$ {{ pergunta.get("latex") }} $$</div>
+                        {% if pergunta.get("sufixo") %}
+                            <p>{{ pergunta.get("sufixo") }}</p>
+                        {% endif %}
+                    {% endif %}
+                </div>
+
+                {% if not resultado %}
+                    {% set action = url_for('laboratorio.responder_laboratorio') %}
+                    {% set opcoes = desafio.get("opcoes_formatadas", desafio.get("opcoes", [])) %}
+                    {% include "partials/options_form.html" %}
+                {% endif %}
+            </div>
+
+            {% if resultado and desafio %}
+                {% set explicacao_texto = "" %}
+                {% include "partials/result_card.html" %}
+                <section class="panel compact-form">
+                    <div class="actions">
+                        <form method="post" action="{{ url_for('laboratorio.tela_laboratorio') }}" data-aviso-texto="Montando o experimento..."><input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                            <input type="hidden" name="materia" value="{{ desafio.get('materia', 'Matematica') }}">
+                            <input type="hidden" name="nivel" value="{{ desafio.get('nivel', 'Médio') }}">
+                            <input type="hidden" name="tema" value="{{ desafio.get('tema', '') }}">
+                            <button type="submit">Gerar novo experimento</button>
+                        </form>
+                        <form method="post" action="{{ url_for('laboratorio.novo_experimento_laboratorio') }}"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                            <button class="button secondary" type="submit">Escolher outra matéria</button>
+                        </form>
+                    </div>
+                </section>
+            {% endif %}
+        </div>
+    {% endif %}
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script>
+window.MathJax = {
+    // MELHORIA: "$" era delimitador de formula inline, entao qualquer
+    // enunciado com dinheiro ("Um produto de R$ 200 ... o desconto em R$?")
+    // tinha TODO o texto entre os dois cifroes engolido pelo MathJax e
+    // renderizado como matematica italica ilegivel (verificado ao vivo).
+    // As formulas do app usam $$...$$ (displayMath), que segue funcionando.
+    tex: { inlineMath: [["\\(", "\\)"]] },
+    svg: { fontCache: "global" }
+};
+</script>
+<script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+{% endblock %}

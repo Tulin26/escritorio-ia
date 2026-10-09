@@ -107,10 +107,17 @@ também os anexos), marque o pedido como "feito" e grave em `missao` o id do pla
 
 ## Anexos dos pedidos
 
-O dono pode mandar arquivos junto com o pedido: fotos, prints, logo, PDF, TXT, MD, CSV ou JSON (no PC, até 10 por pedido e
-25 MB cada; no painel online, até 5 e 3 MB no total). PDF grande: leia em partes (a ferramenta Read aceita páginas).
-Eles ficam em `anexos/<id do pedido>/` e aparecem em `pedidos[].anexos` como `{ nome, arquivo, tipo, tamanho }`
-(`arquivo` é o caminho, ex.: `anexos/p-004/logo.png`).
+O dono pode mandar arquivos de qualquer tipo junto com o pedido, ou uma pasta inteira com subpastas (no PC, sem limite de
+quantidade nem de tamanho; no painel online, até 5 e 3 MB no total, limite do Vercel). PDF grande: leia em partes (a
+ferramenta Read aceita páginas). Eles ficam em `anexos/<id do pedido>/` (com as subpastas, nomes simplificados) e aparecem
+em `pedidos[].anexos` como `{ nome, arquivo, tipo, tamanho }` (`arquivo` é o caminho, ex.: `anexos/p-004/tcc/cap-1.pdf`).
+
+- **Pasta grande** (dezenas ou centenas de arquivos): não leia tudo. Use a lista de `pedidos[].anexos` (ou Glob/Grep na
+  pasta) como índice, leia o que importa para o pedido e diga no plano o que ficou de fora. Nas sub-missões, o campo
+  `anexos` pode citar uma pasta inteira terminando em `/` (ex.: `anexos/p-004/tcc/capitulos/`) em vez de cada arquivo.
+- **Arquivo que a Read não abre** (Word, Excel, PowerPoint, ZIP, programa): diga na entrega qual era e peça ao dono para
+  mandar em PDF, TXT ou CSV. Código-fonte e LaTeX são texto: leia normalmente.
+- **Acima de 95 MB**: o arquivo fica só no PC (fora do GitHub, por um `.gitignore` na pasta do pedido); na nuvem ele não existe.
 
 - **Leia** com a ferramenta Read, que abre imagens, PDFs e texto. São material de trabalho do dono (o logo de verdade, fotos
   reais, o cardápio, o relatório exportado) e valem mais que suposição: use como fonte e diga na entrega quais usou.

@@ -1,0 +1,165 @@
+{% extends "base.html" %}
+{% block title %}EducaGame IA - Treino Rápido{% endblock %}
+{% block content %}
+{% if aviso_resposta %}
+    <p class="notice warn">{{ aviso_resposta }}</p>
+{% endif %}
+
+<section class="section-head">
+    <div>
+        <p class="eyebrow">Treino Rápido</p>
+        <h1>Sessão de treino</h1>
+        {% include "partials/student_context.html" %}
+    </div>
+</section>
+
+{% include "partials/ia_notice.html" %}
+
+{% if not treino %}
+<section>
+    <div class="panel">
+        <h2>Configurar treino</h2>
+        <form method="post" action="{{ url_for('treino.iniciar_treino') }}" data-aviso-texto="Preparando a primeira questão..." class="form"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <label for="materia">Matéria</label>
+            <select id="materia" name="materia">
+                {% for materia in materias %}
+                    <option value="{{ materia.valor }}" data-ef="{{ 1 if materia.permitida_ef else 0 }}" data-em="{{ 1 if materia.permitida_em else 0 }}">{{ materia.label }}</option>
+                {% endfor %}
+            </select>
+
+            <label for="nivel">Dificuldade</label>
+            <select id="nivel" name="nivel">
+                <option>Fácil</option>
+                <option selected>Médio</option>
+                <option>Difícil</option>
+            </select>
+
+            <label for="total">Número de questões</label>
+            <select id="total" name="total">
+                <option>3</option>
+                <option selected>5</option>
+                <option>7</option>
+                <option>10</option>
+            </select>
+
+            {% include "partials/student_selector.html" %}
+
+            <label for="tema">Tema opcional</label>
+            <input id="tema" type="text" name="tema" placeholder="Ex: frações, Revolução Industrial, genética">
+
+            <button type="submit">Iniciar treino</button>
+        </form>
+    </div>
+</section>
+{% endif %}
+
+{% if treino and questao %}
+<section class="panel challenge">
+    <div class="challenge-head">
+        <div>
+            <p class="eyebrow">{{ treino.get("materia_label", questao.get("materia_label", "")) }}</p>
+            <h2>{{ questao.get("enigma", "Desafio de treino") }}</h2>
+        </div>
+        <span class="pill">{{ questao.get("_origem_geracao", "questão") }}</span>
+    </div>
+
+    <div class="progress-row">
+        <strong>Questão {{ treino.get("atual", 1) }} de {{ treino.get("total", 1) }}</strong>
+        <span>{{ treino.get("acertos", 0) }} {{ "acerto" if treino.get("acertos", 0) == 1 else "acertos" }} · {{ treino.get("erros", 0) }} {{ "erro" if treino.get("erros", 0) == 1 else "erros" }}</span>
+    </div>
+    {% set progresso = (treino.get("atual", 1) / treino.get("total", 1) * 100)|round(0, "floor")|int %}
+    <progress class="progress-bar" value="{{ progresso }}" max="100">{{ progresso }}%</progress>
+
+    {% if questao.get("formula_latex") %}
+        <div class="formula-box">
+            <h3>Fórmula principal</h3>
+            <div class="latex">$$ {{ questao.get("formula_latex") }} $$</div>
+            {% if questao.get("legenda_variaveis") %}
+                <p class="muted">{{ questao.get("legenda_variaveis")|formula_html }}</p>
+            {% endif %}
+        </div>
+    {% endif %}
+
+    {% if questao.get("subformulas_latex") %}
+        <div class="formula-box">
+            <h3>Subfórmulas auxiliares</h3>
+            {% for subformula in questao.get("subformulas_latex") %}
+                <div class="latex">$$ {{ subformula }} $$</div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    {% set suporte = questao.get("suporte") %}
+    {% include "partials/suporte_questao.html" %}
+    {% set pergunta = questao.get("pergunta_formatada", {}) %}
+    <div class="question">
+        {% if pergunta.get("texto") %}
+            <p>{{ pergunta.get("texto") }}{% if not pergunta.get("latex") %}{{ pergunta.get("sufixo") }}{% endif %}</p>
+        {% endif %}
+        {% if pergunta.get("latex") %}
+            <div class="latex">$$ {{ pergunta.get("latex") }} $$</div>
+            {% if pergunta.get("sufixo") %}
+                <p>{{ pergunta.get("sufixo") }}</p>
+            {% endif %}
+        {% endif %}
+    </div>
+
+    {% if not resultado %}
+        {% set action = url_for('treino.responder_treino') %}
+        {% set opcoes = questao.get("opcoes", []) %}
+        {% include "partials/options_form.html" %}
+    {% endif %}
+</section>
+{% endif %}
+
+{% if resultado and treino and questao %}
+    {% set explicacao_texto = questao.get("explicacao_texto") %}
+    {% include "partials/result_card.html" %}
+
+    <section class="panel">
+        {% if treino.get("atual", 1) >= treino.get("total", 1) %}
+            {% set pct = (treino.get("acertos", 0) / treino.get("total", 1) * 100)|round(0, "floor")|int %}
+            <h2>Treino concluído</h2>
+            <p><strong>{{ treino.get("acertos", 0) }}/{{ treino.get("total", 1) }}</strong> acertos, aproveitamento de <strong>{{ pct }}%</strong>.</p>
+            {% if treino.get("historico") %}
+                <div class="summary-list">
+                    {% for item in treino.get("historico") %}
+                        {# O resumo mostrava o enunciado sem filtro nenhum: "357 cm^2" e "x^2 - 6x + 8"
+                   crus, ao lado da MESMA questao ja formatada na tela de responder.
+                   Achado 4.4 do QA de 23/09/2026; medido em 28/09: 260 questoes dos
+                   bancos e 34 das 554 reais da IA. #}
+                        <p>{{ "✓" if item.acertou else "×" }} Q{{ item.numero }} - {{ item.pergunta|unidades|formula_html }}</p>
+                    {% endfor %}
+                </div>
+            {% endif %}
+            <form method="post" action="{{ url_for('treino.reiniciar_treino') }}"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <button type="submit">Novo treino</button>
+            </form>
+        {% else %}
+            <div class="actions">
+                <form method="post" action="{{ url_for('treino.proxima_questao') }}" data-aviso-texto="Preparando a próxima questão..."><input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <button type="submit">Próxima questão</button>
+                </form>
+                <form method="post" action="{{ url_for('treino.reiniciar_treino') }}"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <button class="button secondary" type="submit">Recomeçar</button>
+                </form>
+            </div>
+        {% endif %}
+    </section>
+{% endif %}
+{% endblock %}
+
+{% block scripts %}
+<script>
+window.MathJax = {
+    // MELHORIA: "$" era delimitador de formula inline, entao qualquer
+    // enunciado com dinheiro ("Um produto de R$ 200 ... o desconto em R$?")
+    // tinha TODO o texto entre os dois cifroes engolido pelo MathJax e
+    // renderizado como matematica italica ilegivel (verificado ao vivo).
+    // As formulas do app usam $$...$$ (displayMath), que segue funcionando.
+    tex: { inlineMath: [["\\(", "\\)"]] },
+    svg: { fontCache: "global" }
+};
+</script>
+<script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+{% endblock %}

@@ -1,0 +1,1 @@
+"""Telas Streamlit do EducaGame."""

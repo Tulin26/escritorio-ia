@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% block title %}EducaGame IA - Cadastro do Aluno{% endblock %}
+{% block topnav %}{% endblock %}
+{% block header %}{% endblock %}
+{% block content %}
+<section class="school-entry">
+    <div class="school-entry-copy">
+        <h1>Cadastro do aluno</h1>
+        <p class="muted">Crie sua conta com seu e-mail. Se o professor já te matriculou, use o mesmo RA/identificação pra manter seus pontos.</p>
+        {% include "partials/trocar_escola_link.html" %}
+    </div>
+
+    {% if sucesso %}
+        {% if aviso_sucesso %}
+            <p class="notice warn">{{ aviso_sucesso }}</p>
+        {% else %}
+            <p class="notice ok">Cadastro recebido! Enviamos um link de confirmação pro seu e-mail — confirme antes de fazer login.</p>
+        {% endif %}
+    {% else %}
+        {% if erro %}
+            <p class="notice warn">{{ erro }}</p>
+        {% endif %}
+
+        <form class="form" method="post" action="{{ url_for('auth.tela_cadastro') }}"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <label for="nome">Nome completo</label>
+            <input id="nome" name="nome" type="text" required>
+
+            <label for="ra_identificacao">RA / Identificação</label>
+            <input id="ra_identificacao" name="ra_identificacao" type="text" required>
+
+            <label for="ano_escolar">Série/Ano</label>
+            <select id="ano_escolar" name="ano_escolar">
+                {% for serie in series %}
+                    <option value="{{ serie }}">{{ serie }}</option>
+                {% endfor %}
+            </select>
+
+            <label for="periodo">Período</label>
+            <select id="periodo" name="periodo">
+                <option>Manhã</option>
+                <option>Tarde</option>
+                <option>Noite</option>
+            </select>
+
+            <label for="email">Seu e-mail</label>
+            <input id="email" name="email" type="email" autocomplete="email" required>
+
+            <label for="senha">Crie uma senha</label>
+            <input id="senha" name="senha" type="password" autocomplete="new-password" minlength="6" required>
+
+            <label class="check-option">
+                <input id="consentimento" name="consentimento" type="checkbox" required>
+                Li e aceito a <a href="{{ url_for('privacidade.tela_privacidade') }}" target="_blank" rel="noopener">política de privacidade</a>.
+            </label>
+
+            <button type="submit">Cadastrar</button>
+        </form>
+    {% endif %}
+
+    <p class="muted">Já tem conta? <a href="{{ url_for('auth.tela_login') }}">Entrar</a>.</p>
+</section>
+{% endblock %}
